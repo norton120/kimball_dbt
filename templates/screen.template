@@ -1,0 +1,28 @@
+--------KIMBALL DBT SCREEN TEMPLATE 
+--------
+--------Screens are source-data-quality tests that we use to investigate and record data quality.     
+--
+
+
+----------------------------SCHEMA TESTING-------------------------------------------------------
+
+--------BEGIN NOT NULL 
+--------END NOT NULL  
+
+
+--------BEGIN FK 
+--------END FK
+
+
+--------BEGIN ACCEPTED VALUES
+--------END ACCEPTED VALUES
+
+
+
+----------------------------STATISTICAL TESTING-------------------------------------------------------
+
+
+
+--------BEGIN NORMAL RANGES
+--------END NORMAL RANGES
+

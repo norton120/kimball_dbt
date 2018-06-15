@@ -1,0 +1,32 @@
+--------KIMBALL DBT PRODUCTION MODEL TEMPLATE 
+--------CONFIGURATION SECTION
+--------This is where we set the local model values for each model.    
+--
+
+{{config({
+
+--------SCHEMA - uncomment this line and declare the appropriate schema for the model.
+--------below if you do not want it to default to 'GENERAL'
+-- "schema":"< declare_schema_name_here >",
+        
+"post-hook": [
+
+--------ENTITY COMMENTS - declare the entity comments here
+-- "{{entity_comment(type,target.database,target.schema,target.name, 'comment')}}",  
+
+--------COLUMN COMMENTS - declare each comment using a macro statment here
+-- "{{column_comment(column, 'comment')}}", 
+
+--------PRIMARY KEY - declare the PK
+-- "{{primary_key(target.database,target.schema,target.name, 'primary_key_name')}}",
+
+--------FOREIGN KEYS - declare FKs
+-- "{{foreign_key(target.database,target.schema,target.name, 'local_column','fk_column' )}}",
+
+--------NOT NULLS - declare all the NOT NULL constraints
+-- "{{not_null(target.database,target.schema,target.name, 'column')}}",
+
+]})}}
+      
+
+--------MODEL CODE BELOW THIS LINE 
