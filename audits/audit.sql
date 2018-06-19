@@ -1,4 +1,4 @@
----------- INITIAL AUDIT PARTIAL 
+---------- INITIAL AUDIT 
 ---- All the initial audit runs are performed here for a build.
 ---- These runs are only to set the min and max values for the audit 
 ---- and to populate the AUDIT table with a working row to update
