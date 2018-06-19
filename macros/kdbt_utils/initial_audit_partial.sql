@@ -70,3 +70,4 @@
     
     {{schema_name}}_{{target_name}}_source_min_max 
 )    
+{%- endmacro -%}
