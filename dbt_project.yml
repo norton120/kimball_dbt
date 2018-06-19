@@ -2,8 +2,8 @@
 # Name your package! Package names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: 'my_new_package'
-version: '1.0'
+name: 'kdbt_template'
+version: '0.0.1'
 
 # This setting configures which "profile" dbt uses for this project. Profiles contain
 # database connection information, and should be configured in the  ~/.dbt/profiles.yml file
@@ -23,13 +23,13 @@ clean-targets:         # directories to be removed by `dbt clean`
     - "target"
     - "dbt_modules"
 
-# You can define configurations for models in the `source-paths` directory here.
-# Using these configurations, you can enable or disable models, change how they
-# are materialized, and more!
 
-# In this example config, we tell dbt to build all models in the example/ directory
-# as views (the default). Try changing `view` to `table` below, then re-running dbt
 models:
-  my_new_package:
-      example:
-          materialized: view
+  revzilla:
+    
+    partials:
+      materialized: ephemeral
+
+    audits:
+      materialized: incremental
+      sql_where: "TRUE"         ## This is legacy dbt that tells the framework to use the logic in the model.
