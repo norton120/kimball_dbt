@@ -24,8 +24,8 @@ clean-targets:         # directories to be removed by `dbt clean`
     - "dbt_modules"
 
 quoting:
-  identifier: true
-  schema: true
+  identifier: false
+  schema: false
 
 models:
   revzilla:
