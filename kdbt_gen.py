@@ -4,6 +4,8 @@
     INTENT: kdbt_gen generates stub model files from templates.
     
         Templates live in the /templates folder with a .template file extension.
+
+    ARGS: invoke with an argument string. see help method
 '''
 import os
 import yaml
@@ -16,26 +18,31 @@ class kdbt_gen:
         self._model_type = args[1].lower()
         self._model_name = args[2].upper()
         
-        ## additional args
-        kwargs = []
+        ## check for help
+        for arg in args:
+            if arg[3:].upper() == 'HELP':
+                self.help() 
 
+        ## additional args
+        kwargs = {}
+        
         ## for each additional arg, if the arg has double dashes,
         ## take it as a key. If not feed it as a value.
 
         for index, arg in enumerate(args[3:]):
-            if arg[:3] == '--':
+            if arg[:2] == '--':
 
                 ## if 2 keys are back to back error out
-                if args[index+4][:3] == '--':
+                if args[index+4] and args[index+4][:2] == '--':
                     raise ValueError('Incorrect argument values')    
         
                 ## if a key has no value, set it to True.
                 try:
-                    kwargs[arg[3:]] = args[index+3]
+                    kwargs[arg[2:]] = args[index+4]
                 except: 
-                    kwargs[arg[3:]] = True
+                    kwargs[arg[2:]] = True
         
-    
+
         ## check to see if the distructive flag was set
         self._destructive = kwargs['distructive'] if 'destructive' in kwargs else False
 
@@ -47,8 +54,13 @@ class kdbt_gen:
 
             existing_model = self.check_for_existing_model(self._model_name)
 
+            ## grab the path arguments. Defaults are RAW.ERP. Entity is required. 
+            self._database = kwargs['database'] if 'database' in kwargs else 'RAW'
+            self._schema = kwargs['schema'] if 'schema' in kwargs else 'ERP'
+            self._entity = kwargs['entity'] 
+
             if self._destructive or not existing_model:
-                self.create_new_model(self._model_type, self._model_name)
+                self.create_new_model(self._model_type, self._model_name, kwargs['entity'], kwargs['schema'],  kwargs['database'])
                 self._print_success(self._model_name)
             else:
                 self._print_exists(existing_model)
@@ -89,7 +101,7 @@ class kdbt_gen:
 
 
 
-    def create_new_model(self, model_type, model_name):
+    def create_new_model(self, model_type, model_name, entity = None, schema = None, database = None):
         '''
             INTENT: creates a new aptly-named file from the appropriate template file.
             ARGS: 
@@ -97,13 +109,25 @@ class kdbt_gen:
                 - model_name (string) the unqualified name of the model
             RETURNS: boolean True on success
         '''
-        template = open(self._dbt_root() + os.path.sep + 'templates' + os.path.sep + model_type + '.template', 'r')
+        
+        ## fill in the template values
+        with open(self._dbt_root() + os.path.sep + 'templates' + os.path.sep + model_type + '.template', 'r') as template_text:
+            template_text = template_text.read()
+            
+            ## model_type specific formatting
+        if model_type == 'screen':
+            template_text = template_text.replace(
+                                '<database>', database).replace(
+                                    '<schema>', schema).replace(
+                                        '<entity>', entity).replace(
+                                            '<model_name>', model_name)
+
         target = open(self._dbt_root() + os.path.sep + self.format_for_folder_name(model_type) + os.path.sep + model_name + '.sql', 'wr')
         
-        success = target.write(template.read())
+        success = target.write(template_text)
         
         target.close()
-        template.close()
+        template_text.close()
         return success
 
 
@@ -160,6 +184,23 @@ class kdbt_gen:
         '''
         print('Sorry! That model already exists at {}'.format(os.path.normpath(path)))
 
+    
+    
+    def help(self):
+        print(
+        '''
+        usage: kdbt_gen.py <model_type> <model_name> [--option_name option_value]
+
+        model_type: the model template to check and generate. Options are screen, audit, staging_quality, production
+        model_name: the file name of the new model
+        options:
+            database: the source data database
+            schema: the source data schema
+            entity: the source data entity
+            distructive: boolean defaults true to force overwrite of existing models
+        '''                
+        )
+        return
 
 if __name__ == "__main__":
     kdbt_gen(sys.argv)
