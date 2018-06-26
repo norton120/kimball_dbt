@@ -65,4 +65,12 @@ target_audit AS (
 ----
 ----
 
+---------- MODEL CONFIGURATION
+{{config({
+
+    "materialized":"ephemerial",
+    "sql_where":"TRUE",
+    "schema":"QUALITY"
+
+})}}
     

@@ -4,13 +4,13 @@
 ---- and to populate the AUDIT table with a working row to update
 ---- as the screens complete. 
 
----- FORMATTING
+---------- FORMATTING
 ---- To help keep this from becoming a mess, follow these rules: 
 ---- * 3 newlines between CTEs
 ---- * Keep CTEs in alphabetical order. Yes it makes git diffs harder to read.
 
 
----- CONFIG
+---------- CONFIGURATION
     {{config({
         "materialized":"incremental",
         "sql_where":"TRUE",
