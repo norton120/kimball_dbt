@@ -11,6 +11,22 @@
 
 
 
+---- create the final partial    
+    SELECT
+        sequence.nextval AS error_event_key,
+        audit_key,
+        screen_name,
+        error_subject,
+        record_identifier,
+        error_event_action    
+    FROM
+        
+    unioned_error_events,
+    TABLE(getnextval(quality_error_event_fact_pk_seq)) sequence  
+
+
+
+
 ---------- CONFIGURATION
     {{config({
         "materialized":"incremental",
