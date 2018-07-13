@@ -7,9 +7,17 @@
 ---- To help keep this from becoming a mess, follow these rules: 
 ---- * 3 newlines between CTEs
 ---- * Keep CTEs in alphabetical order. Yes it makes git diffs harder to read.
-
-
-
+WITH
+unioned_error_events AS (
+    SELECT
+        audit_key,
+        screen_name,
+        error_subject,
+        record_identifier,
+        error_event_action 
+    FROM
+        {{ref('ORDERS_SCREEN')}}   
+)
 
 ---- create the final partial    
     SELECT
@@ -44,3 +52,6 @@
                         'grain':'Every time an instance or entity fails a screen, an error event is created.'})}}"    
     
    ]})}}
+
+---------- DEPENDENCY HACK
+---- {{ref('AUDIT')}}

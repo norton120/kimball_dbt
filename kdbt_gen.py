@@ -15,13 +15,15 @@ class kdbt_gen:
     
     def __init__(self, args):
         
+        ## check for help
+        for arg in args:
+            if arg[2:].upper() == 'HELP':
+                self.help() 
+        
         self._model_type = args[1].lower()
         self._model_name = args[2].upper()
         
-        ## check for help
-        for arg in args:
-            if arg[3:].upper() == 'HELP':
-                self.help() 
+
 
         ## additional args
         kwargs = {}
@@ -60,7 +62,7 @@ class kdbt_gen:
             self._entity = kwargs['entity'] 
 
             if self._destructive or not existing_model:
-                self.create_new_model(self._model_type, self._model_name, kwargs['entity'], kwargs['schema'],  kwargs['database'])
+                self.create_new_model(self._model_type, self._model_name, self._entity, self._schema,  self._database)
                 self._print_success(self._model_name)
             else:
                 self._print_exists(existing_model)
@@ -107,6 +109,12 @@ class kdbt_gen:
             ARGS: 
                 - model_type (string) determines which template to copy and the naming rules.
                 - model_name (string) the unqualified name of the model
+            OPTIONS:
+                (flag with --option and then the value)
+                - entity (string) the entity to model
+                - database (string) the database to model (default is RAW)
+                - schema (string) the schema to model (default is ERP) 
+
             RETURNS: boolean True on success
         '''
         
@@ -127,7 +135,6 @@ class kdbt_gen:
         success = target.write(template_text)
         
         target.close()
-        template_text.close()
         return success
 
 
@@ -200,7 +207,7 @@ class kdbt_gen:
             distructive: boolean defaults true to force overwrite of existing models
         '''                
         )
-        return
+        sys.exit()
 
 if __name__ == "__main__":
     kdbt_gen(sys.argv)

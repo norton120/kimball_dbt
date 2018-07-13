@@ -1,37 +1,6 @@
----------- <model_name> SCREEN
+---------- ORDERS_SCREEN SCREEN
 ----
 ---- Screens are source-data-quality tests that we use to investigate and record data quality.     
-----
-----
-----
----------- Statement for establishing target_audit
-----
----- The target audit data is applied to each screen. Set it in Jinja context here.
-    {%- call statement target_audit, fetch_result = True -%}
-        SELECT
-            audit_key,
-            cdc_target,
-            lowest_cdc,
-            highest_cdc
-        FROM
-            {{this.database}}.quality.audit
-        WHERE
-            database_key = '<database>'
-        AND
-            schema_key = '<schema>'
-        AND
-            entity_key = '<entity>'
-        ORDER BY audit_key DESC 
-        LIMIT 1
-    {%- endcall -%}
-
-    {%- set audit_data = load_result('target_audit') -%}
-    {%- set audit_key = audit_data['audit_key'][0] -%}
-    {%- set cdc_target = audit_data['cdc_target'][0] -%}
-    {%- set lowest_cdc = audit_data['lowest_cdc'][0] -%}
-    {%- set highest_cdc = audit_data['highest_cdc'][0] -%}
-
-----
 ---- 
 ---- Screens accept 2 arguments: a dict with the target path, and a 2nd dict with keys for their respective properties.
 ----
@@ -41,23 +10,38 @@
 ---- - Flag : pass the record but flag it as a quality issue 
 ---- - Reject : discard the record, record the error
 ---- - Halt : stop ETL process and sound alarm
----- Default value is Flag
+----
 
-{%- set target_path = {'database':'<database>', 'schema':'<schema>','entity':'<entity>'} -%}
-
+{% set target_path = {'database':'RAW', 'schema':'ERP','entity':'ORDERS'} %}
 
 
 WITH
-
 target_audit AS (
-
+    SELECT
+        audit_key,
+        cdc_target,
+        lowest_cdc,
+        highest_cdc
+    FROM
+        {{this.database}}.quality.audit
+    WHERE
+        database_key = 'RAW'
+    AND
+        schema_key = 'ERP'
+    AND
+        entity_key = 'ORDERS'
+    ORDER BY audit_key DESC 
+    LIMIT 1
 ),
 
 ---------- Column Property Screens
 ---- Column property screens check each record for questionable values.
 ---- Available screens:
 ---- 
-----    - null_screen({'column':'<column_name>'})
+
+    {{null_screen(target_path, {'column':'administrator_id'})}}
+
+
 ----    - accepted_range_screen({'column':'<column_name>','min':'<min_value>','max':'<max_value>'})
 ----    - accepted_length_screen({'column':'<column_name>','min_length':'<min_length_value>','max_length':'<max_length_value>'})
 ----    - accepted_values_screen()
@@ -87,9 +71,18 @@ target_audit AS (
 ----
 
 ---------- MODEL CONFIGURATION
+
+---------- UNION
+
+SELECT
+    *
+FROM 
+    raw_erp_orders_administrator_id_not_null   
+
+
 {{config({
 
-    "materialized":"ephemerial",
+    "materialized":"ephemeral",
     "sql_where":"TRUE",
     "schema":"QUALITY"
 

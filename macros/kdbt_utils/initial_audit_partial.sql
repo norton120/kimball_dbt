@@ -68,4 +68,4 @@
     {{schema_key}}_{{entity_key}}_source_min_max,
     TABLE(getnextval(quality_audit_pk_seq)) sequence  
 )
-
+{%- endmacro -%}
