@@ -8,7 +8,8 @@
 ---- * 3 newlines between CTEs
 ---- * Keep CTEs in alphabetical order. Yes it makes git diffs harder to read.
 
-
+---- union all the ref tables
+    
 
 
 ---- create the final partial    
