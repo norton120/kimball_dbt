@@ -17,4 +17,5 @@
         FROM
             {{target_path.database}}.{{target_path.schema}}.{{target_path.entity}}               
         WHERE
-            {{cdc_target}} BETERRN  
+            {{cdc_target}} BETWEEN {{lowest_cdc}} AND {{highest_cdc}}
+    )  
