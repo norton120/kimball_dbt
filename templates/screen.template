@@ -7,14 +7,24 @@
 ---------- Statement for establishing target_audit
 ----
 ---- The target audit data is applied to each screen. Set it in Jinja context here.
-    {%- call statement target_audit, fetch_result = True -%}
+
+    {%- call statement('target_audit', fetch_result=True) -%}
         SELECT
             audit_key,
             cdc_target,
             lowest_cdc,
-            highest_cdc
+            highest_cdc,
+            data_type
         FROM
             {{this.database}}.quality.audit
+        LEFT JOIN
+            '<database>'.information_schema.columns
+        ON
+            table_schema = '<schema>'
+        AND
+            column_name = cdc_target
+        AND
+            table_name = entity_key
         WHERE
             database_key = '<database>'
         AND
@@ -23,13 +33,23 @@
             entity_key = '<entity>'
         ORDER BY audit_key DESC 
         LIMIT 1
-    {%- endcall -%}
 
-    {%- set audit_data = load_result('target_audit') -%}
-    {%- set audit_key = audit_data['audit_key'][0] -%}
-    {%- set cdc_target = audit_data['cdc_target'][0] -%}
-    {%- set lowest_cdc = audit_data['lowest_cdc'][0] -%}
-    {%- set highest_cdc = audit_data['highest_cdc'][0] -%}
+    {%- endcall -%}
+    {%- set audit_response = load_result('target_audit')['data'][0] -%}
+
+-- update the record identifier to match the table primary key
+
+    {%- set target_audit_properties = {
+                            'database' : 'RAW', 
+                            'schema' : 'ERP',
+                            'entity' : 'ORDERS', 
+                            'audit_key' :  audit_response[0],
+                            'cdc_target' : audit_response[1],
+                            'lowest_cdc' : audit_response[2],
+                            'highest_cdc' : audit_response[3],
+                            'cdc_data_type' : audit_response[4], 
+                            'record_identifier' : 'id' } -%}
+                    
 
 ----
 ---- 
@@ -43,21 +63,15 @@
 ---- - Halt : stop ETL process and sound alarm
 ---- Default value is Flag
 
-{%- set target_path = {'database':'<database>', 'schema':'<schema>','entity':'<entity>'} -%}
 
-
+---------- Column Property Screens
 
 WITH
 
-target_audit AS (
-
-),
-
----------- Column Property Screens
 ---- Column property screens check each record for questionable values.
 ---- Available screens:
 ---- 
-----    - null_screen({'column':'<column_name>'})
+----    - null_screen({'column':'<column_name>'}, target_audit_properties)
 ----    - accepted_range_screen({'column':'<column_name>','min':'<min_value>','max':'<max_value>'})
 ----    - accepted_length_screen({'column':'<column_name>','min_length':'<min_length_value>','max_length':'<max_length_value>'})
 ----    - accepted_values_screen()

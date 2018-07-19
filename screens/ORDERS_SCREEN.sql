@@ -12,18 +12,26 @@
 ---- - Halt : stop ETL process and sound alarm
 ----
 
-{% set target_path = {'database':'RAW', 'schema':'ERP','entity':'ORDERS'} %}
+---------- STATEMENTS
+---- Statements below populate the python context with information about the subject audit.
 
-
-WITH
-target_audit AS (
+{%- call statement('target_audit', fetch_result=True) -%}
     SELECT
         audit_key,
         cdc_target,
         lowest_cdc,
-        highest_cdc
+        highest_cdc,
+        data_type
     FROM
         {{this.database}}.quality.audit
+    LEFT JOIN
+        raw.information_schema.columns
+    ON
+        table_schema = 'ERP'
+    AND
+        column_name = cdc_target
+    AND
+        table_name = entity_key
     WHERE
         database_key = 'RAW'
     AND
@@ -32,14 +40,30 @@ target_audit AS (
         entity_key = 'ORDERS'
     ORDER BY audit_key DESC 
     LIMIT 1
-),
+
+{%- endcall -%}
+{%- set audit_response = load_result('target_audit')['data'][0] -%}
+
+
+{%- set target_audit_properties = {
+                        'database' : 'RAW', 
+                        'schema' : 'ERP',
+                        'entity' : 'ORDERS', 
+                        'audit_key' :  audit_response[0],
+                        'cdc_target' : audit_response[1],
+                        'lowest_cdc' : audit_response[2],
+                        'highest_cdc' : audit_response[3],
+                        'cdc_data_type' : audit_response[4], 
+                        'record_identifier' : 'id' } -%}
+                    
 
 ---------- Column Property Screens
+
+WITH
 ---- Column property screens check each record for questionable values.
 ---- Available screens:
 ---- 
-
-    {{null_screen(target_path, {'column':'administrator_id'})}}
+    {{null_screen({'column':'administrator_id'},target_audit_properties)}}
 
 
 ----    - accepted_range_screen({'column':'<column_name>','min':'<min_value>','max':'<max_value>'})
