@@ -6,7 +6,7 @@
 ---------- FORMATTING
 ---- To help keep this from becoming a mess, follow these rules: 
 ---- * 3 newlines between CTEs
----- * Keep CTEs in alphabetical order. Yes it makes git diffs harder to read.
+---- * Keep refs in the union statment in alphabetical order. Yes it makes git diffs harder to read.
 WITH
 unioned_error_events AS (
     SELECT

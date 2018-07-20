@@ -38,6 +38,8 @@
         schema_key = 'ERP'
     AND
         entity_key = 'ORDERS'
+    AND
+        audit_status = 'In Process'
     ORDER BY audit_key DESC 
     LIMIT 1
 
@@ -63,7 +65,7 @@ WITH
 ---- Column property screens check each record for questionable values.
 ---- Available screens:
 ---- 
-    {{null_screen({'column':'administrator_id'},target_audit_properties)}}
+    {{null_screen({'column':'PLACED_BY_ADMINISTRATOR_ID'},target_audit_properties)}}
 
 
 ----    - accepted_range_screen({'column':'<column_name>','min':'<min_value>','max':'<max_value>'})
@@ -101,7 +103,7 @@ WITH
 SELECT
     *
 FROM 
-    raw_erp_orders_administrator_id_not_null   
+    raw_erp_orders_placed_by_administrator_id_not_null   
 
 
 {{config({

@@ -7,7 +7,7 @@
 ---------- FORMATTING
 ---- To help keep this from becoming a mess, follow these rules: 
 ---- * 3 newlines between CTEs
----- * Keep CTEs in alphabetical order. Yes it makes git diffs harder to read.
+---- * Keep initial_audit_partial macros in alphabetical order. Yes it makes git diffs harder to read.
 
 
 ---------- CONFIGURATION
