@@ -1,6 +1,11 @@
 ---------- SQL you need to run against production to get things working. 
 
 
+---- Make sure to declare your quality schema here.
+---- For prod this is generally just QUALITY.
+---- For dev this will be prefixed with your default schema, a la BBARKER_QUALITY if BBARKER is your default in dbt_profile.yml
+USE SCHEMA <YOUR_TARGET_DATABASE>.<YOUR_TARGET_QUALITY_SCHEMA>;
+
 ---- Audit tables and sequence 
 
 CREATE OR REPLACE SEQUENCE quality_audit_pk_seq start = 100000
@@ -51,4 +56,6 @@ CREATE TABLE ERROR_EVENT_FACT (
 
 
 ---- make sure to grant the right permissions to the user for your DBT engine
----- GRANT ALL ON ALL TABLES IN SCHEMA 
+GRANT ALL ON ALL TABLES IN SCHEMA <YOUR_TARGET_DATABASE>.<YOUR_TARGET_QUALITY_SCHEMA> TO ROLE <YOUR_DBT_ROLE>;
+GRANT ALL ON ALL VIEWS IN SCHEMA <YOUR_TARGET_DATABASE>.<YOUR_TARGET_QUALITY_SCHEMA> TO ROLE <YOUR_DBT_ROLE>;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA <YOUR_TARGET_DATABASE>.<YOUR_TARGET_QUALITY_SCHEMA> TO ROLE <YOUR_DBT_ROLE>;
