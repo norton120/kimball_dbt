@@ -7,7 +7,14 @@
             {{universal_audit_property_set(screen_args,kwargs)}}
 
         AND
-            {{screen_args.column}} IS NULL
-    )
+            (SELECT
+                 CASE WHEN
+                    COUNT({{screen_args.column}}) - COUNT(DISTINCT({{screen_args.column}})) = 0 THEN FALSE
+                    ELSE TRUE
+                    END
+            FROM
+                {{kwargs.entity}}
+            GROUP BY
+                {{screen_args.column}}
+            )
 {%- endmacro -%}
-    
