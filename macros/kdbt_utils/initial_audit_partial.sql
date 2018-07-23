@@ -1,16 +1,16 @@
 {%- macro initial_audit_partial(schema_key, entity_key, cdc_target, cast_target_as= 'TIMESTAMP', incremental = True, entity_type = 'Table', database_key = 'RAW') -%}
-----  INTENT: gets the CDC range values for this audit, builds an 
+----------  INTENT: gets the CDC range values for this audit, builds an 
 ----    initial row without measures that we set to 'In Progress' status.
 ----
 ----    ARGS:
 ----       - schema_name (string) the raw source schema.
 ----       - cdc_target (string) the name of the column that indicates a new or updated row.
-----      - cast_target_as (varchar default TIMESTAMP) cast the target before comparison.
+----       - cast_target_as (varchar default TIMESTAMP) cast the target before comparison.   
 ----       - incremental (boolean default True) does the audit table already exist.
 ----       - entity_key (string) the name of the source entity.
 ----       - entity_type (string default 'Table') the type of source entity targeted.
 ----       - database_name (string default 'RAW') the raw source database.
-----   RETURNS: string fully wrapped CTE named '<schema>_<table>_initial_audit'
+----    RETURNS: string fully wrapped CTE named '<schema>_<table>_initial_audit'
 
 {{schema_key}}_{{entity_key}}_new_audit_record AS (      
     -- get the max value of the most recent audit if the audit table exists
@@ -68,4 +68,4 @@
     {{schema_key}}_{{entity_key}}_source_min_max,
     TABLE(getnextval(quality_audit_pk_seq)) sequence  
 )
-
+{%- endmacro -%}
