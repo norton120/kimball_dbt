@@ -65,7 +65,7 @@ WITH
 ---- Column property screens check each record for questionable values.
 ---- Available screens:
 ---- 
-    {{null_screen({'column':'PLACED_BY_ADMINISTRATOR_ID'},target_audit_properties)}}
+    {{null_screen({'column':'PLACED_BY_ADMINISTRATOR_ID'}, target_audit_properties)}}
 
 
 ----    - accepted_range_screen({'column':'<column_name>','min':'<min_value>','max':'<max_value>'})
