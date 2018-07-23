@@ -18,7 +18,7 @@
         FROM
             {{this.database}}.{{this.schema}}.audit
         LEFT JOIN
-            '<database>'.information_schema.columns
+            "<database>".information_schema.columns
         ON
             table_schema = '<schema>'
         AND
@@ -103,7 +103,7 @@ WITH
 ---------- MODEL CONFIGURATION
 {{config({
 
-    "materialized":"ephemerial",
+    "materialized":"ephemeral",
     "sql_where":"TRUE",
     "schema":"QUALITY"
 

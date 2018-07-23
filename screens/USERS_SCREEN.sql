@@ -18,7 +18,7 @@
         FROM
             {{this.database}}.{{this.schema}}.audit
         LEFT JOIN
-            'RAW'.information_schema.columns
+            "RAW".information_schema.columns
         ON
             table_schema = 'ERP'
         AND
@@ -102,7 +102,7 @@
 ---------- MODEL CONFIGURATION
 {{config({
 
-    "materialized":"ephemerial",
+    "materialized":"ephemeral",
     "sql_where":"TRUE",
     "schema":"QUALITY"
 
