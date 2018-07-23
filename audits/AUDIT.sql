@@ -28,18 +28,57 @@
 
 WITH
 
----- Each macro is a self-contained CTE. Just add vars and post-commas.
 
----- example:
-----   initial_audit_partial("YOUR_SCHEMA", "YOUR_TABLE","YOUR_COLUMN")  
+---- Set the variables for each source to be audited. 
+---- variable syntax is:
+---- variable_name = [<schema>, <entity>, <cdc_column>, <cdc_column_data_type>,<incremental>, <entity_type>, <database>]
+---- see the macro definition for more info at /macros/kdbt_utils/initial_audit_partial.sql
+
+    {% set erp_orders = ["ERP", "ORDERS","_METADATA__TIMESTAMP","TIMESTAMP_NTZ"] %}
+    {% set erp_users  = ["ERP", "USERS","_METADATA__TIMESTAMP","TIMESTAMP_NTZ"] %}
 
 
-    {{initial_audit_partial("ERP", "ORDERS","_METADATA__TIMESTAMP","TIMESTAMP_NTZ")}} 
+
+---- combine the lists here. This is because jinja doesn't like nested list asssignment.
+    {%- set all_audit_partials = [
+                                erp_orders,
+                                erp_users
+                                ] -%}
+
+---- Each macro is a self-contained CTE.
+    {% for audit_partial in all_audit_partials %}
+
+        {{initial_audit_partial(audit_partial[0], audit_partial[1], audit_partial[2], audit_partial[3])}} 
+        
+        {{ ',' if not loop.last }}
+
+    {% endfor %}
 
 SELECT
     *
 FROM
-    erp_orders_new_audit_record
+
+---- unions all the CTEs into one big audit set
+    {% for audit_partial in all_audit_partials %}
+        (
+            SELECT
+                audit_key,
+                audit_status,
+                cdc_target,
+                entity_type,
+                entity_key,
+                schema_key,
+                database_Key,
+                dbt_version,
+                dbt_repo_release_version,
+                lowest_cdc,
+                highest_cdc 
+            FROM
+                {{audit_partial[0]|lower}}_{{audit_partial[1]|lower}}_new_audit_record
+
+            {{ 'UNION' if not loop.last }}
+
+    {% endfor %}
 
 
     
