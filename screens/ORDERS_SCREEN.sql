@@ -5,8 +5,8 @@
 
 ---- target_audit_properties contains meta about the current audit. it also accepts an exception_action key with
 ---- one of 4 values:
----- - Ignore : pass the record without action, but record the error
----- - Flag : pass the record but flag it as a quality issue 
+--- - Ignore : pass the record without action, but record the error
+---- - Flag : pass the record but flag it as a quality issue
 ---- - Reject : discard the record, record the error
 ---- - Halt : stop ETL process and sound alarm
 ---- default is Flag. 
@@ -39,7 +39,7 @@
         entity_key = 'ORDERS'
     AND
         audit_status = 'In Process'
-    ORDER BY audit_key DESC 
+    ORDER BY audit_key DESC
     LIMIT 1
 
 {%- endcall -%}
@@ -50,21 +50,21 @@
 ---------- SET target_audit_properties
 
 {%- set target_audit_properties = {
-                        'database' : 'RAW', 
+                        'database' : 'RAW',
                         'schema' : 'ERP',
-                        'entity' : 'ORDERS', 
+                        'entity' : 'ORDERS',
                         'audit_key' :  audit_response[0],
                         'cdc_target' : audit_response[1],
                         'lowest_cdc' : audit_response[2],
                         'highest_cdc' : audit_response[3],
-                        'cdc_data_type' : audit_response[4], 
+                        'cdc_data_type' : audit_response[4],
                         'record_identifier' : 'id' } -%}
-                    
+
 
 ---------- SCREEN VARIABLES
 ---- create a named variable for each screen you want to apply to the source table
 ---- available screens (see /macros/screens/<screen_name> for marcro profile:
-----
+---
 ---- COLUMN SCREENS
 ----    - not_null 
 ----    - unique
@@ -82,6 +82,13 @@
 ---- this 'catch all' screen allows you to declare a complex WHERE clause to test against. For example, 
 ---- a business screen might be "Only customer records with an RFM score > 75 should be in the high-value segment."
 ---- In this example, pass the name of the screen 'high_value_customer_rfm_screen' and the sql_where, a statement 
+----
+----
+---------- Business Screens
+---- Business screens check record values against complex business logic.
+---- For example, a business screen might be
+---- "Only customer records with an RFM score > 75 should be in the high-value segment."
+---- In this example, pass the name of the screen 'high_value_customer_rfm_screen' and the sql_where, a statement
 ---- WHERE clause that returns > 0 results on failure.
 
 ---------- one line per screen   
@@ -117,4 +124,3 @@ FROM
     "schema":"QUALITY"
 
 })}}
-    
