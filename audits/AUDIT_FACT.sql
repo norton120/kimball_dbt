@@ -9,11 +9,10 @@
 
 ---------- INITIAL STATEMENT
 {% call statement('audit_fact', fetch_result=True) %}
-    '''
-        INTENT: captures all the details of open audits and populates the jinja context.
-            ARGS: none
-            RETURNS: dict of lists, each list containing the comma-deliniated values for each row
-    '''
+---- INTENT: captures all the details of open audits and populates the jinja context.
+---- ARGS: none
+---- RETURNS: dict of lists, each list containing the comma-deliniated values for each row
+
     SELECT 
         audit_key,
         database_key,
@@ -25,7 +24,7 @@
         data_type
         
     FROM
-        {{this.database}}.quality.audit 
+        {{this.database}}.{{this.schema}}.audit 
     LEFT JOIN
 -- TODO: this breaks if we ever expand the data lake to more than the raw db
         raw.information_schema.columns
@@ -61,7 +60,7 @@ FROM
     "sql_where":"TRUE",
     "schema":"QUALITY",
     "post-hook": [
-        "UPDATE {{this.database}}.quality.audit SET audit_status = 'Completed' WHERE audit_key IN 
+        "UPDATE {{this.database}}.{{this.schema}}.audit SET audit_status = 'Completed' WHERE audit_key IN 
             (SELECT
                 audit_key
             FROM

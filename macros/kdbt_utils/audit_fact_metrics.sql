@@ -23,7 +23,7 @@
                 (SELECT
                     COUNT(*)
                 FROM
-                    {{this.database}}.QUALITY.ERROR_EVENT_FACT
+                    {{this.database}}.{{this.schema}}.ERROR_EVENT_FACT
                 WHERE 
                     audit_key = {{audit_row[0]}}) AS error_event_count
         )

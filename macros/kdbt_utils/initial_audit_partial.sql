@@ -20,7 +20,7 @@
         SELECT
             MAX(highest_cdc) as record_max
         FROM
-           "{{target.database}}"."QUALITY"."AUDIT"
+           "{{target.database}}"."{{this.schema}}"."AUDIT"
         WHERE
             database_key = '{{database_key}}'
         AND

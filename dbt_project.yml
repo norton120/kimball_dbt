@@ -32,7 +32,13 @@ models:
     
     partials:
       materialized: ephemeral
-
+    
     audits:
       materialized: incremental
       sql_where: "TRUE"         ## This is legacy dbt that tells the framework to use the logic in the model.
+
+    screens:
+      materialized: incremental
+      sql_where: "TRUE" 
+
+

@@ -21,6 +21,18 @@ CREATE TABLE AUDIT (
     audit_status VARCHAR NOT NULL                                                                                       
 );                                                                                                                      
             
+CREATE TABLE AUDIT_FACT (
+    audit_key INTEGER FOREIGN KEY REFERENCES AUDIT(audit_key),
+    gross_record_count INTEGER,
+    validated_record_count INTEGER,
+    audit_completed_at TIMESTAMP_NTZ,
+
+-- this should be fkey'd to the audit date view in the prod model
+    audit_date_key INTEGER 
+
+);
+
+
 ---- Error_Event tables and sequence
 
 CREATE OR REPLACE SEQUENCE quality_error_event_fact_pk_seq start =100000
@@ -36,3 +48,7 @@ CREATE TABLE ERROR_EVENT_FACT (
 );
 
 
+
+
+---- make sure to grant the right permissions to the user for your DBT engine
+---- GRANT ALL ON ALL TABLES IN SCHEMA 

@@ -23,7 +23,7 @@
         highest_cdc,
         data_type
     FROM
-        {{this.database}}.quality.audit
+        {{this.database}}.{{this.schema}}.audit
     LEFT JOIN
         raw.information_schema.columns
     ON
