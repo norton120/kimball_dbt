@@ -1,9 +1,9 @@
 ---------- AUDIT FACT
 ---- After an audit run is completed, we compile the metrics and KPIs for the run
----- here in AUDIT FACT. We also use the post-hook to set the run status to completed. 
+---- here in AUDIT FACT. We also use the post-hook to set the run status to completed.
 
 ---------- FORMATTING
----- To help keep this from becoming a mess, follow these rules: 
+---- To help keep this from becoming a mess, follow these rules:
 ---- * 3 newlines between CTEs
 
 
@@ -13,7 +13,7 @@
 ---- ARGS: none
 ---- RETURNS: dict of lists, each list containing the comma-deliniated values for each row
 
-    SELECT 
+    SELECT
         audit_key,
         database_key,
         schema_key,
@@ -22,9 +22,9 @@
         lowest_cdc,
         highest_cdc,
         data_type
-        
+
     FROM
-        {{this.database}}.{{this.schema}}.audit 
+        {{this.database}}.{{this.schema}}.audit
     LEFT JOIN
         raw.information_schema.columns
     ON
@@ -34,13 +34,13 @@
     AND
         table_name = entity_key
     WHERE
-        audit_status = 'In Process' 
+        audit_status = 'In Process'
 {% endcall %}
 
 
 -- load the values from the audit_fact call into a local context for use
 {%- set audit_fact_response = load_result('audit_fact')['data'] -%}
-    
+
 ---- get the total record count within the audit context
 WITH
 all_records_in_audit_context AS (
@@ -61,7 +61,7 @@ FROM
     "sql_where":"TRUE",
     "schema":"QUALITY",
     "post-hook": [
-        "UPDATE {{this.database}}.{{this.schema}}.audit SET audit_status = 'Completed' WHERE audit_key IN 
+        "UPDATE {{this.database}}.{{this.schema}}.audit SET audit_status = 'Completed' WHERE audit_key IN
             (SELECT
                 audit_key
             FROM
@@ -73,5 +73,3 @@ FROM
 
 ---------- DEPENDENCY HACK
 ---- {{ref('ERROR_EVENT_FACT')}}
- 
-        
