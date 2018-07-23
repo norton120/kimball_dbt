@@ -46,7 +46,7 @@ class kdbt_gen:
         
 
         ## check to see if the distructive flag was set
-        self._destructive = kwargs['distructive'] if 'destructive' in kwargs else False
+        self._destructive = kwargs['destructive'] if 'destructive' in kwargs else False
 
         if self._model_type == 'screen':
             

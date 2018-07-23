@@ -64,7 +64,7 @@ FROM
             (SELECT
                 audit_key
             FROM
-                {{this.database}}.quality.audit_fact)"
+                {{this.database}}.{{this.schema}}.audit_fact)"
     ]
 
 })}}

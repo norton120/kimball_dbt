@@ -35,7 +35,7 @@ WITH
 ---- see the macro definition for more info at /macros/kdbt_utils/initial_audit_partial.sql
 
     {% set erp_orders = ["ERP", "ORDERS","_METADATA__TIMESTAMP","TIMESTAMP_NTZ"] %}
-    {% set erp_users  = ["ERP", "USERS","_METADATA__TIMESTAMP","TIMESTAMP_NTZ"] %}
+    {% set erp_users  = ["ERP", "DW_USERS_VIEW","_METADATA__TIMESTAMP","TIMESTAMP_NTZ"] %}
 
 
 
@@ -75,9 +75,9 @@ FROM
                 highest_cdc 
             FROM
                 {{audit_partial[0]|lower}}_{{audit_partial[1]|lower}}_new_audit_record
-
+        )
             {{ 'UNION' if not loop.last }}
-
+        
     {% endfor %}
 
 
