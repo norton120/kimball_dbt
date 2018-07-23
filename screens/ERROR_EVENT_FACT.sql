@@ -1,14 +1,36 @@
 ---------- ERROR EVENT
 ---- AS screens are applied during audits they can generate errors.
 ---- These errors are collected and added to the error event table here.
----- For each screen model, add as a ref and then union the results.
+---- to use, just add the prefix of the screen you want to the all_screens variable. 
+---- for example, if you want to add the ORDERS_SCREEN.sql results, add 'ORDERS' to the all_screens variable.
 
 ---------- FORMATTING
----- To help keep this from becoming a mess, follow these rules: 
----- * 3 newlines between CTEs
----- * Keep refs in the union statment in alphabetical order. Yes it makes git diffs harder to read.
+---- keep the values in the all_screens list in alphabetical order so they are easy to search through.  
+
+---- INCLUDE SCREENS BY ADDING THEM HERE:
+{% set all_screens = [
+                    'ORDERS',
+                    'USERS'
+                    ] %}
+
+
+
+---------- NOTHING TO CHANGE BELOW HERE
+---- this is all framework from here down. 
+
+
 WITH
 unioned_error_events AS (
+    SELECT 
+        audit_key,
+        screen_name,
+        error_subject,
+        record_identifier,
+        error_event_action 
+    FROM
+        
+{% for screen in all_screens %}
+    (
     SELECT
         audit_key,
         screen_name,
@@ -16,9 +38,13 @@ unioned_error_events AS (
         record_identifier,
         error_event_action 
     FROM
-        {{ref('ORDERS_SCREEN')}}   
-)
+        {{ref(screen|upper +'_SCREEN')}}   
+    )
+    {{ 'UNION' if not loop.last }}
 
+{% endfor %}
+
+)
 ---- create the final partial    
     SELECT
         sequence.nextval AS error_event_key,
