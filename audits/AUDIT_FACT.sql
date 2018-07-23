@@ -50,7 +50,14 @@ FROM
 {{config({
     "materialized":"incremental",
     "sql_where":"TRUE",
-    "schema":"QUALITY"
+    "schema":"QUALITY",
+    "post-hook": [
+        "UPDATE {{this.database}}.quality.audit SET audit_status = 'Completed' WHERE audit_key IN 
+            (SELECT
+                audit_key
+            FROM
+                {{this.database}}.quality.audit_fact)"
+    ]
 
 })}}
 
