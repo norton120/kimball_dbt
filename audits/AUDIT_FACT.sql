@@ -6,7 +6,14 @@
 ---- To help keep this from becoming a mess, follow these rules: 
 ---- * 3 newlines between CTEs
 
+
+---------- INITIAL STATEMENT
 {% call statement('audit_fact', fetch_result=True) %}
+    '''
+        INTENT: captures all the details of open audits and populates the jinja context.
+            ARGS: none
+            RETURNS: dict of lists, each list containing the comma-deliniated values for each row
+    '''
     SELECT 
         audit_key,
         database_key,
@@ -32,8 +39,10 @@
         audit_status = 'In Process' 
 {% endcall %}
 
-{%- set audit_fact_response = load_result('audit_fact')['data'] -%}
 
+-- load the values from the audit_fact call into a local context for use
+{%- set audit_fact_response = load_result('audit_fact')['data'] -%}
+    
 ---- get the total record count within the audit context
 WITH
 all_records_in_audit_context AS (
