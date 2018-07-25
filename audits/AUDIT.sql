@@ -6,8 +6,7 @@
 
 ---------- FORMATTING
 ---- To help keep this from becoming a mess, follow these rules: 
----- * 3 newlines between CTEs
----- * Keep initial_audit_partial macros in alphabetical order. Yes it makes git diffs harder to read.
+---- * Keep all_audit_partial variables in alphabetical order. Yes it makes git diffs harder to read.
 
 
 ---------- CONFIGURATION
@@ -34,12 +33,13 @@ WITH
 ---- variable_name = [<schema>, <entity>, <cdc_column>, <cdc_column_data_type>,<incremental>, <entity_type>, <database>]
 ---- see the macro definition for more info at /macros/kdbt_utils/initial_audit_partial.sql
 
-    {% set erp_orders = ["ERP", "ORDERS","_METADATA__TIMESTAMP","TIMESTAMP_NTZ"] %}
     {% set erp_users  = ["ERP", "DW_USERS_VIEW","_METADATA__TIMESTAMP","TIMESTAMP_NTZ"] %}
+    {% set erp_orders = ["ERP", "ORDERS","_METADATA__TIMESTAMP","TIMESTAMP_NTZ"] %}
 
 
 
----- combine the lists here. This is because jinja doesn't like nested list asssignment.
+
+---- combine the lists here. This is because jinja doesn't like nested list assignment.
     {%- set all_audit_partials = [
                                 erp_orders,
                                 erp_users

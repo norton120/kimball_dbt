@@ -26,7 +26,6 @@
     FROM
         {{this.database}}.{{this.schema}}.audit 
     LEFT JOIN
--- TODO: this breaks if we ever expand the data lake to more than the raw db
         raw.information_schema.columns
     ON
         table_schema = schema_key

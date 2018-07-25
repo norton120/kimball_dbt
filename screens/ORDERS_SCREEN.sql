@@ -1,19 +1,18 @@
 ---------- ORDERS_SCREEN SCREEN
 ----
 ---- Screens are source-data-quality tests that we use to investigate and record data quality.     
----- 
----- Screens accept 2 arguments: a dict with the target path, and a 2nd dict with keys for their respective properties.
-----
-----
----- All screens require an exception_action key with one of 4 values:
+---- You pass screens to the screen_collection list (below) for them to be run and error events collected. 
+
+---- target_audit_properties contains meta about the current audit. it also accepts an exception_action key with
+---- one of 4 values:
 ---- - Ignore : pass the record without action, but record the error
 ---- - Flag : pass the record but flag it as a quality issue 
 ---- - Reject : discard the record, record the error
 ---- - Halt : stop ETL process and sound alarm
-----
+---- default is Flag. 
 
----------- STATEMENTS
----- Statements below populate the python context with information about the subject audit.
+---------- STATEMENTS [leave this section alone!]
+---- Statements populate the python context with information about the subject audit.
 
 {%- call statement('target_audit', fetch_result=True) -%}
     SELECT
@@ -47,6 +46,9 @@
 {%- set audit_response = load_result('target_audit')['data'][0] -%}
 
 
+---------- END STATMENTS
+---------- SET target_audit_properties
+
 {%- set target_audit_properties = {
                         'database' : 'RAW', 
                         'schema' : 'ERP',
@@ -59,57 +61,46 @@
                         'record_identifier' : 'id' } -%}
                     
 
----------- Column Property Screens
----- Load the set of screens to run into the screen_collection variable. Sadly Jinja does not allow for 
----- nested declaration, so you need to build a dict for each screen and then combine them into the variable.
+---------- SCREEN VARIABLES
+---- create a named variable for each screen you want to apply to the source table
+---- available screens (see /macros/screens/<screen_name> for marcro profile:
+----
+---- COLUMN SCREENS
+----    - not_null 
+----    - unique
+----    - accepted_range
+----    - accepted_lenght
+----    - accepted_values
+----    - matches_pattern
+----    - excluded_values
+----
+---- STATISITCAL SCREENS
+----    - frequency_distribution
+----    - row_count_range
+---- 
+---- BUSINESS SCREEN
+---- this 'catch all' screen allows you to declare a complex WHERE clause to test against. For example, 
+---- a business screen might be "Only customer records with an RFM score > 75 should be in the high-value segment."
+---- In this example, pass the name of the screen 'high_value_customer_rfm_screen' and the sql_where, a statement 
+---- WHERE clause that returns > 0 results on failure.
+
+---------- one line per screen   
 {% set placed_by_administrator_id_not_null = {'column':'PLACED_BY_ADMINISTRATOR_ID','type':'not_null'} %} 
+
+
+
+---------- COLLECT VARIABLES
+---- add each screen variable above to the collection
 {% set screen_collection =  [
                                 placed_by_administrator_id_not_null
                             ]%}
 
-
-
-
-
+---------- RUN SCREENS [leave this section alone!]
 WITH
----- Column property screens check each record for questionable values.
----- Available screens:
----- 
     {{screen_declaration(screen_collection, target_audit_properties)}}
 
 
-
-----    - accepted_range_screen({'column':'<column_name>','min':'<min_value>','max':'<max_value>'})
-----    - accepted_length_screen({'column':'<column_name>','min_length':'<min_length_value>','max_length':'<max_length_value>'})
-----    - accepted_values_screen()
-----    - pattern_screen()
-----    - blacklist_screen()
-----
----------- Structure Screens
----- Structure screens check relationships between columns and tables.
----- Available screens:
-----
-----    - foreign_key_screen()
-----    - parent_child_screen()
-----
-----
-----
-----
----------- Business Screens
----- Business screens check record values against complex business logic.
----- For example, a business screen might be 
----- "Only customer records with an RFM score > 75 should be in the high-value segment."
----- In this example, pass the name of the screen 'high_value_customer_rfm_screen' and the sql_where, a statement 
----- WHERE clause that returns > 0 results on failure.
-----
----- Example:
----- business_screen({'name':'high_value_rfm_screen', 'sql_where':' "segment = \'High Value\' AND rfm_score < 100"})
-----
-----
-
----------- MODEL CONFIGURATION
-
----------- UNION
+---------- UNION [leave this section alone!]
 
 SELECT
     *
@@ -118,7 +109,7 @@ FROM
         {{screen_union_statement(screen_collection, target_audit_properties)}}
 
     )
-
+---------- CONFIGURATION [leave this section alone!]
 {{config({
 
     "materialized":"ephemeral",
