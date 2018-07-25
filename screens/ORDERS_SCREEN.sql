@@ -60,15 +60,22 @@
                     
 
 ---------- Column Property Screens
+---- Load the set of screens to run into the screen_collection variable. Sadly Jinja does not allow for 
+---- nested declaration, so you need to build a dict for each screen and then combine them into the variable.
+{% set placed_by_administrator_id_not_null = {'column':'PLACED_BY_ADMINISTRATOR_ID','type':'not_null'} %} 
+{% set screen_collection =  [
+                                placed_by_administrator_id_not_null
+                            ]%}
+
+
+
+
 
 WITH
 ---- Column property screens check each record for questionable values.
 ---- Available screens:
 ---- 
-    {{screen_declaration([
-                            {'column':'PLACED_BY_ADMINISTRATOR_ID','type':'null'}
-                            
-                        ], target_audit_properties)}}
+    {{screen_declaration(screen_collection, target_audit_properties)}}
 
 
 
@@ -106,9 +113,11 @@ WITH
 
 SELECT
     *
-FROM 
-    raw_erp_orders_placed_by_administrator_id_not_null   
+FROM
+    (
+        {{screen_union_statement(screen_collection, target_audit_properties)}}
 
+    )
 
 {{config({
 

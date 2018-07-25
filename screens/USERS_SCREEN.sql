@@ -63,14 +63,19 @@
 ---- - Halt : stop ETL process and sound alarm
 ---- Default value is Flag
 
-WITH
----------- Column Property Screens
 
-    
-    {{screen_declaration([
-                            {'column':'ID','type':'null'}
-                            
-                        ], target_audit_properties)}}
+
+---- Load the set of screens to run into the screen_collection variable. Sadly Jinja does not allow for 
+---- nested declaration, so you need to build a dict for each screen and then combine them into the variable.
+{% set id_not_null = {'column':'ID','type':'not_null'} %} 
+{% set screen_collection =  [
+                                id_not_null
+                            ]%}
+
+---------- Column Property Screens
+WITH
+
+    {{screen_declaration(screen_collection, target_audit_properties)}}
 
 ---- Column property screens check each record for questionable values.
 ---- Available screens:
@@ -106,8 +111,11 @@ WITH
 ---------- UNION
 SELECT
     *
-FROM 
-    raw_erp_dw_users_view_id_not_null   
+FROM
+    (
+        {{screen_union_statement(screen_collection, target_audit_properties)}}
+
+    )
 
 
 

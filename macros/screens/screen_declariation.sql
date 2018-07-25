@@ -6,7 +6,7 @@
 ----    RETURNS: string the combined CTE's that create the screen for the entitiy.
 
     {% for s in screen_applications %} 
-        {% if s['type'] == 'null' %}
+        {% if s['type'] == 'not_null' %}
             {{null_screen(s, target_audit_properties)}}
         {% elif s['type'] == 'unique' %}
             {{unique_screen(s, target_audit_properties)}}
