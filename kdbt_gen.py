@@ -1,18 +1,32 @@
 #!/usr/bin/python
 
-'''
-    INTENT: kdbt_gen generates stub model files from templates.
-    
-        Templates live in the /templates folder with a .template file extension.
+## kdbt_gen generates stub model files from templates.
+## See help method for info       
 
-    ARGS: invoke with an argument string. see help method
-'''
 import os
 import yaml
 import sys
 
 class kdbt_gen:
-    
+
+    def help(self):
+        print(
+        '''
+        usage: kdbt_gen.py <model_type> <model_name> [--option_name option_value]
+
+        model_type: the model template to check and generate. Options are screen, audit, staging_quality, production
+        model_name: the file name of the new model
+        options:
+            database: the source data database. Default RAW
+            schema: the source data schema. Default ERP
+            entity: the source data entity 
+            record_identifier: the unique identifier (primary key) for the entity. Default id
+            destructive: boolean forces overwrite of existing models
+        '''                
+        )
+        sys.exit()
+
+
     def __init__(self, args):
         
         ## check for help
@@ -59,10 +73,17 @@ class kdbt_gen:
             ## grab the path arguments. Defaults are RAW.ERP. Entity is required. 
             self._database = kwargs['database'] if 'database' in kwargs else 'RAW'
             self._schema = kwargs['schema'] if 'schema' in kwargs else 'ERP'
+            self._record_identifier = kwargs['record_identifier'] if 'record_identifier' in kwargs else 'id'
             self._entity = kwargs['entity'] 
 
             if self._destructive or not existing_model:
-                self.create_new_model(self._model_type, self._model_name, self._entity, self._schema,  self._database)
+                self.create_new_model(self._model_type, 
+                                      self._model_name, 
+                                      self._entity, 
+                                      self._schema, 
+                                      self._record_identifier, 
+                                      self._database)
+
                 self._print_success(self._model_name)
             else:
                 self._print_exists(existing_model)
@@ -103,18 +124,16 @@ class kdbt_gen:
 
 
 
-    def create_new_model(self, model_type, model_name, entity = None, schema = None, database = None):
+    def create_new_model(self, model_type, model_name, entity, record_identifier, schema, database):
         '''
             INTENT: creates a new aptly-named file from the appropriate template file.
             ARGS: 
                 - model_type (string) determines which template to copy and the naming rules.
                 - model_name (string) the unqualified name of the model
-            OPTIONS:
-                (flag with --option and then the value)
                 - entity (string) the entity to model
-                - database (string) the database to model (default is RAW)
-                - schema (string) the schema to model (default is ERP) 
-
+                - database (string) the database to model
+                - schema (string) the schema to model
+                - record_identifier (string) the unique identifier ie PK for the entity
             RETURNS: boolean True on success
         '''
         
@@ -128,7 +147,8 @@ class kdbt_gen:
                                 '<database>', database).replace(
                                     '<schema>', schema).replace(
                                         '<entity>', entity).replace(
-                                            '<model_name>', model_name)
+                                            '<model_name>', model_name).replace(
+                                                '<record_identifier>', record_identifier)
 
         target = open(self._dbt_root() + os.path.sep + self.format_for_folder_name(model_type) + os.path.sep + model_name + '.sql', 'wr')
         
@@ -193,21 +213,7 @@ class kdbt_gen:
 
     
     
-    def help(self):
-        print(
-        '''
-        usage: kdbt_gen.py <model_type> <model_name> [--option_name option_value]
 
-        model_type: the model template to check and generate. Options are screen, audit, staging_quality, production
-        model_name: the file name of the new model
-        options:
-            database: the source data database
-            schema: the source data schema
-            entity: the source data entity
-            distructive: boolean defaults true to force overwrite of existing models
-        '''                
-        )
-        sys.exit()
 
 if __name__ == "__main__":
     kdbt_gen(sys.argv)
