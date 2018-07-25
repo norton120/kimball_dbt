@@ -30,7 +30,7 @@ CREATE TABLE AUDIT_FACT (
     audit_key INTEGER FOREIGN KEY REFERENCES AUDIT(audit_key),
     gross_record_count INTEGER,
     validated_record_count INTEGER,
-    audit_completed_at TIMESTAMP_NTZ,
+    audit_completed_at TIMESTAMP_LTZ,
 
 -- this should be fkey'd to the audit date view in the prod model
     audit_date_key INTEGER 

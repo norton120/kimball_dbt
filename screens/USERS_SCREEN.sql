@@ -42,7 +42,7 @@
     {%- set target_audit_properties = {
                             'database' : 'RAW', 
                             'schema' : 'ERP',
-                            'entity' : 'ORDERS', 
+                            'entity' : 'DW_USERS_VIEW', 
                             'audit_key' :  audit_response[0],
                             'cdc_target' : audit_response[1],
                             'lowest_cdc' : audit_response[2],
@@ -63,9 +63,14 @@
 ---- - Halt : stop ETL process and sound alarm
 ---- Default value is Flag
 
-
+WITH
 ---------- Column Property Screens
 
+    
+    {{screen_declaration([
+                            {'column':'ID','type':'null'}
+                            
+                        ], target_audit_properties)}}
 
 ---- Column property screens check each record for questionable values.
 ---- Available screens:
@@ -98,6 +103,13 @@
 ---- business_screen({'name':'high_value_rfm_screen', 'sql_where':' "segment = \'High Value\' AND rfm_score < 100"})
 ----
 ----
+---------- UNION
+SELECT
+    *
+FROM 
+    raw_erp_dw_users_view_id_not_null   
+
+
 
 ---------- MODEL CONFIGURATION
 {{config({

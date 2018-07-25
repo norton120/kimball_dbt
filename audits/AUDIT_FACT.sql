@@ -51,7 +51,9 @@ all_records_in_audit_context AS (
 SELECT
     audit_key,
     gross_record_count,
-    gross_record_count - error_event_count AS validated_record_count
+    gross_record_count - error_event_count AS validated_record_count,
+    CURRENT_TIMESTAMP() AS audit_completed_at,
+    {{date_key('CURRENT_DATE()')}} AS audit_date_key
 FROM
     all_records_in_audit_context
 
