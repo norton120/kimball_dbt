@@ -39,41 +39,58 @@
         LIMIT 1
 
     {%- endcall -%}
-    {%- set audit_response = load_result('target_audit')['data'][0] -%}
+{% set audit_response_data_object = load_result('target_audit')['data']%}
+---------- END STATMENTS
 
+---- if there is no new data, skip the entire screen model
+{% if audit_response_data_object | length > 0 %}
+
+    {%- set audit_response = audit_response_data_object[0] -%}
 -- update the record identifier to match the table primary key
 
-    {%- set target_audit_properties = {
-                            'database' : 'RAW', 
-                            'schema' : 'ERP',
-                            'entity' : 'DW_USERS_VIEW', 
-                            'audit_key' :  audit_response[0],
-                            'cdc_target' : audit_response[1],
-                            'lowest_cdc' : audit_response[2],
-                            'highest_cdc' : audit_response[3],
-                            'cdc_data_type' : audit_response[4], 
-                            'record_identifier' : 'id' } -%}
-                    
+        {%- set target_audit_properties = {
+                                'database' : 'RAW', 
+                                'schema' : 'ERP',
+                                'entity' : 'DW_USERS_VIEW', 
+                                'audit_key' :  audit_response[0],
+                                'cdc_target' : audit_response[1],
+                                'lowest_cdc' : audit_response[2],
+                                'highest_cdc' : audit_response[3],
+                                'cdc_data_type' : audit_response[4], 
+                                'record_identifier' : 'id' } -%}
+                        
 
 
-{% set id_not_null = {'column':'ID','type':'not_null'} %} 
-{% set screen_collection =  [
-                                id_not_null
-                            ]%}
+    {% set id_not_null = {'column':'ID','type':'not_null'} %} 
+    {% set screen_collection =  [
+                                    id_not_null
+                                ]%}
 
-WITH
+    WITH
 
-    {{screen_declaration(screen_collection, target_audit_properties)}}
+        {{screen_declaration(screen_collection, target_audit_properties)}}
 
 
 ---------- UNION
-SELECT
-    *
-FROM
-    (
-        {{screen_union_statement(screen_collection, target_audit_properties)}}
+    SELECT
+        *
+    FROM
+        (
+            {{screen_union_statement(screen_collection, target_audit_properties)}}
 
-    )
+        )
+
+{% else %}
+
+---- when no new data is present, return an empty table
+    SELECT
+        NULL AS audit_key,
+        NULL AS error_event_at,
+        NULL AS screen_name,
+        NULL AS error_subject,
+        NULL AS record_identifier,
+        NULL AS error_event_action
+{% endif %} 
 
 
 

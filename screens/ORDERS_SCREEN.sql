@@ -43,23 +43,30 @@
     LIMIT 1
 
 {%- endcall -%}
-{%- set audit_response = load_result('target_audit')['data'][0] -%}
-
-
+{% set audit_response_data_object = load_result('target_audit')['data']%}
 ---------- END STATMENTS
+
+---- if there is no new data, skip the entire screen model
+{% if audit_response_data_object | length > 0 %}
+
+    {%- set audit_response = audit_response_data_object[0] -%}
+
+
+
+
 ---------- SET target_audit_properties
 
-{%- set target_audit_properties = {
-                        'database' : 'RAW',
-                        'schema' : 'ERP',
-                        'entity' : 'ORDERS',
-                        'audit_key' :  audit_response[0],
-                        'cdc_target' : audit_response[1],
-                        'lowest_cdc' : audit_response[2],
-                        'highest_cdc' : audit_response[3],
-                        'cdc_data_type' : audit_response[4],
-                        'record_identifier' : 'id' } -%}
-
+       {%- set target_audit_properties = {
+                                'database' : 'RAW', 
+                                'schema' : 'ERP',
+                                'entity' : 'ORDERS', 
+                                'audit_key' :  audit_response[0],
+                                'cdc_target' : audit_response[1],
+                                'lowest_cdc' : audit_response[2],
+                                'highest_cdc' : audit_response[3],
+                                'cdc_data_type' : audit_response[4], 
+                                'record_identifier' : 'id' } -%}
+                    
 
 ---------- SCREEN VARIABLES
 ---- create a named variable for each screen you want to apply to the source table
@@ -92,30 +99,42 @@
 ---- WHERE clause that returns > 0 results on failure.
 
 ---------- one line per screen   
-{% set placed_by_administrator_id_not_null = {'column':'PLACED_BY_ADMINISTRATOR_ID','type':'not_null'} %} 
+    {% set placed_by_administrator_id_not_null = {'column':'PLACED_BY_ADMINISTRATOR_ID','type':'not_null'} %} 
 
 
 
 ---------- COLLECT VARIABLES
 ---- add each screen variable above to the collection
-{% set screen_collection =  [
-                                placed_by_administrator_id_not_null
-                            ]%}
+    {% set screen_collection =  [
+                                    placed_by_administrator_id_not_null
+                                ]%}
 
 ---------- RUN SCREENS [leave this section alone!]
-WITH
-    {{screen_declaration(screen_collection, target_audit_properties)}}
+    WITH
+        {{screen_declaration(screen_collection, target_audit_properties)}}
 
 
 ---------- UNION [leave this section alone!]
 
-SELECT
-    *
-FROM
-    (
-        {{screen_union_statement(screen_collection, target_audit_properties)}}
+    SELECT
+        *
+    FROM
+        (
+            {{screen_union_statement(screen_collection, target_audit_properties)}}
 
-    )
+        )
+{% else %}
+
+---- when no new data is present, return an empty table
+    SELECT
+        NULL AS audit_key,
+        NULL AS error_event_at,
+        NULL AS screen_name,
+        NULL AS error_subject,
+        NULL AS record_identifier,
+        NULL AS error_event_action
+{% endif %} 
+
 ---------- CONFIGURATION [leave this section alone!]
 {{config({
 

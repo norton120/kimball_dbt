@@ -44,6 +44,7 @@ unioned_error_events AS (
 
 {% endfor %}
 
+
 )
 ---- create the final partial    
     SELECT
@@ -54,10 +55,10 @@ unioned_error_events AS (
         record_identifier,
         error_event_action    
     FROM
-        
-    unioned_error_events,
-    TABLE(getnextval(quality_error_event_fact_pk_seq)) sequence  
-
+        unioned_error_events,
+        TABLE(getnextval(quality_error_event_fact_pk_seq)) sequence  
+    WHERE
+        audit_key IS NOT NULL
 
 
 

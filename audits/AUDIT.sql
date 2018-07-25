@@ -48,37 +48,45 @@ WITH
 ---- Each macro is a self-contained CTE.
     {% for audit_partial in all_audit_partials %}
 
-        {{initial_audit_partial(audit_partial[0], audit_partial[1], audit_partial[2], audit_partial[3])}} 
-        
-        {{ ',' if not loop.last }}
-
+        {{initial_audit_partial(audit_partial[0], audit_partial[1], audit_partial[2], audit_partial[3])}},
+ 
     {% endfor %}
+
+union_all_initial_audits AS (
+    SELECT
+        *
+    FROM
+
+    ---- unions all the CTEs into one big audit set
+        {% for audit_partial in all_audit_partials %}
+            (
+                SELECT
+                    audit_key,
+                    audit_status,
+                    cdc_target,
+                    entity_type,
+                    entity_key,
+                    schema_key,
+                    database_Key,
+                    dbt_version,
+                    dbt_repo_release_version,
+                    lowest_cdc,
+                    highest_cdc 
+                FROM
+                    {{audit_partial[0]|lower}}_{{audit_partial[1]|lower}}_new_audit_record
+            )
+                {{ 'UNION' if not loop.last }}
+            
+        {% endfor %}
+)
 
 SELECT
     *
 FROM
-
----- unions all the CTEs into one big audit set
-    {% for audit_partial in all_audit_partials %}
-        (
-            SELECT
-                audit_key,
-                audit_status,
-                cdc_target,
-                entity_type,
-                entity_key,
-                schema_key,
-                database_Key,
-                dbt_version,
-                dbt_repo_release_version,
-                lowest_cdc,
-                highest_cdc 
-            FROM
-                {{audit_partial[0]|lower}}_{{audit_partial[1]|lower}}_new_audit_record
-        )
-            {{ 'UNION' if not loop.last }}
-        
-    {% endfor %}
-
+    union_all_initial_audits
+WHERE
+    lowest_cdc IS NOT NULL
+AND
+    highest_cdc IS NOT NULL
 
     

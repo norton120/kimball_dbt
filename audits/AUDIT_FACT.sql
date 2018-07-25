@@ -38,23 +38,36 @@
 {% endcall %}
 
 
--- load the values from the audit_fact call into a local context for use
+---- load the values from the audit_fact call into a local context for use
 {%- set audit_fact_response = load_result('audit_fact')['data'] -%}
 
----- get the total record count within the audit context
-WITH
-all_records_in_audit_context AS (
-    {{audit_fact_metrics(audit_fact_response)}}
-)
 
-SELECT
-    audit_key,
-    gross_record_count,
-    gross_record_count - error_event_count AS validated_record_count,
-    CURRENT_TIMESTAMP() AS audit_completed_at,
-    {{date_key('CURRENT_DATE()')}} AS audit_date_key
-FROM
-    all_records_in_audit_context
+---- if no rows are returned, increment with an empty table
+{% if audit_fact_response | length > 0 %}    
+---- get the total record count within the audit context
+    WITH
+    all_records_in_audit_context AS (
+        {{audit_fact_metrics(audit_fact_response)}}
+    )
+
+    SELECT
+        audit_key,
+        gross_record_count,
+        gross_record_count - error_event_count AS validated_record_count,
+        CURRENT_TIMESTAMP() AS audit_completed_at,
+        {{date_key('CURRENT_DATE()')}} AS audit_date_key
+    FROM
+        all_records_in_audit_context
+{% else %}
+    SELECT
+        NULL AS audit_key,
+        NULL AS gross_record_count,
+        NULL AS validated_record_count,
+        NULL AS audit_completed_at,
+        NULL AS audit_date_key
+    WHERE 
+        audit_key IS NOT NULL
+{% endif %}
 
 {{config({
     "materialized":"incremental",
