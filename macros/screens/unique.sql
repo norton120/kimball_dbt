@@ -7,6 +7,30 @@
             {{universal_audit_property_set(screen_args,kwargs)}}
 
         AND
-            COUNT({{screen_args.column}}) - COUNT(DISTINCT({{screen_args.column}})) > 0
+            id IN
+                (
+                    SELECT
+                        id
+                    FROM
+                        {{kwargs.database}}.{{kwargs.schema}}.{{kwargs.entity}}
+                    WHERE
+                        {{screen_args.column}} IN
+                            (
+                                SELECT
+                                    {{screen_args.column}}
+                                FROM
+                                    (
+                                        SELECT
+                                            {{screen_args.column}},
+                                            (COUNT(*)) AS unique_test
+                                        FROM
+                                            {{kwargs.database}}.{{kwargs.schema}}.{{kwargs.entity}}
+                                        GROUP BY
+                                            {{screen_args.column}}
+                                        HAVING
+                                            unique_test > 1
+                                    )
+                            )
+                )
     )
 {%- endmacro -%}
