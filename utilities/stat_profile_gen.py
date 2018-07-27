@@ -55,6 +55,7 @@ def stat_profile_gen(*args):
     print('analyzing {} rows from {}'.format(data.shape[0], entity))
     
     try:
+        pp.check_correlation = False
         prof = pp.ProfileReport(data)
 
         ## TODO: remove PII from freq report
