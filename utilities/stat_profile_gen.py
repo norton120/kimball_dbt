@@ -8,14 +8,21 @@ import time
     INTENT: query the slave server and generate an HTML document
         profiling the given entity. 
 
-    ARGS: 
-        - entity (string) the name of the entity to profile
+    SIGNATURE:
+        python stat_profile_gen.py <entity> [pii_colummn another_pii_column]
+        - entity (string) the table or view to hit
+        - pii_column (string) each column name to exclude from freq 
     
     RETURNS:
         boolean success or failure of process
 ''' 
-def stat_profile_gen(entity):
-    entity = entity.lower()    
+def stat_profile_gen(*args):
+    entity = args[1].lower()
+    
+    pii_concerns = []
+
+    for arg in args[2:]:
+        pii_concerns.append(arg.lower())            
 
 
     try:
@@ -32,7 +39,8 @@ def stat_profile_gen(entity):
                         SELECT 
                             CASE 
                                 WHEN (SELECT COUNT(*) FROM {0}) <= 1000 THEN 100
-                                ELSE 10
+                                WHEN (SELECT COUNT(*) FROM {0}) BETWEEN 1001 AND 100000 THEN 10
+                                ELSE 1
                             END))'''.format(entity)
 
     print('attempting to sample entity {}'.format(entity))
@@ -49,7 +57,10 @@ def stat_profile_gen(entity):
     try:
         prof = pp.ProfileReport(data)
 
-        ## TODO: add PII wash here before creating the html doc    
+        ## TODO: remove PII from freq report
+        #for col in pii_concerns:
+        #    prof['freq'][col] = 'obfuscated due to PII concerns'
+    
         prof.to_file(outputfile = entity.upper() + '.html')  
 
     except:
@@ -60,4 +71,4 @@ def stat_profile_gen(entity):
 
 
 if __name__ == '__main__':
-    stat_profile_gen(sys.argv[1])
+    stat_profile_gen(*sys.argv)
