@@ -122,7 +122,7 @@ class kdbt_gen:
 
 
 
-    def create_new_model(self, model_type, model_name, entity, record_identifier, schema, database):
+    def create_new_model(self, model_type, model_name, entity, schema, record_identifier, database):
         '''
             INTENT: creates a new aptly-named file from the appropriate template file.
             ARGS: 

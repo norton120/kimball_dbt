@@ -29,7 +29,7 @@
         FROM
             {{this.database}}.{{this.schema | replace('STAGING_QUALITY','QUALITY')}}.audit
 
-        LEFT JOIN
+        FULL OUTER JOIN
             "<database>".information_schema.columns target
         ON
             target.table_schema = '<schema>'
@@ -38,16 +38,18 @@
         AND
             target.table_name = entity_key
     
-        LEFT JOIN
+        FULL OUTER JOIN
             "<database>".information_schema.columns record_identifier
         ON
             record_identifier.table_schema = '<schema>'
         AND
-            record_identifier.column_name = '<record_identifier>'
+            record_identifier.column_name = UPPER('<record_identifier>')
         AND
             record_identifier.table_name = entity_key
 
         WHERE
+            audit_status = 'Completed'
+        AND
             database_key = '<database>'
         AND
             schema_key = '<schema>'
@@ -62,8 +64,7 @@
 ---------- END STATMENTS
 
 ---- if there is no new data, skip the entire staging quality incremental build
-
-    {% if audit_response[0] | length > 0 %}
+{% if audit_response[0] | length > 0 %}
     {% set audit_data = {
                             'audit_key' :  audit_response[0][0],
                             'cdc_target' : audit_response[0][1],
@@ -84,7 +85,7 @@
             {{audit_data['cdc_target']}}
         BETWEEN
         
-        {% if audit_data['record_identifier'] in ('TEXT','TIMESTAMP_NTZ') %}
+        {% if audit_data['cdc_data_type'] in ('TEXT','TIMESTAMP_NTZ') %}
             '{{audit_data["lowest_cdc"]}}' AND '{{audit_data["highest_cdc"]}}'
         {% else %}
             {{audit_data['lowest_cdc']}} AND {{audit_data['highest_cdc']}}
@@ -120,30 +121,39 @@
             CASE
                 WHEN COUNT(*) > 0 THEN 'Flagged' 
                 ELSE 'Passed'
-            END 
+            END
         FROM
             error_events
         WHERE 
-            record_identifier IS NULL) AS audit_quality_score    
+            <record_identifier> IS NULL) AS audit_quality_score    
     FROM
         audit_source_records
     LEFT JOIN
         error_events 
     ON 
-        error_events.<record_identifier> = audit_source_records.record_identifier
+        audit_source_records.<record_identifier> = error_events.<record_identifier>
 
     WHERE
-        error_event_action <> 'Reject'
+        row_quality_score <> 'Reject'
 
-{% else %}
 
 ---- when no new data is present, return an empty table
-    SELECT
-        *
-    FROM
-        {{this}}       
-    WHERE 1=0
-
+{% elif adapter.already_exists(this.schema, this.name) %}
+        SELECT
+            *
+        FROM
+            {{this}}       
+        WHERE 1=0
+{% else %}
+        SELECT
+            *,
+            0::integer AS audit_key,    
+            ''::varchar AS row_quality_score,
+            ''::varchar AS audit_quality_score
+        FROM
+            <database>.<schema>.<entity>
+        WHERE
+            0=1    
 {% endif %} 
 
 ---------- CONFIGURATION [leave this section alone!]
