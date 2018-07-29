@@ -29,28 +29,30 @@
         FROM
             {{this.database}}.{{this.schema | replace('STAGING_QUALITY','QUALITY')}}.audit
 
-        LEFT JOIN
+        FULL OUTER JOIN
             "RAW".information_schema.columns target
         ON
-            target.table_schema = 'id'
+            target.table_schema = 'ERP'
         AND
             target.column_name = cdc_target
         AND
             target.table_name = entity_key
     
-        LEFT JOIN
+        FULL OUTER JOIN
             "RAW".information_schema.columns record_identifier
         ON
-            record_identifier.table_schema = 'id'
+            record_identifier.table_schema = 'ERP'
         AND
-            record_identifier.column_name = 'ERP'
+            record_identifier.column_name = UPPER('id')
         AND
             record_identifier.table_name = entity_key
 
         WHERE
+            audit_status = 'Completed'
+        AND
             database_key = 'RAW'
         AND
-            schema_key = 'id'
+            schema_key = 'ERP'
         AND
             entity_key = 'DW_USERS_VIEW'
         ORDER BY audit_key DESC 
@@ -62,8 +64,7 @@
 ---------- END STATMENTS
 
 ---- if there is no new data, skip the entire staging quality incremental build
-
-    {% if audit_response[0] | length > 0 %}
+{% if audit_response[0] | length > 0 %}
     {% set audit_data = {
                             'audit_key' :  audit_response[0][0],
                             'cdc_target' : audit_response[0][1],
@@ -79,12 +80,12 @@
             *,
             {{audit_data['audit_key']}} AS audit_key
         FROM
-           RAW.id.DW_USERS_VIEW 
+           RAW.ERP.DW_USERS_VIEW 
         WHERE
             {{audit_data['cdc_target']}}
         BETWEEN
         
-        {% if audit_data['record_identifier'] in ('TEXT','TIMESTAMP_NTZ') %}
+        {% if audit_data['cdc_data_type'] in ('TEXT','TIMESTAMP_NTZ') %}
             '{{audit_data["lowest_cdc"]}}' AND '{{audit_data["highest_cdc"]}}'
         {% else %}
             {{audit_data['lowest_cdc']}} AND {{audit_data['highest_cdc']}}
@@ -97,7 +98,7 @@
 
             -- for audit-level error events this will be NULL so we will remove them later
             -- and use the presence of NULL values to flag an audit-level event
-            TRY_CAST(record_identifier AS {{audit_data['record_identifier_data_type']}}) AS ERP           
+            TRY_CAST(record_identifier AS {{audit_data['record_identifier_data_type']}}) AS id           
         FROM
             {{this.database}}.{{this.schema | replace('STAGING_QUALITY','QUALITY')}}.error_event_fact
         WHERE
@@ -120,30 +121,39 @@
             CASE
                 WHEN COUNT(*) > 0 THEN 'Flagged' 
                 ELSE 'Passed'
-            END 
+            END
         FROM
             error_events
         WHERE 
-            record_identifier IS NULL) AS audit_quality_score    
+            id IS NULL) AS audit_quality_score    
     FROM
         audit_source_records
     LEFT JOIN
         error_events 
     ON 
-        error_events.ERP = audit_source_records.record_identifier
+        audit_source_records.id = error_events.id
 
     WHERE
-        error_event_action <> 'Reject'
+        row_quality_score <> 'Reject'
 
-{% else %}
 
 ---- when no new data is present, return an empty table
-    SELECT
-        *
-    FROM
-        {{this}}       
-    WHERE 1=0
-
+{% elif adapter.already_exists(this.schema, this.name) %}
+        SELECT
+            *
+        FROM
+            {{this}}       
+        WHERE 1=0
+{% else %}
+        SELECT
+            *,
+            0::integer AS audit_key,    
+            ''::varchar AS row_quality_score,
+            ''::varchar AS audit_quality_score
+        FROM
+            RAW.ERP.DW_USERS_VIEW
+        WHERE
+            0=1    
 {% endif %} 
 
 ---------- CONFIGURATION [leave this section alone!]
