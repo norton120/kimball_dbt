@@ -62,8 +62,10 @@
 
 
     {% set id_not_null = {'column':'ID','type':'not_null'} %} 
+    {% set last_name_unique = {'column':'LAST_NAME','type':'unique'} %}
     {% set screen_collection =  [
-                                    id_not_null
+                                    id_not_null,
+                                    last_name_unique
                                 ]%}
 
     WITH
