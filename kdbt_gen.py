@@ -140,7 +140,7 @@ class kdbt_gen:
             template_text = template_text.read()
             
             ## model_type specific formatting
-        if model_type == 'screen':
+        if model_type in ('screen', 'staging_quality') :
             template_text = template_text.replace(
                                 '<database>', database).replace(
                                     '<schema>', schema).replace(

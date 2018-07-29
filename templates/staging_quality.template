@@ -32,20 +32,20 @@
         LEFT JOIN
             "<database>".information_schema.columns target
         ON
-            table_schema = '<schema>'
+            target.table_schema = '<schema>'
         AND
-            column_name = cdc_target
+            target.column_name = cdc_target
         AND
-            table_name = entity_key
+            target.table_name = entity_key
     
         LEFT JOIN
-            "database".information_schema.columns record_identifier
+            "<database>".information_schema.columns record_identifier
         ON
-            table_schema = '<schema>'
+            record_identifier.table_schema = '<schema>'
         AND
-            column_name = '<record_identifier>'
+            record_identifier.column_name = '<record_identifier>'
         AND
-            table_name = entity_key
+            record_identifier.table_name = entity_key
 
         WHERE
             database_key = '<database>'
@@ -154,4 +154,7 @@
     "schema":"STAGING_QUALITY"
 
 })}}
-    
+
+
+---------- DEPENDENCY HACK
+---- {{ref('AUDIT_FACT')}}   
