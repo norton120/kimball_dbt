@@ -1,4 +1,4 @@
----------- <model_name> TABLE
+---------- USERS_STAGING_QUALITY TABLE
 ----
 ---- Staging Quality tables are cleaned and transform-ready source tables.     
 ---- The data in Staging Quality tables are completely untransformed source data, with one exception: they 
@@ -30,29 +30,29 @@
             {{this.database}}.{{this.schema | replace('STAGING_QUALITY','QUALITY')}}.audit
 
         LEFT JOIN
-            "<database>".information_schema.columns target
+            "RAW".information_schema.columns target
         ON
-            table_schema = '<schema>'
+            target.table_schema = 'id'
         AND
-            column_name = cdc_target
+            target.column_name = cdc_target
         AND
-            table_name = entity_key
+            target.table_name = entity_key
     
         LEFT JOIN
-            "database".information_schema.columns record_identifier
+            "RAW".information_schema.columns record_identifier
         ON
-            table_schema = '<schema>'
+            record_identifier.table_schema = 'id'
         AND
-            column_name = '<record_identifier>'
+            record_identifier.column_name = 'ERP'
         AND
-            table_name = entity_key
+            record_identifier.table_name = entity_key
 
         WHERE
-            database_key = '<database>'
+            database_key = 'RAW'
         AND
-            schema_key = '<schema>'
+            schema_key = 'id'
         AND
-            entity_key = '<entity>'
+            entity_key = 'DW_USERS_VIEW'
         ORDER BY audit_key DESC 
         LIMIT 1
 
@@ -79,7 +79,7 @@
             *,
             {{audit_data['audit_key']}} AS audit_key
         FROM
-           <database>.<schema>.<entity> 
+           RAW.id.DW_USERS_VIEW 
         WHERE
             {{audit_data['cdc_target']}}
         BETWEEN
@@ -97,7 +97,7 @@
 
             -- for audit-level error events this will be NULL so we will remove them later
             -- and use the presence of NULL values to flag an audit-level event
-            TRY_CAST(record_identifier AS {{audit_data['record_identifier_data_type']}}) AS <record_identifier>           
+            TRY_CAST(record_identifier AS {{audit_data['record_identifier_data_type']}}) AS ERP           
         FROM
             {{this.database}}.{{this.schema | replace('STAGING_QUALITY','QUALITY')}}.error_event_fact
         WHERE
@@ -130,7 +130,7 @@
     LEFT JOIN
         error_events 
     ON 
-        error_events.<record_identifier> = audit_source_records.record_identifier
+        error_events.ERP = audit_source_records.record_identifier
 
     WHERE
         error_event_action <> 'Reject'
@@ -154,4 +154,7 @@
     "schema":"STAGING_QUALITY"
 
 })}}
-    
+
+
+---------- DEPENDENCY HACK
+---- {{ref('AUDIT_FACT')}}   
