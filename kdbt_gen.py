@@ -62,11 +62,13 @@ class kdbt_gen:
         ## check to see if the distructive flag was set
         self._destructive = kwargs['destructive'] if 'destructive' in kwargs else False
 
-        if self._model_type == 'screen':
+        if self._model_type in ('screen', 'staging_quality') :
             
             ## qualify the model name with _SCREEN suffix
-            self._model_name += '_SCREEN' if self._model_name[-7:] != '_SCREEN' else ''
-            
+            if self._model_type == 'screen':
+                self._model_name += '_SCREEN' if self._model_name[-7:] != '_SCREEN' else ''
+            else:
+                self._model_name += '_STAGING_QUALITY' if self._model_name[-15:] != '_STAGING_QUALITY' else ''
 
             existing_model = self.check_for_existing_model(self._model_name)
 
@@ -88,10 +90,6 @@ class kdbt_gen:
             else:
                 self._print_exists(existing_model)
 
-        elif self._model_type == 'audit':
-            pass
-        elif self._model_type == 'staging_quality':
-            pass
         elif self._model_type  == 'partial':
             pass
         elif self._model_type == 'production':
