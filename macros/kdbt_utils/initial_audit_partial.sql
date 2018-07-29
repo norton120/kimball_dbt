@@ -44,7 +44,14 @@
     {% if incremental %}
         WHERE
             {{cdc_target}}::{{cast_target_as}} > 
-                COALESCE((SELECT record_max::{{cast_target_as}}  FROM {{schema_key}}_{{entity_key}}_audit_max LIMIT 1),'1970-01-01 00:00:00'::timestamp)
+                COALESCE((SELECT record_max::{{cast_target_as}}  FROM {{schema_key}}_{{entity_key}}_audit_max LIMIT 1),
+        {%- if cast_target_as in ('TIMESTAMP_NTZ','TIMESTAMP_LTZ') -%}
+            '1970-01-01 00:00:00'::{{cast_target_as}}
+        {%- elif cast_target_as in ('VARCHAR','TEXT') -%}
+            'a'
+        {%- else -%}
+            0::{{cast_target_as}}
+        {%- endif -%})
 
     {%- endif -%}
     )
