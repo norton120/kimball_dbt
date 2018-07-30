@@ -55,6 +55,11 @@
             schema_key = 'ERP'
         AND
             entity_key = 'DW_USERS_VIEW'
+        AND
+            audit_key NOT IN (SELECT
+                                DISTINCT audit_key
+                              FROM
+                                {{this}})
         ORDER BY audit_key DESC 
         LIMIT 1
 
@@ -135,7 +140,15 @@
 
     WHERE
         row_quality_score <> 'Reject'
-
+    
+    -- guard against duplicate audit inserts
+    {% if adapter.already_exists(this.schema, this.name) %}
+        AND
+            audit_key NOT IN (SELECT
+                                DISTINCT audit_key
+                              FROM
+                                {{this}})    
+    {% endif %}
 
 ---- when no new data is present, return an empty table
 {% elif adapter.already_exists(this.schema, this.name) %}
@@ -144,6 +157,9 @@
         FROM
             {{this}}       
         WHERE 1=0
+
+---- when no data is present and the table does not exist,
+---- create a new table outline
 {% else %}
         SELECT
             *,
