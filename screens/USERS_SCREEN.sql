@@ -69,9 +69,10 @@
 ---------- AGE_RANGE
 ---- valid values are [4,3,2,7,5 and NULL]
 {% set age_range_valid_values = {'column':'AGE_RANGE', 'type' : 'valid_values','valid_values' : [4,3,2,7,5], 'allow_null' : True, 'value_type' : 'number'} %}
----- only users created < 2015-02-01 are not null. This is still updated daily due to facebook.
- 
----------- EMAIL_ADDRESS
+---- all users created > 2015-02-01 are null. Older users are still updated daily due to facebook.
+{% set age_range_created_before_2015 = {'column':'AGE_RANGE', 'type' : 'custom', 
+    'sql_where' : "age_range IS NOT NULL and created_at > '2015-02-01'", 'screen_name' : 'age_range_created_before_2015'} %}
+--------- EMAIL_ADDRESS
 ---- must only be null if user is_anaonymous
 ---- must be in the format <string>@<string> or NULL
 ---- flag for the email 'robaan@web.com'. this single user has 134k accounts.
