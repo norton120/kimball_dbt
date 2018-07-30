@@ -54,10 +54,10 @@
 
 ### Evaluate the data profile for TABLE_NAME
 * Review the HTML report on TABLE_NAME and note the fields that need to be screened for validity.
-* Within the table screen, comment on the fields that need to be screened and include the relevant screen.
-    * If such a screen has already been created, add that screen to the table screen SQL file.
-    * If not such screen has been created yet, create a new screen to test for validity within said field.
-*
+* Within the new table screen, comment on the fields that need to be screened and include the relevant screens.
+    * If a required screen has already been created, add that screen to the table screen SQL file.
+    * If not such screen has been created yet, create a new screen macro.
+* 
 
 
 ### Creating a new screen to test for validity within a field.
