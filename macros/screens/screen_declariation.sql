@@ -10,6 +10,8 @@
             {{null_screen(s, target_audit_properties)}}
         {% elif s['type'] == 'unique' %}
             {{unique_screen(s, target_audit_properties)}}
+        {% elif s['type'] == 'valid_values' %}
+            {{valid_values(s, target_audit_properties)}}
         {% endif %}
     
         {{ ',' if not loop.last }}
