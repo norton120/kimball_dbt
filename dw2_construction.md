@@ -1,5 +1,8 @@
 # Data Warehouse 2 construction
-
+---
+## Screens
+**Documentation will leave inside each screen (by table).**
+---
 ## Data Profiling process
 
 ### Overview:
@@ -25,9 +28,10 @@
 * `git status`
 * `git add --all`
 * `git status`
-* `git commit TABLE_NAME.html -m "JIRA_TICKET"``
+* `git commit TABLE_NAME.html -m "JIRA_TICKET"`
 * `git status`
 * `git push origin branch_name_TABLE_NAME`
 * `git status` ("nothing to commit, working tree clean")
 
 #### Local Python server for ~/DW2/data_profiles
+`python -m SimpleHTTPServer 8000`
