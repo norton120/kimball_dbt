@@ -62,6 +62,7 @@
                                 'record_identifier' : 'id' } -%}
                         
 
+---------- SCREENS
 
     {% set id_not_null = {'column':'ID','type':'not_null'} %} 
     {% set last_name_unique = {'column':'LAST_NAME','type':'unique'} %}
