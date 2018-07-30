@@ -14,8 +14,15 @@
             record_identifier,
             error_event_action
         FROM    
-        {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen.column}}_{{screen.type}}        
+        
+        -- custom screens will have a screen_name value that overrides the normal type
+        {% if screen.type == 'custom' %}
+            {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen.column}}_{{screen.screen_name}}
 
+        -- for all other screens, the screen type (null, unique etc) is used to identify the cte
+        {% else %} 
+            {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen.column}}_{{screen.type}}        
+        {% endif %}
         {{ 'UNION' if not loop.last}}
     {% endfor %}
 
