@@ -34,18 +34,14 @@
         ON
             target.table_schema = '<schema>'
         AND
-            target.column_name = cdc_target
-        AND
             target.table_name = entity_key
     
         FULL OUTER JOIN
             "<database>".information_schema.columns record_identifier
         ON
-            record_identifier.table_schema = '<schema>'
+            record_identifier.table_schema = target.table_schema
         AND
-            record_identifier.column_name = UPPER('<record_identifier>')
-        AND
-            record_identifier.table_name = entity_key
+            record_identifier.table_name = target.table_name
 
         WHERE
             audit_status = 'Completed'
@@ -55,6 +51,15 @@
             schema_key = '<schema>'
         AND
             entity_key = '<entity>'
+        AND
+            target.column_name = cdc_target
+        AND
+            record_identifier.column_name = UPPER('<record_identifier>')
+        AND
+            audit_key NOT IN (SELECT
+                                DISTINCT audit_key
+                              FROM
+                                {{this}})
         ORDER BY audit_key DESC 
         LIMIT 1
 
