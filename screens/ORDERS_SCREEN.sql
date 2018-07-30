@@ -127,12 +127,10 @@
 
 ---- when no new data is present, return an empty table
     SELECT
-        NULL AS audit_key,
-        NULL AS error_event_at,
-        NULL AS screen_name,
-        NULL AS error_subject,
-        NULL AS record_identifier,
-        NULL AS error_event_action
+        *
+    FROM 
+        {{this.database}}.{{this.schema}}.error_event_fact
+    WHERE 1=0
 {% endif %} 
 
 ---------- CONFIGURATION [leave this section alone!]
