@@ -35,11 +35,7 @@
 
 ## Screens
 **Documentation will live inside each screen (by table).**
-
-Test block quote
-> Ooooo who lives in a pineapole under the sea?
-> SpongeBob SquarePants!
-> And who lives under the rock?
-Patrick Star
-
-Squidward Tentacles 
+### Process overview:
+* Profile the source table.
+* Based on assumptions and observations found in the data profile, determine patterns and logic that columns must follow.
+* Create screens to evaluate validity and generate error event facts.
