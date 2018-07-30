@@ -29,23 +29,19 @@
         FROM
             {{this.database}}.{{this.schema | replace('STAGING_QUALITY','QUALITY')}}.audit
 
-        FULL OUTER JOIN
+        JOIN
             "RAW".information_schema.columns target
         ON
             target.table_schema = 'ERP'
         AND
-            target.column_name = cdc_target
-        AND
             target.table_name = entity_key
     
-        FULL OUTER JOIN
+        JOIN
             "RAW".information_schema.columns record_identifier
         ON
-            record_identifier.table_schema = 'ERP'
+            record_identifier.table_schema = target.table_schema
         AND
-            record_identifier.column_name = UPPER('id')
-        AND
-            record_identifier.table_name = entity_key
+            record_identifier.table_name = target.table_name
 
         WHERE
             audit_status = 'Completed'
@@ -55,6 +51,10 @@
             schema_key = 'ERP'
         AND
             entity_key = 'DW_USERS_VIEW'
+        AND
+            target.column_name = cdc_target
+        AND
+            record_identifier.column_name = UPPER('id')
         AND
             audit_key NOT IN (SELECT
                                 DISTINCT audit_key
