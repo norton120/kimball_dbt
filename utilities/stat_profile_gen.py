@@ -9,21 +9,19 @@ import time
         profiling the given entity. 
 
     SIGNATURE:
-        python stat_profile_gen.py <entity> [pii_colummn another_pii_column]
+        python stat_profile_gen.py <entity> [method]
         - entity (string) the table or view to hit
-        - pii_column (string) each column name to exclude from freq 
-    
+        - method (string) accepts bernoulli (default), random (for non-tables) or all (the whole entity)
     RETURNS:
         boolean success or failure of process
 ''' 
 def stat_profile_gen(*args):
     entity = args[1].lower()
-    
-    pii_concerns = []
 
-    for arg in args[2:]:
-        pii_concerns.append(arg.lower())            
-
+    if len(args) > 2:
+        method = args[2]
+    else:
+        method = 'bernoulli'
 
     try:
         engine = create_engine('postgresql://fivetran@localhost:2345/ecom')
@@ -34,7 +32,9 @@ def stat_profile_gen(*args):
     query_string = '''
                     SELECT 
                         * 
-                    FROM {0} 
+                    FROM {0}'''.format(entity)
+    
+    bernoulli = ''' 
                     TABLESAMPLE BERNOULLI ((
                         SELECT 
                             CASE 
@@ -42,8 +42,22 @@ def stat_profile_gen(*args):
                                 WHEN (SELECT COUNT(*) FROM {0}) BETWEEN 1001 AND 100000 THEN 10
                                 ELSE 1
                             END))'''.format(entity)
+    
+    random = '''
+                WHERE RANDOM() >= 0.1 LIMIT 100000'''
+    
+    ## assemble the record based on the method passed
+    if method == 'bernoulli':
+        query_string += bernoulli
+    elif method == 'random':
+        query_string += random
+    elif method == 'all':
+        pass
+    else:
+        print('invalid method of selection')
+        sys.exit()
 
-    print('attempting to sample entity {}'.format(entity))
+    print('attempting to sample entity {} via {}'.format(entity, method))
     timer = time.time()
     
     try:

@@ -63,13 +63,91 @@
                         
 
 ---------- SCREENS
+---- All screens are flag unless noted
 
-    {% set id_not_null = {'column':'ID','type':'not_null'} %} 
-    {% set last_name_unique = {'column':'LAST_NAME','type':'unique', 'exception_action':'Reject'} %}
+
+---------- AGE_RANGE
+---- valid values are [4,3,2,7,5 and NULL]
+{% set age_range_valid_values = {'column':'AGE_RANGE', 'type' : 'valid_values','valid_values' : [4,3,2,7,5], 'allow_null' : True, 'value_type' : 'number'} %}
+---- only users created < 2015-02-01 are not null. This is still updated daily due to facebook.
+ 
+---------- EMAIL_ADDRESS
+---- must only be null if user is_anaonymous
+---- must be in the format <string>@<string> or NULL
+---- flag for the email 'robaan@web.com'. this single user has 134k accounts.
+
+---------- FIRST_NAME
+---- Must be only alphabetical characters
+---- Must not equal 'revzilla' 
+---- Must be > 1 character
+
+---------- SEGMENT_MASK
+---- valid range is 0-511
+---- TODO: what is this? How is this defined? 
+
+---------- _METADATA__UUID
+----
+---------- LAST_LOGIN_AT
+----
+---------- IS_DELETED
+----
+---------- PASSWORD_RESET_REQUESTED_AT
+----
+---------- IS_ACTIVE
+----
+---------- ROLE_ID
+----
+---------- GENDER
+----
+---------- ID_HASH_KEY
+----
+---------- LAST_NAME
+----
+---------- XMIN
+----
+---------- ID
+----
+---------- IS_FRAUD
+----
+---------- TRANSPARENT_SIGNUP
+----
+---------- _METADATA_CONSOLIDATION
+----
+---------- PROFILE_IMAGE
+----
+---------- DEALER_ID
+----
+---------- ESP_ID
+----
+---------- _METADATA__TIMESTAMP
+----
+---------- UPDATED_AT
+----
+---------- IS_FRAUD_VERIFIED
+----
+---------- BRAINTREE_CUSTOMER_ID
+----
+---------- COUNTRY_OF_RESIDENCE
+----
+---------- CREATED_AT
+----
+---------- IS_ANONYMOUS
+----
+---------- PERMISSION_SECTION_GROUP_ID
+----
+---------- SEND_REVIEW_FOLLOWUP
+----
+---------- BIRTH_DATE
+----
+---------- DEPARTMENT_ID
+----
+---------- SITE_ID
+----
+---------- XMIN__TEXT__BIGINT
+
 
     {% set screen_collection =  [
-                                    id_not_null,
-                                    last_name_unique
+                                    age_range_valid_values
                                 ]%}
 
     WITH
