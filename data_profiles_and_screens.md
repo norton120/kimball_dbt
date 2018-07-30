@@ -1,5 +1,6 @@
 ### Reference document for creating data profiles and screens.
 
+
 ## Data Profiling process
 
 ### Overview:
@@ -16,6 +17,7 @@
     * `git pull`
     * `git fetch`
     * `git checkout branch_name_TABLE_NAME`
+
 **Now local DW2 repository (data_profiles_base branch) is up to date with most recent changes on GitHub.**
 * This will also provide the most recent version of utilities/stat_profile_gen.py
 * In Terminal:
@@ -34,16 +36,27 @@
 ### Local Python server for ~/DW2/data_profiles
 `python -m SimpleHTTPServer 8000`
 
+
 ## Screens
 **Documentation will live inside each screen (by table).**
 ### Overview:
 * Create a screen to evaluate record validity and to generate error event facts.
 * Based on assumptions and observations found in the data profile, determine patterns and logic that columns must follow.
 
-### Steps for creating a new screen:
+### Steps for creating a new table screen:
 * In Terminal:
     * `cd DW2`
     * `python kdbt_gen.py --help` for help documentation
         * "usage: kdbt_gen.py <model_type> <model_name> [--option_name option_value]"
-        * Ex: `python kdbt_gen.py screen PRODUCTS`
+        * `python kdbt_gen.py screen TABLE_NAME`
 * Running the kdbt_gen.py script will generate a SQL file in DW2/screens.
+
+### Evaluate the data profile for TABLE_NAME
+* Review the HTML report on TABLE_NAME and note the fields that need to be screened for validity.
+* Within the table screen, comment on the fields that need to be screened and include the relevant screen.
+    * If such a screen has already been created, add that screen to the table screen SQL file.
+    * If not such screen has been created yet, create a new screen to test for validity within said field.
+* 
+
+
+### Creating a new screen to test for validity within a field.
