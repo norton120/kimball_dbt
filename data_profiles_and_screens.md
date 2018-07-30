@@ -10,32 +10,40 @@
 
 ### Steps to create and document a new data profile for a table:
 * **Select a table to profile.**
-* **Open Jumper from Desktop (to open connection to Postgres).**
+* Open Jumper from Desktop (to open connection to Postgres).
 * In Terminal:
-* `cd DW`
-* `git pull`
-* `git fetch`
-* `git checkout branch_name_TABLE_NAME`
-* **Now local DW2 repository (data_profiles_base branch) is up to date with most recent changes on GitHub.**
+    * `cd DW2`
+    * `git pull`
+    * `git fetch`
+    * `git checkout branch_name_TABLE_NAME`
+**Now local DW2 repository (data_profiles_base branch) is up to date with most recent changes on GitHub.**
 * This will also provide the most recent version of utilities/stat_profile_gen.py
-* `cd data_profiles`
-* `python ../utilities/stat_profile_gen.py TABLE_NAME`
-* `ls` (to confirm that the new HTML profile for TABLE_NAME has been successfully created)
-* `chromium-browser TABLE_NAME.html` (to view the new profile for TABLE_NAME)
-* `git status`
-* `git add --all`
-* `git status`
-* `git commit TABLE_NAME.html -m "JIRA_TICKET"`
-* `git status`
-* `git push origin branch_name_TABLE_NAME`
-* `git status` "nothing to commit, working tree clean"
+* In Terminal:
+    * `cd data_profiles`
+    * `python ../utilities/stat_profile_gen.py TABLE_NAME`
+    * `ls` (to confirm that the new HTML profile for TABLE_NAME has been successfully created)
+    * `chromium-browser TABLE_NAME.html` (to view the new profile for TABLE_NAME)
+    * `git status`
+    * `git add --all`
+    * `git status`
+    * `git commit TABLE_NAME.html -m "JIRA_TICKET"`
+    * `git status`
+    * `git push origin branch_name_TABLE_NAME`
+    * `git status` "nothing to commit, working tree clean"
 
 ### Local Python server for ~/DW2/data_profiles
 `python -m SimpleHTTPServer 8000`
 
 ## Screens
 **Documentation will live inside each screen (by table).**
-### Process overview:
-* Profile the source table.
+### Overview:
+* Create a screen to evaluate record validity and to generate error event facts.
 * Based on assumptions and observations found in the data profile, determine patterns and logic that columns must follow.
-* Create screens to evaluate validity and generate error event facts.
+
+### Steps for creating a new screen:
+* In Terminal:
+    * `cd DW2`
+    * `python kdbt_gen.py --help` for help documentation
+        * "usage: kdbt_gen.py <model_type> <model_name> [--option_name option_value]"
+        * Ex: `python kdbt_gen.py screen PRODUCTS`
+* Running the kdbt_gen.py script will generate a SQL file in DW2/screens.
