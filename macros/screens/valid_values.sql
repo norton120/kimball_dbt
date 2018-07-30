@@ -13,7 +13,7 @@
             {{universal_audit_property_set('valid_values',screen_args,kwargs)}}
 
         AND
-            {{screen_args.column}} IN (
+            {{screen_args.column}} NOT IN (
             {%- for val in screen_args.valid_values -%}
                 {%- if screen_args.value_type.upper() in ('STRING','TEXT','TIMESTAMP_LTZ','TIMESTAMP_NTZ') -%}
                     '{{val}}'

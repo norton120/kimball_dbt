@@ -34,14 +34,12 @@ WITH
 ---- see the macro definition for more info at /macros/kdbt_utils/initial_audit_partial.sql
 
     {% set erp_users  = ["ERP", "DW_USERS_VIEW","XMIN","NUMBER"] %}
-    {% set erp_orders = ["ERP", "ORDERS","XMIN__TEXT__BIGINT","NUMBER"] %}
 
 
 
 
 ---- combine the lists here. This is because jinja doesn't like nested list assignment.
     {%- set all_audit_partials = [
-                                erp_orders,
                                 erp_users
                                 ] -%}
 
