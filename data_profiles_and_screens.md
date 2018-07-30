@@ -49,6 +49,7 @@
     * `python kdbt_gen.py --help` for help documentation
         * "usage: kdbt_gen.py <model_type> <model_name> [--option_name option_value]"
         * `python kdbt_gen.py screen TABLE_NAME`
+    * If an option needs to be used, after TABLE_NAME add `--option_name option_value`
 * Running the kdbt_gen.py script will generate a SQL file in DW2/screens.
 
 ### Evaluate the data profile for TABLE_NAME
@@ -56,7 +57,7 @@
 * Within the table screen, comment on the fields that need to be screened and include the relevant screen.
     * If such a screen has already been created, add that screen to the table screen SQL file.
     * If not such screen has been created yet, create a new screen to test for validity within said field.
-* 
+*
 
 
 ### Creating a new screen to test for validity within a field.

@@ -64,7 +64,17 @@ class kdbt_gen:
 
         if self._model_type in ('screen', 'staging_quality') :
 
-            ## qualify the model name with _SCREEN suffix
+
+
+            ## grab the path arguments. Defaults are RAW.ERP. Entity is required.
+            self._database = kwargs['database'] if 'database' in kwargs else 'RAW'
+            self._schema = kwargs['schema'] if 'schema' in kwargs else 'ERP'
+            self._record_identifier = kwargs['record_identifier'] if 'record_identifier' in kwargs else 'id'
+            self._entity = kwargs['entity'] if 'entity' in kwargs else self._model_name
+
+
+
+            ## qualify the model name with _MODEL suffix
             if self._model_type == 'screen':
                 self._model_name += '_SCREEN' if self._model_name[-7:] != '_SCREEN' else ''
             else:
@@ -72,11 +82,7 @@ class kdbt_gen:
 
             existing_model = self.check_for_existing_model(self._model_name)
 
-            ## grab the path arguments. Defaults are RAW.ERP. Entity is required.
-            self._database = kwargs['database'] if 'database' in kwargs else 'RAW'
-            self._schema = kwargs['schema'] if 'schema' in kwargs else 'ERP'
-            self._record_identifier = kwargs['record_identifier'] if 'record_identifier' in kwargs else 'id'
-            self._entity = kwargs['entity'] if 'entity' in kwargs else self._model_name
+
 
             if self._destructive or not existing_model:
                 self.create_new_model(self._model_type,
