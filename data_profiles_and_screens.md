@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-# Data Warehouse 2 construction
-
-## Screens
-**Documentation will leave inside each screen (by table).**
-=======
 ### Reference document for creating data profiles and screens.
->>>>>>> 6cf5061413167f04f4da6dbe497c0b28761bd11a
 
 
 ## Data Profiling process
@@ -27,7 +20,6 @@
 
 **Now local DW2 repository (data_profiles_base branch) is up to date with most recent changes on GitHub.**
 * This will also provide the most recent version of utilities/stat_profile_gen.py
-<<<<<<< HEAD
 * In Terminal:
     * `cd data_profiles`
     * `python ../utilities/stat_profile_gen.py TABLE_NAME`
@@ -40,25 +32,6 @@
     * `git status`
     * `git push origin branch_name_TABLE_NAME`
     * `git status` "nothing to commit, working tree clean"
-=======
-* `cd data_profiles`
-* `python ../utilities/stat_profile_gen.py TABLE_NAME`
-* `ls` (to confirm that the new HTML profile for TABLE_NAME has been successfully created)
-* `chromium-browser TABLE_NAME.html` (to view the new profile for TABLE_NAME)
-* `git status`
-* `git add --all`
-* `git status`
-* `git commit TABLE_NAME.html -m "JIRA_TICKET"`
-* `git status`
-* `git push origin branch_name_TABLE_NAME`
-<<<<<<< HEAD
-* `git status` ("nothing to commit, working tree clean")
-
-#### Local Python server for ~/DW2/data_profiles
-`python -m SimpleHTTPServer 8000`
-=======
-* `git status` "nothing to commit, working tree clean"
->>>>>>> 01eb6b7ee2af09865b24cf38acdf5af1f8ad88f8
 
 ### Local Python server for ~/DW2/data_profiles
 `python -m SimpleHTTPServer 8000`
@@ -69,7 +42,6 @@
 ### Overview:
 * Create a screen to evaluate record validity and to generate error event facts.
 * Based on assumptions and observations found in the data profile, determine patterns and logic that columns must follow.
-<<<<<<< HEAD
 
 ### Steps for creating a new table screen:
 * In Terminal:
@@ -84,12 +56,11 @@
 * Review the HTML report on TABLE_NAME and note the fields that need to be screened for validity.
 * Within the new table screen, comment on the fields that need to be screened and include the relevant screens.
     * If a required screen has already been created, add that screen to the table screen SQL file.
+        * Template: `{% set screen_name = {'column':'column_name', 'type':'macro_name'} %}`
+        * For each screen, list the screen under screen collection: `{% set screen_collection =  [screen_name1, screen_name2, ...]%}`
     * If not such screen has been created yet, create a new screen macro.
-* 
 
 
 ### Creating a new screen to test for validity within a field.
-=======
-* Create screens to evaluate validity and generate error event facts.
->>>>>>> 6cf5061413167f04f4da6dbe497c0b28761bd11a
->>>>>>> 01eb6b7ee2af09865b24cf38acdf5af1f8ad88f8
+*Refer to the unique.sql macro*
+*Add a signature to the top of the macro file.*
