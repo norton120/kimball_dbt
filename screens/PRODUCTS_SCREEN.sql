@@ -35,7 +35,7 @@
         AND
             schema_key = 'ERP'
         AND
-            entity_key = 'PRODUCTS_SCREEN'
+            entity_key = 'PRODUCTS'
         AND
             audit_status = 'In Process'
         ORDER BY audit_key DESC 
@@ -55,7 +55,7 @@
         {%- set target_audit_properties = {
                                 'database' : 'RAW', 
                                 'schema' : 'ERP',
-                                'entity' : 'PRODUCTS_SCREEN', 
+                                'entity' : 'PRODUCTS', 
                                 'audit_key' :  audit_response[0],
                                 'cdc_target' : audit_response[1],
                                 'lowest_cdc' : audit_response[2],
