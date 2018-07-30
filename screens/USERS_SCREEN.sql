@@ -65,15 +65,16 @@
 ---------- SCREENS
 ---- All screens are flag unless noted
 
-
 ---------- AGE_RANGE
 ---- valid values are [4,3,2,7,5 and NULL]
 {% set age_range_valid_values = {'column':'AGE_RANGE', 'type' : 'valid_values','valid_values' : [4,3,2,7,5], 'allow_null' : True, 'value_type' : 'number'} %}
 ---- all users created > 2015-02-01 are null. Older users are still updated daily due to facebook.
 {% set age_range_created_before_2015 = {'column':'AGE_RANGE', 'type' : 'custom', 
     'sql_where' : "age_range IS NOT NULL and created_at > '2015-02-01'", 'screen_name' : 'age_range_created_before_2015'} %}
+
 --------- EMAIL_ADDRESS
 ---- must only be null if user is_anaonymous
+{% set email_only_null_for_anon = {'column':'email_address','type' : 'custom', 'sql_where' : 'email_address IS NULL AND NOT is_anonymous','screen_name':'email_only_null_for_anon'} %}
 ---- must be in the format <string>@<string> or NULL
 ---- flag for the email 'robaan@web.com'. this single user has 134k accounts.
 
@@ -148,7 +149,9 @@
 
 
     {% set screen_collection =  [
+                                    age_range_created_before_2015,
                                     age_range_valid_values
+
                                 ]%}
 
     WITH
