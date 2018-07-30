@@ -1,7 +1,4 @@
-# Data Warehouse 2 construction
-
-## Screens
-**Documentation will leave inside each screen (by table).**
+### Reference document for creating data profiles and screens.
 
 ## Data Profiling process
 
@@ -31,7 +28,18 @@
 * `git commit TABLE_NAME.html -m "JIRA_TICKET"`
 * `git status`
 * `git push origin branch_name_TABLE_NAME`
-* `git status` ("nothing to commit, working tree clean")
+* `git status` "nothing to commit, working tree clean"
 
-#### Local Python server for ~/DW2/data_profiles
+### Local Python server for ~/DW2/data_profiles
 `python -m SimpleHTTPServer 8000`
+
+## Screens
+**Documentation will live inside each screen (by table).**
+
+Test block quote
+> Ooooo who lives in a pineapole under the sea?
+> SpongeBob SquarePants!
+> And who lives under the rock?
+Patrick Star
+
+Squidward Tentacles 
