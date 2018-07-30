@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 # Data Warehouse 2 construction
 
 ## Screens
 **Documentation will leave inside each screen (by table).**
+=======
+### Reference document for creating data profiles and screens.
+>>>>>>> 6cf5061413167f04f4da6dbe497c0b28761bd11a
 
 ## Data Profiling process
 
@@ -31,7 +35,21 @@
 * `git commit TABLE_NAME.html -m "JIRA_TICKET"`
 * `git status`
 * `git push origin branch_name_TABLE_NAME`
+<<<<<<< HEAD
 * `git status` ("nothing to commit, working tree clean")
 
 #### Local Python server for ~/DW2/data_profiles
 `python -m SimpleHTTPServer 8000`
+=======
+* `git status` "nothing to commit, working tree clean"
+
+### Local Python server for ~/DW2/data_profiles
+`python -m SimpleHTTPServer 8000`
+
+## Screens
+**Documentation will live inside each screen (by table).**
+### Process overview:
+* Profile the source table.
+* Based on assumptions and observations found in the data profile, determine patterns and logic that columns must follow.
+* Create screens to evaluate validity and generate error event facts.
+>>>>>>> 6cf5061413167f04f4da6dbe497c0b28761bd11a
