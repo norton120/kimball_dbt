@@ -76,8 +76,9 @@
 ---- must only be null if user is_anaonymous
 {% set email_only_null_for_anon = {'column':'email_address','type' : 'custom', 'sql_where' : 'email_address IS NULL AND NOT is_anonymous','screen_name':'email_only_null_for_anon'} %}
 ---- must be in the format <string>@<string> or NULL
+{% set email_minimal_format = {'column':'email_address', 'type' : 'custom', 'sql_where' : "email_address NOT ILIKE '%@%'", 'screen_name' : 'email_minimal_format' } %}
 ---- flag for the email 'robaan@web.com'. this single user has 134k accounts.
-
+{% set email_is_robaan_at_web_dot_com = {'column': 'email_address', 'type' : 'blacklist', 'blacklist_values' : ['robaan@web.com','ROBAAN@WEB.COM'], 'value_type' : 'varchar', 'exception_action':'Reject'} %}
 ---------- FIRST_NAME
 ---- Must be only alphabetical characters
 ---- Must not equal 'revzilla' 
@@ -150,8 +151,10 @@
 
     {% set screen_collection =  [
                                     age_range_created_before_2015,
-                                    age_range_valid_values
-
+                                    age_range_valid_values,
+                                    email_only_null_for_anon,
+                                    email_is_robaan_at_web_dot_com,
+                                    email_minimal_format
                                 ]%}
 
     WITH
