@@ -71,9 +71,9 @@
 ---- COLUMN SCREENS
 ---------- id (bigint)
 ----    - not_null
-    {% set id_not_null = {'column':'id', 'type':'null_screen'} %}
+    {% set id_not_null = {'column':'id', 'type':'not_null'} %}
 ----    - unique
-    {% set id_is_unique = {'column':'id', 'type':'unique_screen'} %}
+    {% set id_is_unique = {'column':'id', 'type':'unique'} %}
 ----    - values_at_least (1)
     {% set id_at_least_one = {'column':'id', 'type':'values_at_least', 'provided_value':'1'} %}
 
@@ -113,7 +113,7 @@
 
 ---------- brand_id (integer)
 ----    - not_null
-    {% set brand_id_not_null = {'column':'brand_id', 'type':'null_screen'} %}
+    {% set brand_id_not_null = {'column':'brand_id', 'type':'not_null'} %}
 ----    - values_at_least (1)
     {% set brand_id_at_least_one = {'column':'brand_id', 'type':'values_at_least', 'provided_value':'1'} %}
 
@@ -182,14 +182,7 @@
                                     brand_id_not_null,
                                     brand_id_at_least_one,
                                     closed_out_at_range_within_history,
-                                    created_at_range_within_history,
-                                    ,
-                                    ,
-                                    ,
-                                    ,
-                                    ,
-                                    ,
-                                    ,
+                                    created_at_range_within_history
 
                                 ]%}
 
