@@ -82,7 +82,7 @@
 
 ---------- FIRST_NAME
 ---- Must be only alphabetical characters and spaces
-{% set first_name_alpha = {'column':'first_name', 'type' : 'custom', 'sql_where' : "first_name NOT REGEXP '[\s a-z A-Z \'\' \-]*'", 'screen_name' : 'first_name_alpha' } %}
+{% set first_name_valid = {'column':'first_name', 'type' : 'valid_name'} %}
 ---- Must not equal 'revzilla' 
 {% set first_name_not_revzilla = {'column': 'first_name', 'type' : 'blacklist', 'blacklist_values' : ['revzilla','revzilla.com','REVZILLA','REVZILLA.COM', 'RevZilla', 'RevZilla.com'], 'value_type' : 'varchar'} %}
 ---- Must not equal 'cycle gear' 
@@ -94,11 +94,12 @@
 ---- must be a bitwise AND with at least one id from segments
 {% set segment_mask_bitmask = {'column' : 'segment_mask', 'type' : 'custom', 'sql_where' : 'id in (SELECT id FROM (SELECT raw.erp.dw_users_view.id, MAX(BITAND(segment_mask,raw.erp.segments.id)) AS in_mask FROM raw.erp.dw_users_view JOIN raw.erp.segments ON 1=1 WHERE segment_mask IS NOT NULL AND segment_mask <> 0 GROUP BY 1 HAVING in_mask = FALSE))', 'screen_name' : 'segment_mask_bitmask'} %}
 ---- not used on records created > 2014-01-01
+{% set segment_mask_null_after_2014 = {'column' : 'segment_mask', 'date_column': 'created_at', 'type' : 'static_value_after', 'before' : '2014-01-01'} %}
 
----------- _METADATA__UUID
-----
 ---------- LAST_LOGIN_AT
-----
+---- should be > created_at - however there is an application bug where this is not rarely not the case
+{% set last_login_at_after_created_at = {'type': 'column_order', 'greater_column' : 'last_login_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ' } %}
+
 ---------- IS_DELETED
 ----
 ---------- PASSWORD_RESET_REQUESTED_AT
@@ -121,15 +122,11 @@
 ----
 ---------- TRANSPARENT_SIGNUP
 ----
----------- _METADATA_CONSOLIDATION
-----
 ---------- PROFILE_IMAGE
 ----
 ---------- DEALER_ID
 ----
 ---------- ESP_ID
-----
----------- _METADATA__TIMESTAMP
 ----
 ---------- UPDATED_AT
 ----
@@ -162,11 +159,13 @@
                                     email_only_null_for_anon,
                                     email_is_robaan_at_web_dot_com,
                                     email_minimal_format,
-                                    first_name_alpha,
+                                    first_name_valid,
                                     first_name_not_cycle_gear,
                                     first_name_not_revzilla,
                                     first_name_min_length,
-                                    segment_mask_bitmask
+                                    segment_mask_bitmask,
+                                    segment_mask_null_after_2014,
+                                    last_login_at_after_created_at
                                 ]%}
 
     WITH

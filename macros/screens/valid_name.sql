@@ -1,7 +1,9 @@
----------- NOT NULL SCREEN
----- Verifies that no null values are present in source data
+---------- VALID NAME SCREEN
+---- Verifies that a given name matches expected English naming conventions
+---- note: We are using English base conventions to simplify support at the BI level. 
+---- Non-UTF characters are perfectly acceptable but will be flagged by this macro.
 
-{%- macro null_screen(screen_args, kwargs) -%}
+{%- macro valid_name(screen_args, kwargs) -%}
 ---- Pass the screen_args object with these params:
 ----    - column (string) the column tested. 
 ---- Pass the kwargs object with these params:
@@ -14,12 +16,13 @@
 ----    - highest_cdc (string) the highest cdc_target value in this audit
 ----    - cdc_data_type (string) the native data type of the cdc_column in the source entity
 ----    - record_identifier (string) the primary key for the source entity
-    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_NOT_NULL AS (
+    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_VALID_NAME AS (
         SELECT
-            {{universal_audit_property_set('null',screen_args,kwargs)}}
+            {{universal_audit_property_set('valid_name',screen_args,kwargs)}}
 
         AND
             {{screen_args.column}} IS NULL
+        AND
+            {{screen_args.column}} NOT REGEXP '[\s a-z A-Z \'\' \-]*'
     )
 {%- endmacro -%}
-

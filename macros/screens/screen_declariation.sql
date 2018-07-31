@@ -16,6 +16,12 @@
             {{blacklist(s, target_audit_properties)}}
         {% elif s['type'] == 'min_length' %}
             {{min_length(s, target_audit_properties)}}
+        {% elif s['type'] == 'valid_name' %}
+            {{valid_name(s, target_audit_properties)}}
+        {% elif s['type'] == 'static_value_after' %}
+            {{static_value_after(s, target_audit_properties)}}
+        {% elif s['type'] == 'column_order' %}
+            {{column_order(s, target_audit_properties)}}
         {% elif s['type'] == 'custom' %}
             {{custom(s, target_audit_properties)}}
         {% endif %}
