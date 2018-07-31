@@ -71,13 +71,15 @@
 ---- COLUMN SCREENS
 ---------- id (bigint)
 ----    - not_null
-    {% set id_not_null = {'column':'id', 'type':'not_null'} %}
+    {% set id_not_null = {'column':'id', 'type':'null_screen'} %}
 ----    - unique
-    {% set id_is_unique = {'column':'id', 'type':'unique'} %}
+    {% set id_is_unique = {'column':'id', 'type':'unique_screen'} %}
+----    - values_at_least (1)
+    {% set id_at_least_one = {'column':'id', 'type':'values_at_least', 'provided_value':'1'} %}
 
 ---------- additional_shipping_charge (numeric)
 ---- (should not have values less than 0 (zero))
-----    - not_negative_value
+----    - values_at_least (0)
     {% set additional_shipping_charge_at_least_zero = {'column':'additional_shipping_charge', 'type':'values_at_least', 'provided_value':'0'} %}
 
 ---------- allow_closeout_exchange (boolean)
@@ -87,7 +89,7 @@
 ----
 
 ---------- apparel_material_mask (integer)
-----    - not_negative_value
+----    - values_at_least (0)
     {% set apparel_material_at_least_zero = {'column':'apparel_material_mask', 'type':'values_at_least', 'provided_value':'0'} %}
 
 ---------- apparel_type (integer)
@@ -110,16 +112,22 @@
 ----
 
 ---------- brand_id (integer)
+----    - not_null
+    {% set brand_id_not_null = {'column':'brand_id', 'type':'null_screen'} %}
+----    - values_at_least (1)
+    {% set brand_id_at_least_one = {'column':'brand_id', 'type':'values_at_least', 'provided_value':'1'} %}
+
+---------- browser_title (character varying(400))
 ----
 
-----------
-----
+---------- closed_out_at (timestamp with time zone)
+----    - date_range_within_history
+    {% set closed_out_at_range_within_history = {'column':'closed_out_at', 'type':'date_range_within_history'} %}
 
-----------
-----
 
-----------
-----
+---------- country_of_origin (character varying(3))
+----    - MAX(LENGTH(country_of_origin)) = 3
+
 
 ----------
 ----
