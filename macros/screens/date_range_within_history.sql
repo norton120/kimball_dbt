@@ -1,6 +1,6 @@
 ---------- date_range_within_history SCREEN
 ---- Verifies that each date / timestamp in a column is within the history of RevZilla, if not null.
----- Date must be between 2007-11-00 and current date.
+---- Date must be between 2007-11-01 and current date.
 
 {%- macro date_range_within_history(screen_args, kwargs) -%}
 ---- Pass the screen_args object with these params:
