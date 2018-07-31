@@ -1,11 +1,11 @@
----------- INITIAL AUDIT 
+---------- INITIAL AUDIT
 ---- All the initial audit runs are performed here for a build.
----- These runs are only to set the min and max values for the audit 
+---- These runs are only to set the min and max values for the audit
 ---- and to populate the AUDIT table with a working row to update
----- as the screens complete. 
+---- as the screens complete.
 
 ---------- FORMATTING
----- To help keep this from becoming a mess, follow these rules: 
+---- To help keep this from becoming a mess, follow these rules:
 ---- * Keep all_audit_partial variables in alphabetical order. Yes it makes git diffs harder to read.
 
 
@@ -16,38 +16,38 @@
         "schema":"QUALITY",
         "post-hook":[
             "{{comment({'column':'audit_key','definition':'The supernatural key for the audit table.'})}}",
-            "{{comment({'definition':'Every time we execute a quality process job against new data in the Data Lake the instance of that execution is called an audit.', 
-                        'grain':'One row per audit executed on a unique entity'})}}"    
-    
+            "{{comment({'definition':'Every time we execute a quality process job against new data in the Data Lake the instance of that execution is called an audit.',
+                        'grain':'One row per audit executed on a unique entity'})}}"
+
    ]})}}
 
 
----- Set already exists flag 
+---- Set already exists flag
     {% set audit_exists = adapter.already_exists(this.schema,this.name) %}
 
 WITH
 
 
----- Set the variables for each source to be audited. 
+---- Set the variables for each source to be audited.
 ---- variable syntax is:
 ---- variable_name = [<schema>, <entity>, <cdc_column>, <cdc_column_data_type>,<incremental>, <entity_type>, <database>]
 ---- see the macro definition for more info at /macros/kdbt_utils/initial_audit_partial.sql
 
-    {% set erp_users  = ["ERP", "DW_USERS_VIEW","XMIN","NUMBER"] %}
+    {% set erp_products  = ["ERP", "PRODUCTS","XMIN__TEXT__BIGINT","NUMBER"] %}
 
 
 
 
 ---- combine the lists here. This is because jinja doesn't like nested list assignment.
     {%- set all_audit_partials = [
-                                erp_users
+                                erp_products
                                 ] -%}
 
 ---- Each macro is a self-contained CTE.
     {% for audit_partial in all_audit_partials %}
 
         {{initial_audit_partial(audit_partial[0], audit_partial[1], audit_partial[2], audit_partial[3])}},
- 
+
     {% endfor %}
 
 union_all_initial_audits AS (
@@ -69,12 +69,12 @@ union_all_initial_audits AS (
                     dbt_version,
                     dbt_repo_release_version,
                     lowest_cdc,
-                    highest_cdc 
+                    highest_cdc
                 FROM
                     {{audit_partial[0]|lower}}_{{audit_partial[1]|lower}}_new_audit_record
             )
                 {{ 'UNION' if not loop.last }}
-            
+
         {% endfor %}
 )
 
@@ -86,5 +86,3 @@ WHERE
     lowest_cdc IS NOT NULL
 AND
     highest_cdc IS NOT NULL
-
-    
