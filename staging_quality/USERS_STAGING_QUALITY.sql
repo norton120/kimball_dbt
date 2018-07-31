@@ -35,13 +35,23 @@
             target.table_schema = 'ERP'
         AND
             target.table_name = entity_key
-    
-        JOIN
-            "RAW".information_schema.columns record_identifier
-        ON
-            record_identifier.table_schema = target.table_schema
         AND
-            record_identifier.table_name = target.table_name
+            target.column_name = cdc_target
+        JOIN
+            (SELECT 
+                data_type
+            FROM
+                "RAW".information_schema.columns 
+            WHERE
+                table_schema = 'ERP'
+            AND
+                table_name = 'DW_USERS_VIEW'
+            AND
+                column_name = UPPER('id')
+            LIMIT 1
+            ) record_identifier
+        ON
+            1=1 
 
         WHERE
             audit_status = 'Completed'
@@ -51,10 +61,6 @@
             schema_key = 'ERP'
         AND
             entity_key = 'DW_USERS_VIEW'
-        AND
-            target.column_name = cdc_target
-        AND
-            record_identifier.column_name = UPPER('id')
         AND
             audit_key NOT IN (SELECT
                                 DISTINCT audit_key

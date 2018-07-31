@@ -1,13 +1,17 @@
----------- UNIVERSAL AUDIT PROPERTY SET
----- Nearly all screens need the same property set as a base.
----- This generates the property set and leaves the end of the CTE open (no parenthesis)
----- So it can be extended using AND values for the WHERE clause.
+---------- CUSTOM SCREEN
+---- This screen allows for complex business logic tests
 
-{% macro universal_audit_property_set(screen_type,screen_args,kwargs) %}
-
-        {{kwargs.audit_key}} AS audit_key,
+{%- macro custom(screen_args, kwargs) -%}
+---- Pass the screen_args object with these params:
+---- screen_args:
+----    - sql_where (string) the WHERE clause that defines a failing screen
+----    - screen_name (string) the custom name for the screen
+----    - column (string) the column tested. When more than one column is tested select one primary.
+    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_{{screen_args.screen_name}} AS (
+        SELECT
+            {{kwargs.audit_key}} AS audit_key,
             CURRENT_TIMESTAMP() AS error_event_at,
-            '{{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column | upper}}_{{screen_type | upper}}' AS screen_name,
+            '{{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column | upper}}_{{screen_args.screen_name | upper}}' AS screen_name,
             '{{screen_args.column | upper}}' AS error_subject,
 
         {% if kwargs.record_identifier %}
@@ -32,4 +36,8 @@
         {% else %}
             {{kwargs.lowest_cdc}} AND {{kwargs.highest_cdc}}
         {% endif %}
-{% endmacro %}
+
+        AND
+            {{screen_args.sql_where}} 
+    )
+{%- endmacro -%}

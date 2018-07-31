@@ -29,19 +29,27 @@
         FROM
             {{this.database}}.{{this.schema | replace('STAGING_QUALITY','QUALITY')}}.audit
 
-        FULL OUTER JOIN
+        JOIN
             "<database>".information_schema.columns target
         ON
             target.table_schema = '<schema>'
         AND
             target.table_name = entity_key
-    
-        FULL OUTER JOIN
-            "<database>".information_schema.columns record_identifier
-        ON
-            record_identifier.table_schema = target.table_schema
         AND
-            record_identifier.table_name = target.table_name
+            target.column_name = cdc_target
+        JOIN
+            (SELECT
+                data_type
+            FROM
+                "<database>".information_schema.columns 
+            WHERE
+                table_schema = '<schema>'
+            AND
+                table_name = '<entity>'
+            AND
+                record_identifier.column_name = UPPER('<record_identifier>')
+            LIMIT 1) record_identifier
+        ON 1=1 
 
         WHERE
             audit_status = 'Completed'
@@ -51,10 +59,7 @@
             schema_key = '<schema>'
         AND
             entity_key = '<entity>'
-        AND
-            target.column_name = cdc_target
-        AND
-            record_identifier.column_name = UPPER('<record_identifier>')
+
         AND
             audit_key NOT IN (SELECT
                                 DISTINCT audit_key
