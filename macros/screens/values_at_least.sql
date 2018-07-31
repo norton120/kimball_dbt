@@ -4,8 +4,7 @@
 {%- macro null_screen(screen_args, kwargs) -%}
 ---- Pass the screen_args object with these params:
 ---- screen_args:
-----    - blacklisted_values (list) the values to deny
-----    - value_type (string) the datatype for the list of values
+----    - provided_value (numeric, integer, etc.) is the minimum value allowed
 
     {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_VALUES_AT_LEAST_{{screen_args.provided_value}} AS (
         SELECT
