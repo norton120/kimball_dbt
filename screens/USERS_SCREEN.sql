@@ -82,7 +82,7 @@
 
 ---------- FIRST_NAME
 ---- Must be only alphabetical characters and spaces
-{% set first_name_alpha = {'column':'first_name', 'type' : 'custom', 'sql_where' : "first_name NOT REGEXP '[\s a-z A-Z]*'", 'screen_name' : 'first_name_alpha' } %}
+{% set first_name_alpha = {'column':'first_name', 'type' : 'custom', 'sql_where' : "first_name NOT REGEXP '[\s a-z A-Z \'\' \-]*'", 'screen_name' : 'first_name_alpha' } %}
 ---- Must not equal 'revzilla' 
 {% set first_name_not_revzilla = {'column': 'first_name', 'type' : 'blacklist', 'blacklist_values' : ['revzilla','revzilla.com','REVZILLA','REVZILLA.COM', 'RevZilla', 'RevZilla.com'], 'value_type' : 'varchar'} %}
 ---- Must not equal 'cycle gear' 
@@ -91,8 +91,9 @@
 {% set first_name_min_length = {'column' : 'first_name', 'type' : 'min_length', 'min_length' : 1} %}
 
 ---------- SEGMENT_MASK
----- valid range is 0-511
----- TODO: what is this? How is this defined? 
+---- must be a bitwise AND with at least one id from segments
+{% set segment_mask_bitmask = {'column' : 'segment_mask', 'type' : 'custom', 'sql_where' : 'id in (SELECT id FROM (SELECT raw.erp.dw_users_view.id, MAX(BITAND(segment_mask,raw.erp.segments.id)) AS in_mask FROM raw.erp.dw_users_view JOIN raw.erp.segments ON 1=1 WHERE segment_mask IS NOT NULL AND segment_mask <> 0 GROUP BY 1 HAVING in_mask = FALSE))', 'screen_name' : 'segment_mask_bitmask'} %}
+---- not used on records created > 2014-01-01
 
 ---------- _METADATA__UUID
 ----
@@ -164,7 +165,8 @@
                                     first_name_alpha,
                                     first_name_not_cycle_gear,
                                     first_name_not_revzilla,
-                                    first_name_min_length
+                                    first_name_min_length,
+                                    segment_mask_bitmask
                                 ]%}
 
     WITH

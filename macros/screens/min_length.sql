@@ -18,8 +18,10 @@
     {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_MIN_LENGTH AS (
         SELECT
             {{universal_audit_property_set('min_length',screen_args,kwargs)}}
-
+        
         AND
-            LENGTH({{screen_args.column}}) > {{screen_args.min_length}}::number
+            LENGTH({{screen_args.column}}) < {{screen_args.min_length}}::number
+        AND 
+            {{screen_args.column}} IS NOT NULL
     )
 {%- endmacro -%}
