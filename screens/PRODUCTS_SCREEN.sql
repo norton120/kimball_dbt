@@ -90,7 +90,7 @@
 
 ---------- apparel_material_mask (integer)
 ----    - values_at_least (0)
-    {% set apparel_material_at_least_zero = {'column':'apparel_material_mask', 'type':'values_at_least', 'provided_value':'0'} %}
+    {% set apparel_material_mask_at_least_zero = {'column':'apparel_material_mask', 'type':'values_at_least', 'provided_value':'0'} %}
 
 ---------- apparel_type (integer)
 ----    - values_at_least (1)
@@ -129,11 +129,14 @@
 ----    - MAX(LENGTH(country_of_origin)) = 3
 
 
-----------
-----
+---------- created_at (timestamp with time zone)
+----    - date_range_within_history
+    {% set created_at_range_within_history = {'column':'created_at', 'type':'date_range_within_history'} %}
 
-----------
-----
+
+---------- creator_id (bigint)
+----    - values_at_least (1)
+    {% set creator_id_at_least_one = {'column':'creator_id', 'type':'values_at_least', 'provided_value':'1'} %}
 
 ----------
 ----
@@ -172,8 +175,22 @@
     {% set screen_collection =  [
                                     id_not_null,
                                     id_is_unique,
-                                    additional_shipping_charge_not_negative,
-                                    apparel_material_mask_not_negative
+                                    id_at_least_one,
+                                    additional_shipping_charge_at_least_zero,
+                                    apparel_material_mask_at_least_zero,
+                                    apparel_type_at_least_one,
+                                    brand_id_not_null,
+                                    brand_id_at_least_one,
+                                    closed_out_at_range_within_history,
+                                    created_at_range_within_history,
+                                    ,
+                                    ,
+                                    ,
+                                    ,
+                                    ,
+                                    ,
+                                    ,
+
                                 ]%}
 
 ---------- RUN SCREENS [leave this section alone!]
