@@ -79,10 +79,16 @@
 {% set email_minimal_format = {'column':'email_address', 'type' : 'custom', 'sql_where' : "email_address NOT ILIKE '%@%'", 'screen_name' : 'email_minimal_format' } %}
 ---- flag for the email 'robaan@web.com'. this single user has 134k accounts.
 {% set email_is_robaan_at_web_dot_com = {'column': 'email_address', 'type' : 'blacklist', 'blacklist_values' : ['robaan@web.com','ROBAAN@WEB.COM'], 'value_type' : 'varchar', 'exception_action':'Reject'} %}
+
 ---------- FIRST_NAME
----- Must be only alphabetical characters
+---- Must be only alphabetical characters and spaces
+{% set first_name_alpha = {'column':'first_name', 'type' : 'custom', 'sql_where' : "first_name NOT REGEXP '[\s a-z A-Z]*'", 'screen_name' : 'first_name_alpha' } %}
 ---- Must not equal 'revzilla' 
+{% set first_name_not_revzilla = {'column': 'first_name', 'type' : 'blacklist', 'blacklist_values' : ['revzilla','revzilla.com','REVZILLA','REVZILLA.COM', 'RevZilla', 'RevZilla.com'], 'value_type' : 'varchar'} %}
+---- Must not equal 'cycle gear' 
+{% set first_name_not_cycle_gear = {'column': 'first_name', 'type' : 'blacklist', 'blacklist_values' : ['cyclegear','cyclegear.com','cycle gear','CYCLEGEAR', 'CYCLEGEAR.COM', 'CYCLE GEAR'], 'value_type' : 'varchar'} %}
 ---- Must be > 1 character
+{% set first_name_min_length = {'column' : 'first_name', 'type' : 'min_length', 'min_length' : 1} %}
 
 ---------- SEGMENT_MASK
 ---- valid range is 0-511
@@ -154,7 +160,11 @@
                                     age_range_valid_values,
                                     email_only_null_for_anon,
                                     email_is_robaan_at_web_dot_com,
-                                    email_minimal_format
+                                    email_minimal_format,
+                                    first_name_alpha,
+                                    first_name_not_cycle_gear,
+                                    first_name_not_revzilla,
+                                    first_name_min_length
                                 ]%}
 
     WITH

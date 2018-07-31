@@ -1,8 +1,8 @@
----------- NOT NULL SCREEN
----- Verifies that no null values are present in source data
-
-{%- macro null_screen(screen_args, kwargs) -%}
+---------- MIN LENGTH SCREEN
+---- verifies the value length is at least a min value
+{%- macro min_length(screen_args, kwargs) -%}
 ---- Pass the screen_args object with these params:
+----    - min_length (number) the value an instance of the column must be greater than or equal to 
 ----    - column (string) the column tested. 
 ---- Pass the kwargs object with these params:
 ----    - database (string) the source database 
@@ -14,11 +14,12 @@
 ----    - highest_cdc (string) the highest cdc_target value in this audit
 ----    - cdc_data_type (string) the native data type of the cdc_column in the source entity
 ----    - record_identifier (string) the primary key for the source entity
-    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_NOT_NULL AS (
+
+    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_MIN_LENGTH AS (
         SELECT
-            {{universal_audit_property_set('null',screen_args,kwargs)}}
+            {{universal_audit_property_set('min_length',screen_args,kwargs)}}
 
         AND
-            {{screen_args.column}} IS NULL
+            LENGTH({{screen_args.column}}) > {{screen_args.min_length}}::number
     )
 {%- endmacro -%}

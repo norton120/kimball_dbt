@@ -14,6 +14,8 @@
             {{valid_values(s, target_audit_properties)}}
         {% elif s['type'] == 'blacklist' %}
             {{blacklist(s, target_audit_properties)}}
+        {% elif s['type'] == 'min_length' %}
+            {{min_length(s, target_audit_properties)}}
         {% elif s['type'] == 'custom' %}
             {{custom(s, target_audit_properties)}}
         {% endif %}
