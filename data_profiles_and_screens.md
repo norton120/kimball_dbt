@@ -59,8 +59,10 @@
         * Template: `{% set screen_name = {'column':'column_name', 'type':'macro_name'} %}`
         * For each screen, list the screen under screen collection: `{% set screen_collection =  [screen_name1, screen_name2, ...]%}`
     * If not such screen has been created yet, create a new screen macro.
+* All screens must be added to the screen collection in the next section. 
 
 
 ### Creating a new screen to test for validity within a field.
-*Refer to the unique.sql macro*
-*Add a signature to the top of the macro file.*
+* Name the macro and thoroughly describe what it does at the top of the SQL file.
+* *Add a signature to the top of the macro file.*
+* Add new screen macros to the..........
