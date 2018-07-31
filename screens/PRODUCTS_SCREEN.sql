@@ -69,14 +69,79 @@
 ---- available screens (see /macros/screens/<screen_name> for macro profile:
 ----
 ---- COLUMN SCREENS
+---------- id (bigint)
 ----    - not_null
     {% set id_not_null = {'column':'id', 'type':'not_null'} %}
-
 ----    - unique
     {% set id_is_unique = {'column':'id', 'type':'unique'} %}
 
+---------- additional_shipping_charge (numeric)
+---- (should not have values less than 0 (zero))
+----    - not_negative_value
+    {% set additional_shipping_charge_at_least_zero = {'column':'additional_shipping_charge', 'type':'values_at_least', 'provided_value':'0'} %}
+
+---------- allow_closeout_exchange (boolean)
+----
+
+---------- allow_discounting (boolean)
+----
+
+---------- apparel_material_mask (integer)
+----    - not_negative_value
+    {% set apparel_material_at_least_zero = {'column':'apparel_material_mask', 'type':'values_at_least', 'provided_value':'0'} %}
+
+---------- apparel_type (integer)
+----    - values_at_least (1)
+    {% set apparel_type_at_least_one = {'column':'apparel_type', 'type':'values_at_least', 'provided_value':'1'} %}
+
+---------- application_imports (text)
+----
+
+---------- apply_sale_price (boolean)
+----
+
+---------- auto_generate_teaser (boolean)
+----
+
+---------- blemish_caption (text)
+----
+
+---------- blemish_notes (text)
+----
+
+---------- brand_id (integer)
+----
+
+----------
+----
+
+----------
+----
+
+----------
+----
+
+----------
+----
+
+----------
+----
+
+----------
+----
+
+----------
+----
+
+----------
+----
+
+----------
+----
+
+
 ----    - accepted_range
-----    - accepted_lenght
+----    - accepted_length
 ----    - accepted_values
 ----    - matches_pattern
 ----    - excluded_values
@@ -98,7 +163,9 @@
 ---- add each screen variable above to the collection
     {% set screen_collection =  [
                                     id_not_null,
-                                    id_is_unique
+                                    id_is_unique,
+                                    additional_shipping_charge_not_negative,
+                                    apparel_material_mask_not_negative
                                 ]%}
 
 ---------- RUN SCREENS [leave this section alone!]
