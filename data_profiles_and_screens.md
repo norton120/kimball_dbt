@@ -2,7 +2,6 @@
 
 
 ## Data Profiling process
-
 ### Overview:
 * Generate the data profile for a table in HTML through pandas_profiling.
 * Use Jumper and Python stat_profile_gen.py to build profiles.
@@ -71,8 +70,16 @@
 * Set the variables for each source to be audited.
 * Combine the list of the sources to be audited in the next section below.
 
+
 ## Staging Quality
 * Staging Quality tables are generated through kdbt
 * In Terminal:
     * Start from DW2
     * `python kdbt_gen.py staging_quality TABLE_NAME`
+
+
+## Run the Model
+* Materilize the model with dbt
+* In Terminal:
+    * Start from DW2
+    * `dbt run`
