@@ -109,7 +109,8 @@
 ---------- ROLE_ID
 ----
 ---------- GENDER
-----
+---- TODO: why do anon accounts have genders assigned? 
+
 ---------- ID_HASH_KEY
 ----
 ---------- LAST_NAME
