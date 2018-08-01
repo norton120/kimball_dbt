@@ -5,8 +5,14 @@
 ----        - target_audit_properties(object): complex dict with the audit values.
 ----    RETURNS: string the combined CTE's that create the screen for the entitiy.
 
-    {% for s in screen_applications %} 
-        {% if s['type'] == 'not_null' %}
+    {% for s in screen_applications %}
+        {% if s['type'] == 'blacklist' %}
+            {{blacklist(s, target_audit_properties)}}
+        {% elif s['type'] == 'custom' %}
+            {{custom(s, target_audit_properties)}}
+        {% elif s['type'] == 'date_range_within_history' %}
+            {{date_range_within_history(s, target_audit_properties)}}
+        {% elif s['type'] == 'not_null' %}
             {{null_screen(s, target_audit_properties)}}
         {% elif s['type'] == 'unique' %}
             {{unique_screen(s, target_audit_properties)}}
@@ -24,8 +30,10 @@
             {{column_order(s, target_audit_properties)}}
         {% elif s['type'] == 'custom' %}
             {{custom(s, target_audit_properties)}}
+        {% elif s['type'] == 'values_at_least' %}
+            {{values_at_least(s, target_audit_properties)}}
         {% endif %}
-    
+
         {{ ',' if not loop.last }}
     {% endfor %}
 {% endmacro %}

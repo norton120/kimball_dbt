@@ -1,8 +1,6 @@
 ### Reference document for creating data profiles and screens.
 
-
 ## Data Profiling process
-
 ### Overview:
 * Generate the data profile for a table in HTML through pandas_profiling.
 * Use Jumper and Python stat_profile_gen.py to build profiles.
@@ -57,7 +55,34 @@
 * Within the new table screen, comment on the fields that need to be screened and include the relevant screens.
     * If a required screen has already been created, add that screen to the table screen SQL file.
     * If not such screen has been created yet, create a new screen macro.
-* 
 
 
 ### Creating a new screen to test for validity within a field.
+        * Template: `{% set screen_name = {'column':'column_name', 'type':'macro_name'} %}`
+        * For each screen, list the screen under screen collection: `{% set screen_collection =  [screen_name1, screen_name2, ...]%}`
+    * If not such screen has been created yet, create a new screen macro.
+* All screens must be added to the screen collection in the next section.
+
+### Creating a new screen to test for validity within a field.
+* Name the macro and thoroughly describe what it does at the top of the SQL file.
+* Add a signature at the top of the macro file to describe what is being done and what arguments to pass through the macro.
+* Add new screen macros to the screen_declaration so that a CTE is created for each column screen passed.
+
+
+## Audits
+* Set the variables for each source to be audited.
+* Combine the list of the sources to be audited in the next section below.
+
+
+## Staging Quality
+* Staging Quality tables are generated through kdbt
+* In Terminal:
+    * Start from DW2
+    * `python kdbt_gen.py staging_quality TABLE_NAME`
+
+
+## Run the Model
+* Materilize the model with dbt
+* In Terminal:
+    * Start from DW2
+    * `dbt run`

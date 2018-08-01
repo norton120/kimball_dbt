@@ -71,9 +71,9 @@
 ---- COLUMN SCREENS
 ---------- id (bigint)
 ----    - not_null
-    {% set id_not_null = {'column':'id', 'type':'null_screen'} %}
+   {% set id_not_null = {'column':'id', 'type':'not_null'} %}
 ----    - unique
-    {% set id_is_unique = {'column':'id', 'type':'unique_screen'} %}
+    {% set id_is_unique = {'column':'id', 'type':'unique'} %}
 ----    - values_at_least (1)
     {% set id_at_least_one = {'column':'id', 'type':'values_at_least', 'provided_value':'1'} %}
 
@@ -91,6 +91,7 @@
 ---------- apparel_material_mask (integer)
 ----    - values_at_least (0)
     {% set apparel_material_at_least_zero = {'column':'apparel_material_mask', 'type':'values_at_least', 'provided_value':'0'} %}
+    {% set apparel_material_mask_at_least_zero = {'column':'apparel_material_mask', 'type':'values_at_least', 'provided_value':'0'} %}
 
 ---------- apparel_type (integer)
 ----    - values_at_least (1)
@@ -113,7 +114,7 @@
 
 ---------- brand_id (integer)
 ----    - not_null
-    {% set brand_id_not_null = {'column':'brand_id', 'type':'null_screen'} %}
+    {% set brand_id_not_null = {'column':'brand_id', 'type':'not_null'} %}
 ----    - values_at_least (1)
     {% set brand_id_at_least_one = {'column':'brand_id', 'type':'values_at_least', 'provided_value':'1'} %}
 
@@ -129,51 +130,29 @@
 ----    - MAX(LENGTH(country_of_origin)) = 3
 
 
-----------
-----
-
-----------
-----
-
-----------
-----
-
-----------
-----
-
-----------
-----
-
-----------
-----
+---------- created_at (timestamp with time zone)
+----    - date_range_within_history
+    {% set created_at_range_within_history = {'column':'created_at', 'type':'date_range_within_history'} %}
 
 
-----    - accepted_range
-----    - accepted_length
-----    - accepted_values
-----    - matches_pattern
-----    - excluded_values
-----
----- STATISITCAL SCREENS
-----    - frequency_distribution
-----    - row_count_range
-----
----- BUSINESS SCREEN
----- this 'catch all' screen allows you to declare a complex WHERE clause to test against. For example,
----- a business screen might be "Only customer records with an RFM score > 75 should be in the high-value segment."
----- In this example, pass the name of the screen 'high_value_customer_rfm_screen' and the sql_where, a statement
----- WHERE clause that returns > 0 results on failure.
-
-
-
+---------- creator_id (bigint)
+----    - values_at_least (1)
+    {% set creator_id_at_least_one = {'column':'creator_id', 'type':'values_at_least', 'provided_value':'1'} %}
 
 ---------- COLLECT VARIABLES
 ---- add each screen variable above to the collection
     {% set screen_collection =  [
                                     id_not_null,
                                     id_is_unique,
-                                    additional_shipping_charge_not_negative,
-                                    apparel_material_mask_not_negative
+                                    id_at_least_one,
+                                    additional_shipping_charge_at_least_zero,
+                                    apparel_material_mask_at_least_zero,
+                                    apparel_type_at_least_one,
+                                    brand_id_not_null,
+                                    brand_id_at_least_one,
+                                    closed_out_at_range_within_history,
+                                    created_at_range_within_history
+
                                 ]%}
 
 ---------- RUN SCREENS [leave this section alone!]
