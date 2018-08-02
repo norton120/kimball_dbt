@@ -172,8 +172,26 @@
 
     "materialized":"incremental",
     "sql_where":"TRUE",
-    "schema":"STAGING_QUALITY"
-
+    "schema":"STAGING_QUALITY",
+    "post-hook": " CREATE TEMPORARY TABLE {{this.name}}_to_remove AS (
+                    SELECT
+                        FIRST_VALUE(audit_key) OVER (PARTITION BY <record_identifier> ORDER BY audit_key ASC)::varchar||'-'||<record_identifier>::varchar as remove_flag
+                        FROM {{this}}
+                    WHERE
+                        <record_identifier> IN ( SELECT
+                                    id
+                                FROM
+                                    (SELECT <record_identifier>, 
+                                            count(*) countstar 
+                                    FROM {{this}}
+                                    GROUP BY 1 
+                                    HAVING countstar > 1)));
+             
+                    DELETE FROM {{this}} 
+                    WHERE 
+                        audit_key::varchar||'-'||<record_identifier>::varchar 
+                    IN (SELECT remove_flag FROM {{this.name}}_to_remove);
+                    DROP TABLE {{this.name}}_to_remove;"
 })}}
 
 
