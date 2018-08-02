@@ -79,7 +79,6 @@
 {% set email_minimal_format = {'column':'email_address', 'type' : 'custom', 'sql_where' : "email_address NOT ILIKE '%@%'", 'screen_name' : 'email_minimal_format' } %}
 ---- flag for the email 'robaan@web.com'. this single user has 134k accounts.
 {% set email_is_robaan_at_web_dot_com = {'column': 'email_address', 'type' : 'blacklist', 'blacklist_values' : ['robaan@web.com','ROBAAN@WEB.COM'], 'value_type' : 'varchar', 'exception_action':'Reject'} %}
-<<<<<<< HEAD
 
 ---------- FIRST_NAME
 ---- Must be only alphabetical characters and spaces
@@ -168,7 +167,7 @@
                                     first_name_min_length,
                                     segment_mask_bitmask,
                                     segment_mask_null_after_2014,
-                                    last_login_at_after_created_at
+                                    last_login_at_after_created_at,
                                     email_minimal_format
                                 ]%}
 

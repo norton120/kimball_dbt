@@ -9,7 +9,8 @@
 
 ---- INCLUDE SCREENS BY ADDING THEM HERE:
 {% set all_screens = [
-                    'USERS'
+                    'USERS',
+                    'PRODUCTS'
                     ] %}
 
 
