@@ -57,10 +57,10 @@
     * If a required screen has already been created, add that screen to the table screen SQL file.
     * If not such screen has been created yet, create a new screen macro.
 
-### Creating a new screen to test for validity within a field.
-        * Template: `{% set screen_name = {'column':'column_name', 'type':'macro_name'} %}`
-        * For each screen, list the screen under screen collection: `{% set screen_collection =  [screen_name1, screen_name2, ...]%}`
-    * If not such screen has been created yet, create a new screen macro.
+### Creating a new screen to test for validity within a column.
+* Template: `{% set screen_name = {'column':'column_name', 'type':'macro_name'} %}`
+* For each screen, list the screen under screen collection: `{% set screen_collection =  [screen_name1, screen_name2, ...]%}`
+* If not such screen has been created yet, create a new screen macro.
 * All screens must be added to the screen collection in the next section.
 
 ### Creating a new screen macro.
@@ -82,7 +82,7 @@
 
 
 ## Run the Model
-* Materilize the model with dbt
+* Materialize the model with dbt
 * In Terminal:
     * Start from DW2
     * `dbt run`
