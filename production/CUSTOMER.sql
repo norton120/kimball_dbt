@@ -93,9 +93,9 @@ staging_quality AS (
     new AS (
         SELECT
             delta.{{record_identifier}},
-            {{print_columns(type_0_cols,'production')}},
-            {{print_columns(type_1_cols,'delta')}},
-            {{print_columns(type_2_cols,'delta')}},            
+            {{print_columns(type_0_cols,'staging_quality')}},
+            {{print_columns(type_1_cols,'staging_quality')}},
+            {{print_columns(type_2_cols,'staging_quality')}},            
             NULL as customer_key,
             TRUE AS current_row,
             {{date_key('CURRENT_DATE()')}} AS effective_date,
@@ -103,9 +103,9 @@ staging_quality AS (
         FROM
             delta
         LEFT JOIN
-            production
+            staging_quality
         ON
-            delta.{{record_identifier}} = production.{{record_identifier}}
+            staging_quality.{{record_identifier}} = delta.{{record_identifier}}
         WHERE
             delta.{{record_identifier}} NOT IN (SELECT DISTINCT {{record_identifier}} FROM {{this}})
     ),
@@ -127,7 +127,7 @@ staging_quality AS (
         LEFT JOIN
             production
         ON
-        production.id = delta.id
+        production.{{record_identifier}} = delta.{{record_identifier}}
     ),
 
     type_1_attributes AS (
@@ -141,11 +141,13 @@ staging_quality AS (
         production.effective_date,
         production.expiration_date
     FROM
-        production
-    LEFT JOIN
         delta
+    LEFT JOIN
+        production
     ON
-        production.id = delta.id
+        production.{{record_identifier}} = delta.{{record_identifier}}
+    WHERE
+        production.customer_key IS NOT NULL
     ),  
 
     unions AS (
@@ -209,12 +211,12 @@ staging_quality AS (
             unions.{{record_identifier}},
             
             CASE
-                WHEN (expire AND NOT customer_key) THEN FALSE 
+                WHEN (expire AND customer_key) THEN FALSE 
                 ELSE TRUE
             END AS current_row,
             
             CASE
-                WHEN (expire AND NOT customer_key) THEN {{date_key('CURRENT_DATE()')}}
+                WHEN (expire AND customer_key) THEN {{date_key('CURRENT_DATE()')}}
                 ELSE expiration_date
             END AS expiration_date,
             
@@ -277,7 +279,22 @@ FROM
     'materialized' : 'incremental',
     'sql_where' : 'TRUE',
     'schema' : 'GENERAL',
-    'pre-hook' : 'USE SCHEMA {{this.schema}}; CREATE SEQUENCE IF NOT EXISTS customer_pk_seq start = 100000'
+    'pre-hook' : 'USE SCHEMA {{this.schema}}; CREATE SEQUENCE IF NOT EXISTS customer_pk_seq start = 100000',
+    'post-hook': 'DELETE FROM {{this}} 
+                  WHERE 
+                    customer_key IN (
+                                    SELECT 
+                                        customer_key 
+                                    FROM (
+                                        SELECT 
+                                            customer_key, 
+                                            COUNT(*) countstar 
+                                        FROM 
+                                            {{this}} 
+                                        GROUP BY 1 
+                                        HAVING countstar > 1))
+                AND
+                    current_row' 
 })}}
 
 ---- DEPENDENCY HACK
