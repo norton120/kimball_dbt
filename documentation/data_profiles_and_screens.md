@@ -11,12 +11,12 @@
 * **Select a table to profile.**
 * Open Jumper from Desktop (to open connection to Postgres).
 * In Terminal:
-    * `cd DW2`
-    * `git pull`
-    * `git fetch`
-    * `git checkout branch_name_TABLE_NAME`
+    * `cd DW2`(move into the DW2 Git repository)
+    * `git pull` (to update your remote tracking branches)
+    * `git checkout branch_name_TABLE_NAME` (switch to the working branch)
+    * Use `git status` to check what branch is currently active and any pending changes.
 
-**Now local DW2 repository (data_profiles_base branch) is up to date with most recent changes on GitHub.**
+**Now the local DW2 repository (data_profiles_base branch) is up to date with the most recent changes on GitHub.**
 * This will also provide the most recent version of utilities/stat_profile_gen.py
 * In Terminal:
     * `cd data_profiles`
@@ -26,13 +26,14 @@
     * `git status`
     * `git add --all`
     * `git status`
-    * `git commit TABLE_NAME.html -m "JIRA_TICKET"`
+    * `git commit TABLE_NAME.html -m "Create TABLE_NAME data profile."`
     * `git status`
     * `git push origin branch_name_TABLE_NAME`
     * `git status` "nothing to commit, working tree clean"
 
 ### Local Python server for ~/DW2/data_profiles
-`python -m SimpleHTTPServer 8000`
+* `python -m SimpleHTTPServer 8000`
+* Open up your web browser and view available profiles.
 
 
 ## Screens
@@ -44,7 +45,7 @@
 ### Steps for creating a new table screen:
 * In Terminal:
     * `cd DW2`
-    * `python kdbt_gen.py --help` for help documentation
+    * `python kdbt_gen.py --help` (for help documentation)
         * "usage: kdbt_gen.py <model_type> <model_name> [--option_name option_value]"
         * `python kdbt_gen.py screen TABLE_NAME`
     * If an option needs to be used, after TABLE_NAME add `--option_name option_value`

@@ -2,7 +2,7 @@
 
 ### What are Screens and why do we need them?
 **Overview:**
-* "The heart of the ETL architecture is a set of quality screens that act as diagnostic filters in the data flow pipelines."
+* "The heart of the ETL architecture is a set of quality screens that act as diagnostic filters in the data flow pipelines." - The Data Warehouse Toolkit by Ralph Kimball and Margy Ross
     * Each quality screen is a test.
         * If the test against the data is successful, nothing happens and the screen has no side effects.
         * If the test fails, then it must drop an error event row into the error event schema and choose to either *halt* the process, send the offending data into *suspension*, or *tag* the data.
