@@ -33,7 +33,7 @@
 
 ### Local Python server for ~/DW2/data_profiles
 * `python -m SimpleHTTPServer 8000`
-* Open up your web browser and view available profiles.
+* Open up your web browser and enter http://localhost:8000/ to view available profiles. (Use Ctrl + c to quit.)
 
 
 ## Screens
