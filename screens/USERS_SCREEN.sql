@@ -104,6 +104,12 @@
 ---- flag for the email 'robaan@web.com'. this single user has 134k accounts.
 {% set email_is_robaan_at_web_dot_com = {'column': 'email_address', 'type' : 'blacklist', 'blacklist_values' : ['robaan@web.com','ROBAAN@WEB.COM'], 'value_type' : 'varchar', 'exception_action':'Reject'} %}
 
+---------- ESP_ID
+---- valid values must have a length of 3 characters
+{% set esp_id_length_must_be_thirty_six = {'column': 'esp_id', 'type' : 'exact_length', 'exact_length' : 36} %}
+---- esp_id must match esp_id = '________000000000000000000000_______' OR esp_id = '________-____-____-____-____________' OR esp_id IS NULL
+{% set esp_id_must_fit_these_two_formats = {'column':'esp_id', 'type' : 'custom', 'sql_where' : "esp_id NOT LIKE '________000000000000000000000_______' AND esp_id NOT LIKE '________-____-____-____-____________' AND esp_id IS NOT NULL", 'screen_name' : 'esp_id_must_fit_these_two_formats' } %}
+
 ---------- FIRST_NAME
 ---- Must be only alphabetical characters and spaces
 {% set first_name_valid = {'column':'first_name', 'type' : 'valid_name'} %}
@@ -113,6 +119,19 @@
 {% set first_name_not_cycle_gear = {'column': 'first_name', 'type' : 'blacklist', 'blacklist_values' : ['cyclegear','cyclegear.com','cycle gear','CYCLEGEAR', 'CYCLEGEAR.COM', 'CYCLE GEAR'], 'value_type' : 'varchar'} %}
 ---- Must be > 1 character
 {% set first_name_min_length = {'column' : 'first_name', 'type' : 'min_length', 'min_length' : 1} %}
+
+---------- GENDER
+---- Current gender values are either 'female' or 'male'
+{% set gender_valid_values = {'column':'gender', 'type' : 'valid_values','valid_values' : ['female','male'], 'allow_null' : True, 'value_type' : 'STRING'} %}
+---- TODO: why do anon accounts have genders assigned?
+
+---------- ID
+---- not_null
+{% set id_not_null = {'column':'id', 'type':'not_null'} %}
+---- unique
+{% set id_is_unique = {'column':'id', 'type':'unique'} %}
+---- values_at_least (1)
+{% set id_at_least_one = {'column':'id', 'type':'values_at_least', 'provided_value':'1'} %}
 
 ---------- SEGMENT_MASK
 ---- must be a bitwise AND with at least one id from segments
@@ -133,16 +152,11 @@
 ----
 ---------- ROLE_ID
 ----
----------- GENDER
----- TODO: why do anon accounts have genders assigned?
-
 ---------- ID_HASH_KEY
 ----
 ---------- LAST_NAME
 ----
 ---------- XMIN
-----
----------- ID
 ----
 ---------- IS_FRAUD
 ----
@@ -150,21 +164,16 @@
 ----
 ---------- PROFILE_IMAGE
 ----
-
----------- ESP_ID
-----
 ---------- UPDATED_AT
 ----
 ---------- IS_FRAUD_VERIFIED
 ----
-
 ---------- IS_ANONYMOUS
 ----
 ---------- PERMISSION_SECTION_GROUP_ID
 ----
 ---------- SEND_REVIEW_FOLLOWUP
 ----
-
 ---------- SITE_ID
 ----
 ---------- XMIN__TEXT__BIGINT
@@ -181,10 +190,16 @@
                                     email_only_null_for_anon,
                                     email_is_robaan_at_web_dot_com,
                                     email_minimal_format,
+                                    esp_id_length_must_be_thirty_six,
+                                    esp_id_must_fit_these_two_formats,
                                     first_name_valid,
                                     first_name_not_cycle_gear,
                                     first_name_not_revzilla,
                                     first_name_min_length,
+                                    gender_valid_values,
+                                    id_not_null,
+                                    id_is_unique,
+                                    id_at_least_one,
                                     last_login_at_after_created_at,
                                     segment_mask_bitmask,
                                     segment_mask_null_after_2014
