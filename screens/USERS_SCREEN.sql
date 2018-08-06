@@ -165,14 +165,24 @@
 ---------- LAST_LOGIN_AT
 ---- should be > created_at - however there is an application bug where this is not rarely not the case
 {% set last_login_at_after_created_at = {'type': 'column_order', 'greater_column' : 'last_login_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ' } %}
+---- date_range_within_history of RevZilla
+{% set last_login_at_range_within_history = {'column':'last_login_at', 'type':'date_range_within_history'} %}
+
+---------- LAST_NAME
+---- Must be only alphabetical characters and spaces
+{% set last_name_valid = {'column':'last_name', 'type' : 'valid_name'} %}
+---- Must not equal 'revzilla'
+{% set last_name_not_revzilla = {'column': 'last_name', 'type' : 'blacklist', 'blacklist_values' : ['revzilla','revzilla.com','REVZILLA','REVZILLA.COM', 'RevZilla', 'RevZilla.com'], 'value_type' : 'varchar'} %}
+---- Must not equal 'cycle gear'
+{% set last_name_not_cycle_gear = {'column': 'last_name', 'type' : 'blacklist', 'blacklist_values' : ['cyclegear','cyclegear.com','cycle gear','CYCLEGEAR', 'CYCLEGEAR.COM', 'CYCLE GEAR'], 'value_type' : 'varchar'} %}
+---- Must be > 1 character
+{% set last_name_min_length = {'column' : 'last_name', 'type' : 'min_length', 'min_length' : 1} %}
 
 
 
 ---------- PASSWORD_RESET_REQUESTED_AT
 ----
 ---------- ROLE_ID
-----
----------- LAST_NAME
 ----
 ---------- XMIN
 ----
@@ -218,6 +228,11 @@
                                     is_fraud_valid_values,
                                     is_fraud_verified_valid_values,
                                     last_login_at_after_created_at,
+                                    last_login_at_range_within_history,
+                                    last_name_valid,
+                                    last_name_not_revzilla,
+                                    last_name_not_cycle_gear,
+                                    last_name_min_length,
                                     segment_mask_bitmask,
                                     segment_mask_null_after_2014
                                 ]%}
