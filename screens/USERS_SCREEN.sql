@@ -133,6 +133,29 @@
 ---- values_at_least (1)
 {% set id_at_least_one = {'column':'id', 'type':'values_at_least', 'provided_value':'1'} %}
 
+---------- ID_HASH_KEY
+---- TODO: ARE SCREENS NEEDED?
+
+---------- IS_ACTIVE
+---- valid values are [t,f]
+{% set is_active_valid_values = {'column':'is_active', 'type' : 'valid_values','valid_values' : ['t','f'], 'allow_null' : False, 'value_type' : 'STRING'} %}
+
+---------- IS_ANONYMOUS
+---- valid values are [t,f]
+{% set is_anonymous_valid_values = {'column':'is_anonymous', 'type' : 'valid_values','valid_values' : ['t','f'], 'allow_null' : False, 'value_type' : 'STRING'} %}
+
+---------- IS_DELETED
+---- valid values are [t,f]
+{% set is_deleted_valid_values = {'column':'is_deleted', 'type' : 'valid_values','valid_values' : ['t','f'], 'allow_null' : False, 'value_type' : 'STRING'} %}
+
+---------- IS_FRAUD
+---- valid values are [t,f]
+{% set is_fraud_valid_values = {'column':'is_fraud', 'type' : 'valid_values','valid_values' : ['t','f'], 'allow_null' : False, 'value_type' : 'STRING'} %}
+
+---------- IS_FRAUD_VERIFIED
+---- valid values are [t,f]
+{% set is_fraud_verified_valid_values = {'column':'is_fraud_verified', 'type' : 'valid_values','valid_values' : ['t','f'], 'allow_null' : False, 'value_type' : 'STRING'} %}
+
 ---------- SEGMENT_MASK
 ---- must be a bitwise AND with at least one id from segments
 {% set segment_mask_bitmask = {'column' : 'segment_mask', 'type' : 'custom', 'sql_where' : 'id in (SELECT id FROM (SELECT raw.erp.dw_users_view.id, MAX(BITAND(segment_mask,raw.erp.segments.id)) AS in_mask FROM raw.erp.dw_users_view JOIN raw.erp.segments ON 1=1 WHERE segment_mask IS NOT NULL AND segment_mask <> 0 GROUP BY 1 HAVING in_mask = FALSE))', 'screen_name' : 'segment_mask_bitmask'} %}
@@ -144,31 +167,20 @@
 {% set last_login_at_after_created_at = {'type': 'column_order', 'greater_column' : 'last_login_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ' } %}
 
 
----------- IS_DELETED
-----
+
 ---------- PASSWORD_RESET_REQUESTED_AT
 ----
----------- IS_ACTIVE
-----
 ---------- ROLE_ID
-----
----------- ID_HASH_KEY
 ----
 ---------- LAST_NAME
 ----
 ---------- XMIN
-----
----------- IS_FRAUD
 ----
 ---------- TRANSPARENT_SIGNUP
 ----
 ---------- PROFILE_IMAGE
 ----
 ---------- UPDATED_AT
-----
----------- IS_FRAUD_VERIFIED
-----
----------- IS_ANONYMOUS
 ----
 ---------- PERMISSION_SECTION_GROUP_ID
 ----
@@ -200,6 +212,11 @@
                                     id_not_null,
                                     id_is_unique,
                                     id_at_least_one,
+                                    is_active_valid_values,
+                                    is_anonymous_valid_values,
+                                    is_deleted_valid_values,
+                                    is_fraud_valid_values,
+                                    is_fraud_verified_valid_values,
                                     last_login_at_after_created_at,
                                     segment_mask_bitmask,
                                     segment_mask_null_after_2014
