@@ -178,21 +178,30 @@
 ---- Must be > 1 character
 {% set last_name_min_length = {'column' : 'last_name', 'type' : 'min_length', 'min_length' : 1} %}
 
-
-
 ---------- PASSWORD_RESET_REQUESTED_AT
-----
+---- date_range_within_history of RevZilla
+{% set password_reset_requested_at_range_within_history = {'column':'password_reset_requested_at', 'type':'date_range_within_history'} %}
+---- should be > created_at
+{% set password_reset_requested_at_after_created_at = {'type': 'column_order', 'greater_column' : 'password_reset_requested_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ' } %}
+
+---------- PERMISSION_SECTION_GROUP_ID
+---- valid values are [5,1,13,2,16,12,8,9,17,20,3,10,18,11,15,6,7,14,21, and NULL]
+{% set permission_section_group_id_valid_values = {'column':'permission_section_group_id', 'type' : 'valid_values','valid_values' : [5,1,13,2,16,12,8,9,17,20,3,10,18,11,15,6,7,14,21], 'allow_null' : True, 'value_type' : 'number'} %}
+
+---------- PROFILE_IMAGE
+---- profile_image must end in .jpg OR .png OR .gif OR .html OR IS NULL
+{% set profile_image_must_be_a_picture_file_type = {'column':'profile_image', 'type' : 'custom', 'sql_where' : "profile_image NOT ILIKE '%.jpg' AND profile_image NOT ILIKE '%.png' AND profile_image NOT ILIKE '%.gif' AND profile_image NOT ILIKE '%.html' AND profile_image IS NOT NULL", 'screen_name' : 'profile_image_must_be_a_picture_file_type' } %}
+
+
+
 ---------- ROLE_ID
 ----
 ---------- XMIN
 ----
 ---------- TRANSPARENT_SIGNUP
 ----
----------- PROFILE_IMAGE
-----
+
 ---------- UPDATED_AT
-----
----------- PERMISSION_SECTION_GROUP_ID
 ----
 ---------- SEND_REVIEW_FOLLOWUP
 ----
@@ -233,6 +242,10 @@
                                     last_name_not_revzilla,
                                     last_name_not_cycle_gear,
                                     last_name_min_length,
+                                    password_reset_requested_at_range_within_history,
+                                    password_reset_requested_at_after_created_at,
+                                    permission_section_group_id_valid_values,
+                                    profile_image_must_be_a_picture_file_type,
                                     segment_mask_bitmask,
                                     segment_mask_null_after_2014
                                 ]%}
