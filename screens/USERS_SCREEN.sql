@@ -204,12 +204,15 @@
 ---- valid values are [1,4,2]
 {% set site_id_valid_values = {'column':'site_id', 'type' : 'valid_values','valid_values' : [1,4,2], 'allow_null' : False, 'value_type' : 'number'} %}
 
-
 ---------- TRANSPARENT_SIGNUP
-----
+---- valid values are [t,f]
+{% set transparent_signup_valid_values = {'column':'transparent_signup', 'type' : 'valid_values','valid_values' : ['t','f'], 'allow_null' : False, 'value_type' : 'STRING'} %}
 
 ---------- UPDATED_AT
-----
+---- date_range_within_history of RevZilla
+{% set updated_at_range_within_history = {'column':'updated_at', 'type':'date_range_within_history'} %}
+---- should be > created_at
+{% set updated_at_after_created_at = {'type': 'column_order', 'greater_column' : 'updated_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ' } %}
 
 ---------- XMIN
 ----
@@ -260,7 +263,10 @@
                                     segment_mask_bitmask,
                                     segment_mask_null_after_2014,
                                     send_review_followup_valid_values,
-                                    site_id_valid_values
+                                    site_id_valid_values,
+                                    transparent_signup_valid_values,
+                                    updated_at_range_within_history,
+                                    updated_at_after_created_at
                                 ]%}
 
     WITH
