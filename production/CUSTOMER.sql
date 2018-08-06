@@ -54,8 +54,53 @@ staging_quality AS (
     'materialized' : 'incremental',
     'sql_where' : 'TRUE',
     'schema' : 'GENERAL',
-    'pre-hook' : 'USE SCHEMA {{this.schema}}; CREATE SEQUENCE IF NOT EXISTS customer_pk_seq start = 100000'
-
+    'pre-hook' : 'USE SCHEMA {{this.schema}}; CREATE SEQUENCE IF NOT EXISTS customer_pk_seq start = 100000',
+    'post-hook' : ' DELETE 
+                    FROM 
+                        {{this}} 
+                    WHERE 
+                        {{this.name}}_key IN (
+                                                    SELECT 
+                                                        {{this.name}}_key 
+                                                    FROM (
+                                                        SELECT
+                                                            {{this.name}}_key, 
+                                                            COUNT(*) countstar
+                                                        FROM
+                                                            {{this}}
+                                                        GROUP BY 1
+                                                        HAVING countstar > 1)
+                                                )
+                    AND
+                        current_row IS NOT NULL;
+                    UPDATE {{this}} 
+                    SET 
+                        current_row = TRUE,
+                        expiration_date = 99991231                     
+                    WHERE 
+                        effective_date IS NOT NULL;
+                    UPDATE {{this}}
+                    SET
+                        current_row = FALSE,
+                        expiration_date = {{date_key("CURRENT_DATE()")}}
+                    WHERE
+                        id IN (
+                                                    SELECT 
+                                                        id
+                                                    FROM
+                                                        {{this}}
+                                                    WHERE
+                                                        current_row IS NULL
+                                                )
+                    AND
+                        current_row = TRUE;
+                    UPDATE {{this}}
+                    SET
+                        current_row = TRUE,
+                        effective_date = {{date_key("CURRENT_DATE()")}},
+                        expiration_date = 99991231
+                    WHERE
+                        current_row IS NULL;'
 })}}
 
 ---- DEPENDENCY HACK
