@@ -189,8 +189,8 @@
 {% set permission_section_group_id_valid_values = {'column':'permission_section_group_id', 'type' : 'valid_values','valid_values' : [5,1,13,2,16,12,8,9,17,20,3,10,18,11,15,6,7,14,21], 'allow_null' : True, 'value_type' : 'number'} %}
 
 ---------- PROFILE_IMAGE
----- profile_image must end in .jpg OR .png OR .gif OR .html OR IS NULL
-{% set profile_image_must_be_a_picture_file_type = {'column':'profile_image', 'type' : 'custom', 'sql_where' : "profile_image NOT ILIKE '%.jpg' AND profile_image NOT ILIKE '%.png' AND profile_image NOT ILIKE '%.gif' AND profile_image NOT ILIKE '%.html' AND profile_image IS NOT NULL", 'screen_name' : 'profile_image_must_be_a_picture_file_type' } %}
+---- profile_image must end in .jpg OR .png OR .gif OR IS NULL
+{% set profile_image_must_be_a_picture_file_type = {'column':'profile_image', 'type' : 'custom', 'sql_where' : "profile_image NOT ILIKE '%.jpg' AND profile_image NOT ILIKE '%.png' AND profile_image NOT ILIKE '%.gif' AND profile_image IS NOT NULL", 'screen_name' : 'profile_image_must_be_a_picture_file_type' } %}
 
 
 
