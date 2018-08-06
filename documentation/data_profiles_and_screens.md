@@ -69,7 +69,12 @@
 * Add new screen macros to the screen_declaration so that a CTE is created for each column screen passed.
 
 
-## Audits
+## Update ERROR_EVENT_FACTS
+* Add the available screens in the first section.
+* The name to add to this list is the name of the screen file, minus "SCREEN" (`{{ref(screen|upper +'_SCREEN')}}`).
+
+
+## Update Audits
 * Set the variables for each source to be audited.
 * Combine the list of the sources to be audited in the next section below.
 

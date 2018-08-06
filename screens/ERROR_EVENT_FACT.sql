@@ -1,33 +1,34 @@
 ---------- ERROR EVENT
 ---- AS screens are applied during audits they can generate errors.
 ---- These errors are collected and added to the error event table here.
----- to use, just add the prefix of the screen you want to the all_screens variable. 
+---- to use, just add the prefix of the screen you want to the all_screens variable.
 ---- for example, if you want to add the ORDERS_SCREEN.sql results, add 'ORDERS' to the all_screens variable.
 
 ---------- FORMATTING
----- keep the values in the all_screens list in alphabetical order so they are easy to search through.  
+---- keep the values in the all_screens list in alphabetical order so they are easy to search through.
 
 ---- INCLUDE SCREENS BY ADDING THEM HERE:
 {% set all_screens = [
-                    'USERS'
+                    'PRODUCTS',
+                    'DW_USERS_VIEW'
                     ] %}
 
 
 
 ---------- NOTHING TO CHANGE BELOW HERE
----- this is all framework from here down. 
+---- this is all framework from here down.
 
 
 WITH
 unioned_error_events AS (
-    SELECT 
+    SELECT
         audit_key,
         screen_name,
         error_subject,
         record_identifier,
-        error_event_action 
+        error_event_action
     FROM
-        
+
 {% for screen in all_screens %}
     (
     SELECT
@@ -35,9 +36,9 @@ unioned_error_events AS (
         screen_name,
         error_subject,
         record_identifier,
-        error_event_action 
+        error_event_action
     FROM
-        {{ref(screen|upper +'_SCREEN')}}   
+        {{ref(screen|upper +'_SCREEN')}}
     )
     {{ 'UNION' if not loop.last }}
 
@@ -45,17 +46,17 @@ unioned_error_events AS (
 
 
 )
----- create the final partial    
+---- create the final partial
     SELECT
         sequence.nextval AS error_event_key,
         audit_key,
         screen_name,
         error_subject,
         record_identifier,
-        error_event_action    
+        error_event_action
     FROM
         unioned_error_events,
-        TABLE(getnextval(quality_error_event_fact_pk_seq)) sequence  
+        TABLE(getnextval(quality_error_event_fact_pk_seq)) sequence
     WHERE
         audit_key IS NOT NULL
 
@@ -74,9 +75,9 @@ unioned_error_events AS (
             "{{comment({'column':'record_identifier','definition':'The PK of the record that failed the screen. For entities Not Applicable.'})}}",
             "{{comment({'column':'error_event_action','definition':'The action taken in response to the instance failing the screen.'})}}",
 
-            "{{comment({'definition':'Every time an instance or entity fails a screen, an error event is created.', 
-                        'grain':'Every time an instance or entity fails a screen, an error event is created.'})}}"    
-    
+            "{{comment({'definition':'Every time an instance or entity fails a screen, an error event is created.',
+                        'grain':'Every time an instance or entity fails a screen, an error event is created.'})}}"
+
    ]})}}
 
 ---------- DEPENDENCY HACK
