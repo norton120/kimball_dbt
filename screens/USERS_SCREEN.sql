@@ -156,12 +156,6 @@
 ---- valid values are [t,f]
 {% set is_fraud_verified_valid_values = {'column':'is_fraud_verified', 'type' : 'valid_values','valid_values' : ['t','f'], 'allow_null' : False, 'value_type' : 'STRING'} %}
 
----------- SEGMENT_MASK
----- must be a bitwise AND with at least one id from segments
-{% set segment_mask_bitmask = {'column' : 'segment_mask', 'type' : 'custom', 'sql_where' : 'id in (SELECT id FROM (SELECT raw.erp.dw_users_view.id, MAX(BITAND(segment_mask,raw.erp.segments.id)) AS in_mask FROM raw.erp.dw_users_view JOIN raw.erp.segments ON 1=1 WHERE segment_mask IS NOT NULL AND segment_mask <> 0 GROUP BY 1 HAVING in_mask = FALSE))', 'screen_name' : 'segment_mask_bitmask'} %}
----- not used on records created > 2014-01-01
-{% set segment_mask_null_after_2014 = {'column' : 'segment_mask', 'date_column': 'created_at', 'type' : 'static_value_after', 'before' : '2014-01-01'} %}
-
 ---------- LAST_LOGIN_AT
 ---- should be > created_at - however there is an application bug where this is not rarely not the case
 {% set last_login_at_after_created_at = {'type': 'column_order', 'greater_column' : 'last_login_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ' } %}
@@ -192,22 +186,38 @@
 ---- profile_image must end in .jpg OR .png OR .gif OR IS NULL
 {% set profile_image_must_be_a_picture_file_type = {'column':'profile_image', 'type' : 'custom', 'sql_where' : "profile_image NOT ILIKE '%.jpg' AND profile_image NOT ILIKE '%.png' AND profile_image NOT ILIKE '%.gif' AND profile_image IS NOT NULL", 'screen_name' : 'profile_image_must_be_a_picture_file_type' } %}
 
-
-
 ---------- ROLE_ID
-----
----------- XMIN
-----
+---- valid values are [1,2,5,3]
+{% set role_id_valid_values = {'column':'role_id', 'type' : 'valid_values','valid_values' : [1,2,5,3], 'allow_null' : False, 'value_type' : 'number'} %}
+
+---------- SEGMENT_MASK
+---- must be a bitwise AND with at least one id from segments
+{% set segment_mask_bitmask = {'column' : 'segment_mask', 'type' : 'custom', 'sql_where' : 'id in (SELECT id FROM (SELECT raw.erp.dw_users_view.id, MAX(BITAND(segment_mask,raw.erp.segments.id)) AS in_mask FROM raw.erp.dw_users_view JOIN raw.erp.segments ON 1=1 WHERE segment_mask IS NOT NULL AND segment_mask <> 0 GROUP BY 1 HAVING in_mask = FALSE))', 'screen_name' : 'segment_mask_bitmask'} %}
+---- not used on records created > 2014-01-01
+{% set segment_mask_null_after_2014 = {'column' : 'segment_mask', 'date_column': 'created_at', 'type' : 'static_value_after', 'before' : '2014-01-01'} %}
+
+---------- SEND_REVIEW_FOLLOWUP
+---- valid values are [t,f]
+{% set send_review_followup_valid_values = {'column':'send_review_followup', 'type' : 'valid_values','valid_values' : ['t','f'], 'allow_null' : False, 'value_type' : 'STRING'} %}
+
+---------- SITE_ID
+---- valid values are [1,4,2]
+{% set site_id_valid_values = {'column':'site_id', 'type' : 'valid_values','valid_values' : [1,4,2], 'allow_null' : False, 'value_type' : 'number'} %}
+
+
 ---------- TRANSPARENT_SIGNUP
 ----
 
 ---------- UPDATED_AT
 ----
----------- SEND_REVIEW_FOLLOWUP
+
+---------- XMIN
 ----
----------- SITE_ID
-----
----------- XMIN__TEXT__BIGINT
+
+
+
+---------- COLLECT VARIABLES
+---- add each screen variable above to the collection
 
 
     {% set screen_collection =  [
@@ -246,8 +256,11 @@
                                     password_reset_requested_at_after_created_at,
                                     permission_section_group_id_valid_values,
                                     profile_image_must_be_a_picture_file_type,
+                                    role_id_valid_values,
                                     segment_mask_bitmask,
-                                    segment_mask_null_after_2014
+                                    segment_mask_null_after_2014,
+                                    send_review_followup_valid_values,
+                                    site_id_valid_values
                                 ]%}
 
     WITH
