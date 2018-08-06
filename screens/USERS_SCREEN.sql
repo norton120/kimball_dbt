@@ -76,6 +76,15 @@
 ---- all birth dates must be before the current date
 {% set birth_date_at_least_today = {'column': 'birth_date', 'type' : 'values_at_least', 'provided_value' : current_date} %}
 
+---------- BRAINTREE_CUSTOMER_ID
+---- TODO: ARE SCREENS NEEDED?
+
+---------- COUNTRY_OF_RESIDENCE
+---- valid values must have a length of 3 characters
+{% set country_of_residence_length_must_be_three = {'column': 'country_of_residence', 'type' : 'exact_length', 'exact_length' : 3} %}
+---- strings must be uppercase
+{% set country_of_residence_must_be_uppercase = {'column':'country_of_residence', 'type' : 'custom', 'sql_where' : "UPPER(country_of_residence) <> country_of_residence AND country_of_residence IS NOT NULL", 'screen_name' : 'country_of_residence_must_be_uppercase' } %}
+
 --------- EMAIL_ADDRESS
 ---- must only be null if user is_anaonymous
 {% set email_only_null_for_anon = {'column':'email_address','type' : 'custom', 'sql_where' : 'email_address IS NULL AND NOT is_anonymous','screen_name':'email_only_null_for_anon'} %}
@@ -83,7 +92,6 @@
 {% set email_minimal_format = {'column':'email_address', 'type' : 'custom', 'sql_where' : "email_address NOT ILIKE '%@%'", 'screen_name' : 'email_minimal_format' } %}
 ---- flag for the email 'robaan@web.com'. this single user has 134k accounts.
 {% set email_is_robaan_at_web_dot_com = {'column': 'email_address', 'type' : 'blacklist', 'blacklist_values' : ['robaan@web.com','ROBAAN@WEB.COM'], 'value_type' : 'varchar', 'exception_action':'Reject'} %}
-<<<<<<< HEAD
 
 ---------- FIRST_NAME
 ---- Must be only alphabetical characters and spaces
@@ -139,10 +147,6 @@
 ----
 ---------- IS_FRAUD_VERIFIED
 ----
----------- BRAINTREE_CUSTOMER_ID
-----
----------- COUNTRY_OF_RESIDENCE
-----
 ---------- CREATED_AT
 ----
 ---------- IS_ANONYMOUS
@@ -151,7 +155,6 @@
 ----
 ---------- SEND_REVIEW_FOLLOWUP
 ----
-
 ---------- DEPARTMENT_ID
 ----
 ---------- SITE_ID
@@ -162,6 +165,9 @@
     {% set screen_collection =  [
                                     age_range_created_before_2015,
                                     age_range_valid_values,
+                                    birth_date_at_least_today,
+                                    country_of_residence_length_must_be_three,
+                                    country_of_residence_must_be_uppercase,
                                     email_only_null_for_anon,
                                     email_is_robaan_at_web_dot_com,
                                     email_minimal_format,
