@@ -1,14 +1,14 @@
 ---------- USERS_SCREEN SCREEN
----- Screens are source-data-quality tests that we use to investigate and record data quality.     
----- You pass screens to the screen_collection list (below) for them to be run and error events collected. 
+---- Screens are source-data-quality tests that we use to investigate and record data quality.
+---- You pass screens to the screen_collection list (below) for them to be run and error events collected.
 
 ---- target_audit_properties contains meta about the current audit. it also accepts an exception_action key with
 ---- one of 4 values:
 ---- - Ignore : pass the record without action, but record the error
----- - Flag : pass the record but flag it as a quality issue 
+---- - Flag : pass the record but flag it as a quality issue
 ---- - Reject : discard the record, record the error
 ---- - Halt : stop ETL process and sound alarm
----- default is Flag. 
+---- default is Flag.
 
 ---------- STATEMENTS [leave this section alone!]
 ---- Statements populate the python context with information about the subject audit.
@@ -37,7 +37,7 @@
             entity_key = 'DW_USERS_VIEW'
         AND
             audit_status = 'In Process'
-        ORDER BY audit_key DESC 
+        ORDER BY audit_key DESC
         LIMIT 1
 
     {%- endcall -%}
@@ -51,16 +51,16 @@
 -- update the record identifier to match the table primary key
 
         {%- set target_audit_properties = {
-                                'database' : 'RAW', 
+                                'database' : 'RAW',
                                 'schema' : 'ERP',
-                                'entity' : 'DW_USERS_VIEW', 
+                                'entity' : 'DW_USERS_VIEW',
                                 'audit_key' :  audit_response[0],
                                 'cdc_target' : audit_response[1],
                                 'lowest_cdc' : audit_response[2],
                                 'highest_cdc' : audit_response[3],
-                                'cdc_data_type' : audit_response[4], 
+                                'cdc_data_type' : audit_response[4],
                                 'record_identifier' : 'id' } -%}
-                        
+
 
 ---------- SCREENS
 ---- All screens are flag unless noted
@@ -69,8 +69,12 @@
 ---- valid values are [4,3,2,7,5 and NULL]
 {% set age_range_valid_values = {'column':'AGE_RANGE', 'type' : 'valid_values','valid_values' : [4,3,2,7,5], 'allow_null' : True, 'value_type' : 'number'} %}
 ---- all users created > 2015-02-01 are null. Older users are still updated daily due to facebook.
-{% set age_range_created_before_2015 = {'column':'AGE_RANGE', 'type' : 'custom', 
+{% set age_range_created_before_2015 = {'column':'AGE_RANGE', 'type' : 'custom',
     'sql_where' : "age_range IS NOT NULL and created_at > '2015-02-01'", 'screen_name' : 'age_range_created_before_2015'} %}
+
+---------- BIRTH_DATE
+---- all birth dates must be before the current date
+{% set birth_date_at_least_today = {'column': 'birth_date', 'type' : 'values_at_least', 'provided_value' : current_date} %}
 
 --------- EMAIL_ADDRESS
 ---- must only be null if user is_anaonymous
@@ -84,9 +88,9 @@
 ---------- FIRST_NAME
 ---- Must be only alphabetical characters and spaces
 {% set first_name_valid = {'column':'first_name', 'type' : 'valid_name'} %}
----- Must not equal 'revzilla' 
+---- Must not equal 'revzilla'
 {% set first_name_not_revzilla = {'column': 'first_name', 'type' : 'blacklist', 'blacklist_values' : ['revzilla','revzilla.com','REVZILLA','REVZILLA.COM', 'RevZilla', 'RevZilla.com'], 'value_type' : 'varchar'} %}
----- Must not equal 'cycle gear' 
+---- Must not equal 'cycle gear'
 {% set first_name_not_cycle_gear = {'column': 'first_name', 'type' : 'blacklist', 'blacklist_values' : ['cyclegear','cyclegear.com','cycle gear','CYCLEGEAR', 'CYCLEGEAR.COM', 'CYCLE GEAR'], 'value_type' : 'varchar'} %}
 ---- Must be > 1 character
 {% set first_name_min_length = {'column' : 'first_name', 'type' : 'min_length', 'min_length' : 1} %}
@@ -111,7 +115,7 @@
 ---------- ROLE_ID
 ----
 ---------- GENDER
----- TODO: why do anon accounts have genders assigned? 
+---- TODO: why do anon accounts have genders assigned?
 
 ---------- ID_HASH_KEY
 ----
@@ -147,8 +151,7 @@
 ----
 ---------- SEND_REVIEW_FOLLOWUP
 ----
----------- BIRTH_DATE
-----
+
 ---------- DEPARTMENT_ID
 ----
 ---------- SITE_ID
@@ -191,10 +194,10 @@
 ---- when no new data is present, return an empty table
     SELECT
         *
-    FROM 
+    FROM
         {{this.database}}.{{this.schema}}.error_event_fact
     WHERE 1=0
-{% endif %} 
+{% endif %}
 
 
 
@@ -206,4 +209,3 @@
     "schema":"QUALITY"
 
 })}}
-    
