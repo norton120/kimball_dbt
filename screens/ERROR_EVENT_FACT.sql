@@ -10,7 +10,7 @@
 ---- INCLUDE SCREENS BY ADDING THEM HERE:
 {% set all_screens = [
                     'PRODUCTS',
-                    'USERS'
+                    'DW_USERS_VIEW'
                     ] %}
 
 
