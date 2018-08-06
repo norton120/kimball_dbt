@@ -215,7 +215,7 @@
 {% set updated_at_after_created_at = {'type': 'column_order', 'greater_column' : 'updated_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ' } %}
 
 ---------- XMIN
-----
+---- NO SCREENS REQUIRED
 
 
 
