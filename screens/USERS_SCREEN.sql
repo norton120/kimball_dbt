@@ -85,6 +85,17 @@
 ---- strings must be uppercase
 {% set country_of_residence_must_be_uppercase = {'column':'country_of_residence', 'type' : 'custom', 'sql_where' : "UPPER(country_of_residence) <> country_of_residence AND country_of_residence IS NOT NULL", 'screen_name' : 'country_of_residence_must_be_uppercase' } %}
 
+---------- CREATED_AT
+---- date_range_within_history of RevZilla
+{% set created_at_range_within_history = {'column':'created_at', 'type':'date_range_within_history'} %}
+
+---------- DEALER_ID
+---- TODO: ARE SCREENS NEEDED?
+
+---------- DEPARTMENT_ID
+---- valid values are [3,1,6,2,5,4,10,11,9,8,7, and NULL]
+{% set department_id_valid_values = {'column':'department_id', 'type' : 'valid_values','valid_values' : [3,1,6,2,5,4,10,11,9,8,7], 'allow_null' : True, 'value_type' : 'number'} %}
+
 --------- EMAIL_ADDRESS
 ---- must only be null if user is_anaonymous
 {% set email_only_null_for_anon = {'column':'email_address','type' : 'custom', 'sql_where' : 'email_address IS NULL AND NOT is_anonymous','screen_name':'email_only_null_for_anon'} %}
@@ -139,24 +150,21 @@
 ----
 ---------- PROFILE_IMAGE
 ----
----------- DEALER_ID
-----
+
 ---------- ESP_ID
 ----
 ---------- UPDATED_AT
 ----
 ---------- IS_FRAUD_VERIFIED
 ----
----------- CREATED_AT
-----
+
 ---------- IS_ANONYMOUS
 ----
 ---------- PERMISSION_SECTION_GROUP_ID
 ----
 ---------- SEND_REVIEW_FOLLOWUP
 ----
----------- DEPARTMENT_ID
-----
+
 ---------- SITE_ID
 ----
 ---------- XMIN__TEXT__BIGINT
@@ -168,6 +176,8 @@
                                     birth_date_at_least_today,
                                     country_of_residence_length_must_be_three,
                                     country_of_residence_must_be_uppercase,
+                                    created_at_range_within_history,
+                                    department_id_valid_values,
                                     email_only_null_for_anon,
                                     email_is_robaan_at_web_dot_com,
                                     email_minimal_format,
@@ -175,10 +185,9 @@
                                     first_name_not_cycle_gear,
                                     first_name_not_revzilla,
                                     first_name_min_length,
+                                    last_login_at_after_created_at,
                                     segment_mask_bitmask,
-                                    segment_mask_null_after_2014,
-                                    last_login_at_after_created_at
-                                    email_minimal_format
+                                    segment_mask_null_after_2014
                                 ]%}
 
     WITH
