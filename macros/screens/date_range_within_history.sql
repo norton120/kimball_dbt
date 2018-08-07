@@ -15,15 +15,15 @@
 
         AND
             (
-                    (
+                NOT    (
                             date_part('year', {{screen_args.column}}) >= 2007
                         AND
                             date_part('month', {{screen_args.column}}) >= 11
                         AND
                             {{screen_args.column}} < current_timestamp
                     )
-                OR
-                    {{screen_args.column}} IS NULL
+                AND
+                    {{screen_args.column}} IS NOT NULL
             )
     )
 {%- endmacro -%}
