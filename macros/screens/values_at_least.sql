@@ -13,9 +13,9 @@
 
         AND
             (
-                    {{screen_args.column}} >= {{screen_args.provided_value}}
-                OR
-                    {{screen_args.column}} IS NULL
+                    {{screen_args.column}} < {{screen_args.provided_value}}
+                AND
+                    {{screen_args.column}} IS NOT NULL
             )
     )
 {%- endmacro -%}
