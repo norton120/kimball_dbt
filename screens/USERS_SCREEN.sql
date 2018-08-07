@@ -136,7 +136,8 @@
 {% set id_at_least_one = {'column':'id', 'type':'values_at_least', 'provided_value':1} %}
 
 ---------- ID_HASH_KEY
----- TODO: ARE SCREENS NEEDED?
+---- valid values must have a length of 40 characters
+{% set id_hash_key_length_must_be_forty = {'column': 'id_hash_key', 'type' : 'exact_length', 'exact_length' : 40} %}
 
 ---------- IS_ACTIVE
 ---- valid values are [t,f]
@@ -248,6 +249,7 @@
                                     id_not_null,
                                     id_is_unique,
                                     id_at_least_one,
+                                    id_hash_key_length_must_be_forty,
                                     is_active_valid_values,
                                     is_anonymous_valid_values,
                                     is_deleted_valid_values,
