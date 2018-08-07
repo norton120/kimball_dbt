@@ -33,6 +33,7 @@ WITH
 ---- variable_name = [<schema>, <entity>, <cdc_column>, <cdc_column_data_type>,<incremental>, <entity_type>, <database>]
 ---- see the macro definition for more info at /macros/kdbt_utils/initial_audit_partial.sql
 
+    {% set erp_fiscal_calendars  = ["ERP", "FISCAL_CALENDARS","XMIN__TEXT__BIGINT","NUMBER"] %}
     {% set erp_products  = ["ERP", "PRODUCTS","XMIN__TEXT__BIGINT","NUMBER"] %}
     {% set erp_users  = ["ERP", "DW_USERS_VIEW","XMIN","NUMBER"] %}
 
@@ -40,6 +41,7 @@ WITH
 
 ---- combine the lists here. This is because jinja doesn't like nested list assignment.
     {%- set all_audit_partials = [
+                                erp_fiscal_calendars,
                                 erp_products,
                                 erp_users
                                 ] -%}
