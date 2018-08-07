@@ -14,16 +14,12 @@
             {{universal_audit_property_set(screen_args.type,screen_args,kwargs)}}
 
         AND
-            (
-                NOT    (
-                            date_part('year', {{screen_args.column}}) >= 2007
-                        AND
-                            date_part('month', {{screen_args.column}}) >= 11
-                        AND
-                            {{screen_args.column}} < current_timestamp
-                    )
+            NOT(
+                    date_trunc('MONTH', {{screen_args.column}}) >= '2007-04-01'
                 AND
-                    {{screen_args.column}} IS NOT NULL
+                    {{screen_args.column}} <= DATEADD(day,1,current_date())
             )
+        AND
+            {{screen_args.column}} IS NOT NULL
     )
 {%- endmacro -%}

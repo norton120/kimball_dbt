@@ -12,10 +12,8 @@
             {{universal_audit_property_set('values_at_least',screen_args,kwargs)}}
 
         AND
-            (
-                    {{screen_args.column}} < {{screen_args.provided_value}}
-                AND
-                    {{screen_args.column}} IS NOT NULL
-            )
+            {{screen_args.column}} < {{screen_args.provided_value}}
+        AND
+            {{screen_args.column}} IS NOT NULL
     )
 {%- endmacro -%}
