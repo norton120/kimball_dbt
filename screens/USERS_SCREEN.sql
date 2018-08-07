@@ -131,7 +131,7 @@
 ---- unique
 {% set id_is_unique = {'column':'id', 'type':'unique'} %}
 ---- values_at_least (1)
-{% set id_at_least_one = {'column':'id', 'type':'values_at_least', 'provided_value':'1'} %}
+{% set id_at_least_one = {'column':'id', 'type':'values_at_least', 'provided_value':1} %}
 
 ---------- ID_HASH_KEY
 ---- TODO: ARE SCREENS NEEDED?
