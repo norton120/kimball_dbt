@@ -9,7 +9,7 @@
 
     {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_DATE_RANGE_WITHIN_HISTORY AS (
         SELECT
-            {{universal_audit_property_set('date_range_within_history_{{kwargs.provided_value}}',screen_args,kwargs)}}
+            {{universal_audit_property_set(screen_args.type,screen_args,kwargs)}}
 
         AND
             (

@@ -11,12 +11,8 @@
 ---- RETURNS: string the compiled DDL statement 
 #}
     {% for con in constraints %}
-        {% if adapter.already_exists(schema, entity) %}
-            ALTER TABLE {{schema}}.{{entity}} DROP CONSTRAINT {{con}}_{{attribute}};
-        {% endif %}        
-
         ALTER TABLE {{schema}}.{{entity}} ADD CONSTRAINT {{con}}_{{attribute}}
-        {% if con == 'FKey' %}
+        {% if con == 'Fkey' %}
             FOREIGN KEY ({{attribute}})
             REFERENCES {{fkey_entity}} ({{fkey_attribute}});
         {% elif con == 'Pkey' %}

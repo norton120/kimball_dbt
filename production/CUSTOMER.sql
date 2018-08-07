@@ -69,7 +69,11 @@ staging_quality AS (
     'materialized' : 'table',
     'sql_where' : 'TRUE',
     'schema' : 'GENERAL',
-    'pre-hook' : "USE SCHEMA {{this.schema}}; CREATE SEQUENCE IF NOT EXISTS customer_pk_seq start = 100000"
+    'pre-hook' : "USE SCHEMA {{this.schema}}; CREATE SEQUENCE IF NOT EXISTS customer_pk_seq start = 100000",
+    'post-hook': [
+                    "{{add_constraints(['Pkey'], this.schema, this.name + '__dbt_tmp', 'customer_key')}}"
+                    
+                ]
         
                 
 
