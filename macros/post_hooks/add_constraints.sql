@@ -6,12 +6,12 @@
 ----    - entity (string) the fully qualified entity path
 ----    - fkey_entity (string) the entity name to fkey against
 ----    - fkey_attribute (string) the attribute to fkey against
-
-
 ---- RETURNS: string the compiled DDL statement 
+---- Note: this sets the constraints on __dbt_tmp table which is then renamed into the prod table
+
 #}
     {% for con in constraints %}
-        ALTER TABLE {{schema}}.{{entity}} ADD CONSTRAINT {{con}}_{{attribute}}
+        ALTER TABLE {{schema}}.{{entity}}__dbt_tmp ADD CONSTRAINT {{con}}_{{attribute}}
         {% if con == 'Fkey' %}
             FOREIGN KEY ({{attribute}})
             REFERENCES {{fkey_entity}} ({{fkey_attribute}});

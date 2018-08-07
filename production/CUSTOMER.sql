@@ -71,7 +71,7 @@ staging_quality AS (
     'schema' : 'GENERAL',
     'pre-hook' : "USE SCHEMA {{this.schema}}; CREATE SEQUENCE IF NOT EXISTS customer_pk_seq start = 100000",
     'post-hook': [
-                    "{{add_constraints(['Pkey'], this.schema, this.name + '__dbt_tmp', 'customer_key')}}"
+                    "{{add_constraints(['Pkey'], this.schema, this.name, 'customer_key')}}"
                     
                 ]
         
