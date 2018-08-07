@@ -77,7 +77,8 @@
 {% set birth_date_not_in_the_future = {'column': 'birth_date', 'type' : 'custom', 'sql_where' : 'birth_date > DATEADD(day,1,current_date())'} %}
 
 ---------- BRAINTREE_CUSTOMER_ID
----- TODO: ARE SCREENS NEEDED?
+---- values_at_least (1)
+{% set braintree_customer_id_at_least_one = {'column':'braintree_customer_id', 'type':'values_at_least', 'provided_value':1} %}
 
 ---------- COUNTRY_OF_RESIDENCE
 ---- valid values must have a length of 3 characters
@@ -90,7 +91,8 @@
 {% set created_at_range_within_history = {'column':'created_at', 'type':'date_range_within_history'} %}
 
 ---------- DEALER_ID
----- TODO: ARE SCREENS NEEDED?
+---- values_at_least (1)
+{% set dealer_id_at_least_one = {'column':'dealer_id', 'type':'values_at_least', 'provided_value':1} %}
 
 ---------- DEPARTMENT_ID
 ---- valid values are [3,1,6,2,5,4,10,11,9,8,7, and NULL]
@@ -227,9 +229,11 @@
                                     age_range_created_before_2015,
                                     age_range_valid_values,
                                     birth_date_not_in_the_future,
+                                    braintree_customer_id_at_least_one,
                                     country_of_residence_length_must_be_three,
                                     country_of_residence_must_be_uppercase,
                                     created_at_range_within_history,
+                                    dealer_id_at_least_one,
                                     department_id_valid_values,
                                     email_only_null_for_anon,
                                     email_is_robaan_at_web_dot_com,
