@@ -1,11 +1,11 @@
----------- VALID NAME SCREEN
----- Verifies that a given name matches expected English naming conventions
----- note: We are using English base conventions to simplify support at the BI level. 
----- Non-UTF characters are perfectly acceptable but will be flagged by this macro.
-
 {%- macro valid_name(screen_args, kwargs) -%}
+{#
+---- INTENT: screens for values with an invalid English naming convention
+----    note: We are using English base conventions to simplify support at the BI level. 
+----    Non-UTF characters are perfectly acceptable but will be flagged by this macro.
+----
 ---- Pass the screen_args object with these params:
-----    - column (string) the column tested. 
+----    - column (string) the name of the column to test
 ---- Pass the kwargs object with these params:
 ----    - database (string) the source database 
 ----    - schema (string) the source schema
@@ -16,6 +16,8 @@
 ----    - highest_cdc (string) the highest cdc_target value in this audit
 ----    - cdc_data_type (string) the native data type of the cdc_column in the source entity
 ----    - record_identifier (string) the primary key for the source entity
+---- RETURNS: string CTE of failing condition rows
+#}
     {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_VALID_NAME AS (
         SELECT
             {{universal_audit_property_set('valid_name',screen_args,kwargs)}}

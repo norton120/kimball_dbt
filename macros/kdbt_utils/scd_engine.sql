@@ -23,7 +23,7 @@
 {% if kwargs.target_exists %}
 
 
----- Current production values
+{#---- Current production values #}
     current_rows AS (
         SELECT
             {{kwargs.record_identifier}},
@@ -36,7 +36,7 @@
     ),
 
 
----- Type 2 rows
+{#---- Type 2 rows #}
     type_2_rows AS (
         SELECT
             NULL AS {{kwargs.name}}_key,
@@ -68,8 +68,9 @@
     ),
 
 
----- This handles the type 1 transforms. Note: this depends on Type 1 columns not having NULL values, 
+{#---- This handles the type 1 transforms. Note: this depends on Type 1 columns not having NULL values, 
 ---- which is our convention for fully transformed attributes. 
+#}
     updated_production AS (
         SELECT
             production.{{kwargs.name}}_key,

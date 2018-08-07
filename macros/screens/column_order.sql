@@ -1,7 +1,8 @@
----------- COLUMN ORDER SCREEN
----- given 2 columns, verifies that one is always greater than the other
 {%- macro column_order(screen_args, kwargs) -%}
+{#
+---- INTENT: screens for records where columns are not in proper value order with each other
 ---- Pass the screen_args object with these params:
+----    - column (string) the name of the column to test
 ----    - greater_column (number) the column with the expected greater value. 
 ----    - lesser_column (string) the column with the expected lower value. 
 ----    - data_type (string) the data type to cast both columns.
@@ -16,6 +17,9 @@
 ----    - highest_cdc (string) the highest cdc_target value in this audit
 ----    - cdc_data_type (string) the native data type of the cdc_column in the source entity
 ----    - record_identifier (string) the primary key for the source entity
+---- RETURNS: string CTE of failing condition rows
+#}
+
 
     {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_COLUMN_ORDER AS (
         SELECT
