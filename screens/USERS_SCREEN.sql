@@ -74,7 +74,7 @@
 
 ---------- BIRTH_DATE
 ---- all birth dates must be before the current date
-{% set birth_date_at_least_today = {'column': 'birth_date', 'type' : 'values_at_least', 'provided_value' : 'current_date'} %}
+{% set birth_date_not_in_the_future = {'column': 'birth_date', 'type' : 'custom', 'sql_where' : 'birth_date > DATEADD(day,1,current_date())'} %}
 
 ---------- BRAINTREE_CUSTOMER_ID
 ---- TODO: ARE SCREENS NEEDED?
@@ -158,7 +158,7 @@
 
 ---------- LAST_LOGIN_AT
 ---- should be > created_at - however there is an application bug where this is not rarely not the case
-{% set last_login_at_after_created_at = {'type': 'column_order', 'greater_column' : 'last_login_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ' } %}
+{% set last_login_at_after_created_at = {'type': 'column_order', 'column' : 'last_login_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ', 'equal' : True} %}
 ---- date_range_within_history of RevZilla
 {% set last_login_at_range_within_history = {'column':'last_login_at', 'type':'date_range_within_history'} %}
 
@@ -176,7 +176,7 @@
 ---- date_range_within_history of RevZilla
 {% set password_reset_requested_at_range_within_history = {'column':'password_reset_requested_at', 'type':'date_range_within_history'} %}
 ---- should be > created_at
-{% set password_reset_requested_at_after_created_at = {'type': 'column_order', 'greater_column' : 'password_reset_requested_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ' } %}
+{% set password_reset_requested_at_after_created_at = {'type': 'column_order', 'column' : 'password_reset_requested_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ', 'equal' : True} %}
 
 ---------- PERMISSION_SECTION_GROUP_ID
 ---- valid values are [5,1,13,2,16,12,8,9,17,20,3,10,18,11,15,6,7,14,21, and NULL]
@@ -212,7 +212,7 @@
 ---- date_range_within_history of RevZilla
 {% set updated_at_range_within_history = {'column':'updated_at', 'type':'date_range_within_history'} %}
 ---- should be > created_at
-{% set updated_at_after_created_at = {'type': 'column_order', 'greater_column' : 'updated_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ' } %}
+{% set updated_at_after_created_at = {'type': 'column_order', 'column' : 'updated_at', 'lesser_column' : 'created_at', 'data_type' : 'TIMESTAMP_LTZ', 'equal' : True} %}
 
 ---------- XMIN
 ---- NO SCREENS REQUIRED
@@ -226,7 +226,7 @@
     {% set screen_collection =  [
                                     age_range_created_before_2015,
                                     age_range_valid_values,
-                                    birth_date_at_least_today,
+                                    birth_date_not_in_the_future,
                                     country_of_residence_length_must_be_three,
                                     country_of_residence_must_be_uppercase,
                                     created_at_range_within_history,
