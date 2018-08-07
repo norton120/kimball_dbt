@@ -1,8 +1,8 @@
 ---------- USERS_STAGING_QUALITY TABLE
 ----
----- Staging Quality tables are cleaned and transform-ready source tables.     
----- The data in Staging Quality tables are completely untransformed source data, with one exception: they 
----- have additional attributes AUDIT_KEY, ROW_QUALITY_SCORE and AUDIT_QUALITY_SCORE. 
+---- Staging Quality tables are cleaned and transform-ready source tables.
+---- The data in Staging Quality tables are completely untransformed source data, with one exception: they
+---- have additional attributes AUDIT_KEY, ROW_QUALITY_SCORE and AUDIT_QUALITY_SCORE.
 ----
 ---- AUDIT_KEY is the FKey to the audit that added (or last updated) the subject row.
 ----
@@ -18,6 +18,7 @@
 
 ---------- STATEMENTS [leave this section alone!]
 ---- Statements populate the python context with information about the subject audit.
+{% if adapter.already_exists(this.schema, this.name) %}
     {%- call statement('target_audit', fetch_result=True) -%}
         SELECT
             audit_key,
@@ -38,10 +39,10 @@
         AND
             target.column_name = cdc_target
         JOIN
-            (SELECT 
+            (SELECT
                 data_type
             FROM
-                "RAW".information_schema.columns 
+                "RAW".information_schema.columns
             WHERE
                 table_schema = 'ERP'
             AND
@@ -51,7 +52,7 @@
             LIMIT 1
             ) record_identifier
         ON
-            1=1 
+            1=1
 
         WHERE
             audit_status = 'Completed'
@@ -66,12 +67,15 @@
                                 DISTINCT audit_key
                               FROM
                                 {{this}})
-        ORDER BY audit_key DESC 
+        ORDER BY audit_key DESC
         LIMIT 1
 
     {%- endcall -%}
 
-{% set audit_response = load_result('target_audit')['data']%}
+    {% set audit_response = load_result('target_audit')['data']%}
+{% else %}
+    {% set audit_response= [] %}
+{% endif %}
 ---------- END STATMENTS
 
 ---- if there is no new data, skip the entire staging quality incremental build
@@ -81,21 +85,21 @@
                             'cdc_target' : audit_response[0][1],
                             'lowest_cdc' : audit_response[0][2],
                             'highest_cdc' : audit_response[0][3],
-                            'cdc_data_type' : audit_response[0][4], 
+                            'cdc_data_type' : audit_response[0][4],
                             'record_identifier_data_type' : audit_response[0][5]} -%}
 
     WITH
     audit_source_records AS (
 
-        SELECT 
+        SELECT
             *,
             {{audit_data['audit_key']}} AS audit_key
         FROM
-           RAW.ERP.DW_USERS_VIEW 
+           RAW.ERP.DW_USERS_VIEW
         WHERE
             {{audit_data['cdc_target']}}
         BETWEEN
-        
+
         {% if audit_data['cdc_data_type'] in ('TEXT','TIMESTAMP_NTZ') %}
             '{{audit_data["lowest_cdc"]}}' AND '{{audit_data["highest_cdc"]}}'
         {% else %}
@@ -109,7 +113,7 @@
 
             -- for audit-level error events this will be NULL so we will remove them later
             -- and use the presence of NULL values to flag an audit-level event
-            TRY_CAST(record_identifier AS {{audit_data['record_identifier_data_type']}}) AS id           
+            TRY_CAST(record_identifier AS {{audit_data['record_identifier_data_type']}}) AS id
         FROM
             {{this.database}}.{{this.schema | replace('STAGING_QUALITY','QUALITY')}}.error_event_fact
         WHERE
@@ -119,41 +123,41 @@
 
 
 
----- remove rejected rows, flag flagged rows, and add audit-level flag 
-    SELECT 
-        audit_source_records.*, 
+---- remove rejected rows, flag flagged rows, and add audit-level flag
+    SELECT
+        audit_source_records.*,
 
         CASE
             WHEN error_event_action IS NULL THEN 'Passed'
             ELSE error_event_action
         END AS row_quality_score,
-        
+
         (SELECT
             CASE
-                WHEN COUNT(*) > 0 THEN 'Flagged' 
+                WHEN COUNT(*) > 0 THEN 'Flagged'
                 ELSE 'Passed'
             END
         FROM
             error_events
-        WHERE 
-            id IS NULL) AS audit_quality_score    
+        WHERE
+            id IS NULL) AS audit_quality_score
     FROM
         audit_source_records
     LEFT JOIN
-        error_events 
-    ON 
+        error_events
+    ON
         audit_source_records.id = error_events.id
 
     WHERE
         row_quality_score <> 'Reject'
-    
+
     -- guard against duplicate audit inserts
     {% if adapter.already_exists(this.schema, this.name) %}
         AND
             audit_key NOT IN (SELECT
                                 DISTINCT audit_key
                               FROM
-                                {{this}})    
+                                {{this}})
     {% endif %}
 
 ---- when no new data is present, return an empty table
@@ -161,7 +165,7 @@
         SELECT
             *
         FROM
-            {{this}}       
+            {{this}}
         WHERE 1=0
 
 ---- when no data is present and the table does not exist,
@@ -169,14 +173,14 @@
 {% else %}
         SELECT
             *,
-            0::integer AS audit_key,    
+            0::integer AS audit_key,
             ''::varchar AS row_quality_score,
             ''::varchar AS audit_quality_score
         FROM
             RAW.ERP.DW_USERS_VIEW
         WHERE
-            0=1    
-{% endif %} 
+            0=1
+{% endif %}
 
 ---------- CONFIGURATION [leave this section alone!]
 {{config({
@@ -189,4 +193,4 @@
 
 
 ---------- DEPENDENCY HACK
----- {{ref('AUDIT_FACT')}}   
+---- {{ref('AUDIT_FACT')}}
