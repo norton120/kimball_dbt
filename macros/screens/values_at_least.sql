@@ -7,9 +7,9 @@
 ----    - column is the field to screen on
 ----    - provided_value (numeric, integer, etc.) is the minimum value allowed
 
-    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_VALUES_AT_LEAST_{{screen_args.provided_value}} AS (
+    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_VALUES_AT_LEAST AS (
         SELECT
-            {{universal_audit_property_set('values_at_least_',screen_args,kwargs)}}
+            {{universal_audit_property_set('values_at_least',screen_args,kwargs)}}
 
         AND
             (

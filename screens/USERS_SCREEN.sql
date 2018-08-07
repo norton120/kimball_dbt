@@ -74,7 +74,7 @@
 
 ---------- BIRTH_DATE
 ---- all birth dates must be before the current date
-{% set birth_date_at_least_today = {'column': 'birth_date', 'type' : 'values_at_least', 'provided_value' : current_date} %}
+{% set birth_date_at_least_today = {'column': 'birth_date', 'type' : 'values_at_least', 'provided_value' : 'current_date'} %}
 
 ---------- BRAINTREE_CUSTOMER_ID
 ---- TODO: ARE SCREENS NEEDED?

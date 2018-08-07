@@ -4,12 +4,14 @@
 
 {%- macro date_range_within_history(screen_args, kwargs) -%}
 ---- Pass the screen_args object with these params:
+---- screen_args.type:
+----    - type of macro being called
 ---- screen_args:
 ----    - column is the timestamp or date field to screen on (date will be cast as timestamp by date_part)
 
     {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_DATE_RANGE_WITHIN_HISTORY AS (
         SELECT
-            {{universal_audit_property_set('date_range_within_history_{{kwargs.provided_value}}',screen_args,kwargs)}}
+            {{universal_audit_property_set(screen_args.type,screen_args,kwargs)}}
 
         AND
             (
