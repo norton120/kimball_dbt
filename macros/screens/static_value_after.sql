@@ -1,8 +1,8 @@
----------- STATIC VALUE AFTER SCREEN
----- After a given record date, all records should have a set value for 
----- the given column.
 
 {%- macro static_value_after(screen_args, kwargs) -%}
+{#
+---- INTENT: screen for records where a value deviates after a specific point in time. Good for when 
+----    we retire a column in production.
 ---- Pass the screen_args object with these params:
 ----    - column (string) the column tested for the static value
 ----    - date_column (string) the column for the date predicate
@@ -19,6 +19,7 @@
 ----    - highest_cdc (string) the highest cdc_target value in this audit
 ----    - cdc_data_type (string) the native data type of the cdc_column in the source entity
 ----    - record_identifier (string) the primary key for the source entity
+#}
     {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_STATIC_VALUE_AFTER AS (
         SELECT
             {{universal_audit_property_set('static_value_after',screen_args,kwargs)}}

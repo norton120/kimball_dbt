@@ -1,4 +1,4 @@
-{#---------- <model_name> PRODUCTION ENTITY
+{#---------- CUSTOMER PRODUCTION ENTITY
 ---- 
 ---- production models generate the final consumer-ready production data. In this layer we manage 2 key aspects: 
 ---- - Slowly Changing Dimensions. This model supports types 0, 1 and 2 at this time.
@@ -17,31 +17,37 @@
 ---- 
 #}
 
-{#---- Declare the final production columns here in the 3 lists: #}
+
 {% set model_definition = {'this' : this.database + '.' + this.schema + '.' + this.name,  
                            'name' : this.name, 
                             'target_exists' : adapter.already_exists(this.schema, this.name), 
                             'record_identifier' : 'id', 
-                            'type_0_cols' : [],
-                            'type_1_cols' : [],
-                            'type_2_cols' : [] } %}
+                            'type_0_cols' : ['created_at'],
+                            'type_1_cols' : ['updated_at','last_login_at'],
+                            'type_2_cols' : ['first_name','last_name','email_address','is_anonymous'] } %}
 
 WITH
 {#---- staging_quality rows from the newest audit.#}
 staging_quality AS (
     WITH
     untransformed AS (
+        {#-- enumerate the needed source data columns#}
         SELECT
-
-            {#-- enumerate the needed source data columns#}
-
+            id,
+            created_at,
+            updated_at,
+            last_login_at,
+            first_name,
+            last_name,
+            email_address,
+            is_anonymous
         FROM
-            {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.<entity>_STAGING_QUALITY
+            {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.USERS_STAGING_QUALITY
         WHERE 
             audit_key = (SELECT 
                             MAX(audit_key) 
                         FROM 
-                        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.<entity>_STAGING_QUALITY)
+                        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.USERS_STAGING_QUALITY)
     ),
     transformed AS (
         {#-- transforms happen here to conform with the production table.#}
@@ -59,20 +65,22 @@ staging_quality AS (
 {{scd_engine('staging_qualiy', model_definition)}}
 
 
-{# --add constraint and comment macros as needed in post-hook list #}
 {{config({
     'materialized' : 'table',
     'sql_where' : 'TRUE',
     'schema' : 'GENERAL',
-    'pre-hook' : "USE SCHEMA {{this.schema}}; CREATE SEQUENCE IF NOT EXISTS <entity>_pk_seq start = 100000",
-    'post-hook': [ ]
+    'pre-hook' : "USE SCHEMA {{this.schema}}; CREATE SEQUENCE IF NOT EXISTS customer_pk_seq start = 100000",
+    'post-hook': [
+                    "{{add_constraints(['Pkey'], this.schema, this.name, 'customer_key')}}"
+                    
+                ]
         
                 
 
 })}}
 
-{#---- DEPENDENCY HACK #}
----- {{ref('<entity>_STAGING_QUALITY')}}
+{#---- DEPENDENCY HACK#}
+---- {{ref('USERS_STAGING_QUALITY')}}
 
 
 

@@ -1,4 +1,5 @@
 {%- macro initial_audit_partial(schema_key, entity_key, cdc_target, cast_target_as= 'TIMESTAMP', incremental = True, entity_type = 'Table', database_key = 'RAW') -%}
+{#
 ----------  INTENT: gets the CDC range values for this audit, builds an 
 ----    initial row without measures that we set to 'In Progress' status.
 ----
@@ -11,7 +12,7 @@
 ----       - entity_type (string default 'Table') the type of source entity targeted.
 ----       - database_name (string default 'RAW') the raw source database.
 ----    RETURNS: string fully wrapped CTE named '<schema>_<table>_initial_audit'
-
+#}
 {{schema_key}}_{{entity_key}}_new_audit_record AS (      
     -- get the max value of the most recent audit if the audit table exists
     {% if incremental %}
@@ -33,7 +34,7 @@
 
     {%- endif -%}
 
----- get min and max value of source for this audit
+{#---- get min and max value of source for this audit#}
     {{schema_key}}_{{entity_key}}_source_min_max AS (
         SELECT
             MIN({{cdc_target}}) AS lowest_cdc,
@@ -56,7 +57,7 @@
     {%- endif -%}
     )
     
-    -- create the final partial    
+{#    -- create the final partial    #}
     SELECT
         sequence.nextval AS audit_key,
         'In Process' AS audit_status,

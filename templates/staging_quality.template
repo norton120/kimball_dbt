@@ -1,4 +1,4 @@
----------- <model_name> TABLE
+{#---------- <model_name> TABLE
 ----
 ---- Staging Quality tables are cleaned and transform-ready source tables.
 ---- The data in Staging Quality tables are completely untransformed source data, with one exception: they
@@ -18,6 +18,7 @@
 
 ---------- STATEMENTS [leave this section alone!]
 ---- Statements populate the python context with information about the subject audit.
+#}
     {%- call statement('target_audit', fetch_result=True) -%}
         SELECT
             audit_key,
@@ -72,9 +73,11 @@
     {%- endcall -%}
 
 {% set audit_response = load_result('target_audit')['data']%}
+{#
 ---------- END STATMENTS
 
 ---- if there is no new data, skip the entire staging quality incremental build
+#}
 {% if audit_response[0] | length > 0 %}
     {% set audit_data = {
                             'audit_key' :  audit_response[0][0],
@@ -119,7 +122,7 @@
 
 
 
----- remove rejected rows, flag flagged rows, and add audit-level flag
+{#---- remove rejected rows, flag flagged rows, and add audit-level flag #}
     SELECT
         audit_source_records.*,
 
@@ -148,7 +151,7 @@
         row_quality_score <> 'Reject'
 
 
----- when no new data is present, return an empty table
+{#---- when no new data is present, return an empty table #}
 {% elif adapter.already_exists(this.schema, this.name) %}
         SELECT
             *
@@ -167,15 +170,33 @@
             0=1
 {% endif %}
 
----------- CONFIGURATION [leave this section alone!]
+{# ---------- CONFIGURATION [leave this section alone!] #}
 {{config({
 
     "materialized":"incremental",
     "sql_where":"TRUE",
-    "schema":"STAGING_QUALITY"
-
+    "schema":"STAGING_QUALITY",
+    "post-hook": " CREATE TEMPORARY TABLE {{this.name}}_to_remove AS (
+                    SELECT
+                        FIRST_VALUE(audit_key) OVER (PARTITION BY <record_identifier> ORDER BY audit_key ASC)::varchar||'-'||<record_identifier>::varchar as remove_flag
+                        FROM {{this}}
+                    WHERE
+                        <record_identifier> IN ( SELECT
+                                    id
+                                FROM
+                                    (SELECT <record_identifier>, 
+                                            count(*) countstar 
+                                    FROM {{this}}
+                                    GROUP BY 1 
+                                    HAVING countstar > 1)));
+             
+                    DELETE FROM {{this}} 
+                    WHERE 
+                        audit_key::varchar||'-'||<record_identifier>::varchar 
+                    IN (SELECT remove_flag FROM {{this.name}}_to_remove);
+                    DROP TABLE {{this.name}}_to_remove;"
 })}}
 
 
----------- DEPENDENCY HACK
+{# ---------- DEPENDENCY HACK #}
 ---- {{ref('AUDIT_FACT')}}
