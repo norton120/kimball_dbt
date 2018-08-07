@@ -37,6 +37,9 @@ class kdbt_gen:
         self._model_type = args[1].lower()
         self._model_name = args[2].upper()
 
+        # validate model type
+        if self._model_type not in ('production','staging_quality','screen','partial'):
+            raise ValueError('{} is not a valid model type.'.format(self._model_type))
 
 
         ## additional args
@@ -62,46 +65,31 @@ class kdbt_gen:
         ## check to see if the distructive flag was set
         self._destructive = kwargs['destructive'] if 'destructive' in kwargs else False
 
-        if self._model_type in ('screen', 'staging_quality') :
+        ## grab the path arguments. Defaults are RAW.ERP. Entity is required.
+        self._database = kwargs['database'] if 'database' in kwargs else 'RAW'
+        self._schema = kwargs['schema'] if 'schema' in kwargs else 'ERP'
+        self._record_identifier = kwargs['record_identifier'] if 'record_identifier' in kwargs else 'id'
+        self._entity = kwargs['entity'] if 'entity' in kwargs else self._model_name
 
+        ## qualify the model name with _MODEL suffix
+        if self._model_type == 'screen':
+            self._model_name += '_SCREEN' if self._model_name[-7:] != '_SCREEN' else ''
 
+        elif self._model_type == 'staging_quality':
+            self._model_name += '_STAGING_QUALITY' if self._model_name[-15:] != '_STAGING_QUALITY' else ''
 
-            ## grab the path arguments. Defaults are RAW.ERP. Entity is required.
-            self._database = kwargs['database'] if 'database' in kwargs else 'RAW'
-            self._schema = kwargs['schema'] if 'schema' in kwargs else 'ERP'
-            self._record_identifier = kwargs['record_identifier'] if 'record_identifier' in kwargs else 'id'
-            self._entity = kwargs['entity'] if 'entity' in kwargs else self._model_name
+        if self._destructive or not self.check_for_existing_model(self._model_name):
+            self.create_new_model(self._model_type,
+                                  self._model_name,
+                                  self._entity,
+                                  self._schema,
+                                  self._record_identifier,
+                                  self._database)
 
-
-
-            ## qualify the model name with _MODEL suffix
-            if self._model_type == 'screen':
-                self._model_name += '_SCREEN' if self._model_name[-7:] != '_SCREEN' else ''
-            else:
-                self._model_name += '_STAGING_QUALITY' if self._model_name[-15:] != '_STAGING_QUALITY' else ''
-
-            existing_model = self.check_for_existing_model(self._model_name)
-
-
-
-            if self._destructive or not existing_model:
-                self.create_new_model(self._model_type,
-                                      self._model_name,
-                                      self._entity,
-                                      self._schema,
-                                      self._record_identifier,
-                                      self._database)
-
-                self._print_success(self._model_name)
-            else:
-                self._print_exists(existing_model)
-
-        elif self._model_type  == 'partial':
-            pass
-        elif self._model_type == 'production':
-            pass
+            self._print_success(self._model_name)
         else:
-            raise ValueError('{} is not a valid model type.'.format(self._model_type))
+            self._print_exists(existing_model)
+
 
 
 
@@ -146,13 +134,12 @@ class kdbt_gen:
             template_text = template_text.read()
 
             ## model_type specific formatting
-        if model_type in ('screen', 'staging_quality') :
-            template_text = template_text.replace(
-                                '<database>', database).replace(
-                                    '<schema>', schema).replace(
-                                        '<entity>', entity).replace(
-                                            '<model_name>', model_name).replace(
-                                                '<record_identifier>', record_identifier)
+        template_text = template_text.replace(
+                            '<database>', database).replace(
+                                '<schema>', schema).replace(
+                                    '<entity>', entity).replace(
+                                        '<model_name>', model_name).replace(
+                                            '<record_identifier>', record_identifier)
 
         target = open(self._dbt_root() + os.path.sep + self.format_for_folder_name(model_type) + os.path.sep + model_name + '.sql', 'wr')
 
