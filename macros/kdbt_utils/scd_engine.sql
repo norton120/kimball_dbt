@@ -48,8 +48,10 @@
                 COALESCE(current_rows.{{col}}, staging_quality.{{col}}) AS {{col}},
             {% endfor %}
 
-            {{print_columns(kwargs.type_1_cols,'staging_quality')}},
-            {{print_columns(kwargs.type_2_cols,'staging_quality')}},
+            {{print_columns(kwargs.type_1_cols,'staging_quality')}}
+                {{',' if kwargs.type_1_cols | length > 0 }}
+            {{print_columns(kwargs.type_2_cols,'staging_quality')}}
+                {{',' if kwargs.type_2_cols | length > 0 }}
             {{date_key('CURRENT_DATE()')}} AS effective_date,
             99991231 AS expiration_date
         FROM
@@ -58,13 +60,15 @@
             current_rows
         ON
             staging_quality.{{kwargs.record_identifier}} = current_rows.{{kwargs.record_identifier}}
-        WHERE
-            (
-            {% for col in kwargs.type_2_cols %}
-                staging_quality.{{col}} <> current_rows.{{col}}
-                {{'OR' if not loop.last}}
-            {% endfor %}
-            )
+        {% if kwargs.type_2_cols | length > 0 %}
+            WHERE
+                (
+                {% for col in kwargs.type_2_cols %}
+                    staging_quality.{{col}} <> current_rows.{{col}}
+                    {{'OR' if not loop.last}}
+                {% endfor %}
+                )
+        {% endif %}
     ),
 
 
@@ -80,13 +84,14 @@
                 WHEN type_2_rows.{{kwargs.record_identifier}} IS NOT NULL THEN FALSE
                 ELSE production.current_row
             END AS current_row,
-
-            {{print_columns(kwargs.type_0_cols,'production')}},
-
+                
+            {{print_columns(kwargs.type_0_cols,'production')}}
+                {{',' if kwargs.type_0_cols | length > 0 }}
             {% for col in kwargs.type_1_cols %}
                 COALESCE(staging_quality.{{col}}, production.{{col}}) AS {{col}},
             {% endfor %}
-            {{print_columns(kwargs.type_2_cols,'production')}},
+            {{print_columns(kwargs.type_2_cols,'production')}}
+                {{',' if kwargs.type_2_cols | length > 0 }}
             production.effective_date,
 
             CASE 
@@ -117,8 +122,10 @@
                 expiration_date,
                 current_row,
                 {{kwargs.record_identifier}},
-                {{print_columns(kwargs.type_0_cols)}},
-                {{print_columns(kwargs.type_1_cols)}},
+                {{print_columns(kwargs.type_0_cols)}}
+                    {{',' if kwargs.type_0_cols | length > 0 }}
+                {{print_columns(kwargs.type_1_cols)}}
+                    {{',' if kwargs.type_1_cols | length > 0 }}
                 {{print_columns(kwargs.type_2_cols)}}           
             FROM
                 updated_production
@@ -131,8 +138,10 @@
                 expiration_date,
                 current_row,
                 {{kwargs.record_identifier}},
-                {{print_columns(kwargs.type_0_cols)}},
-                {{print_columns(kwargs.type_1_cols)}},
+                {{print_columns(kwargs.type_0_cols)}}
+                    {{',' if kwargs.type_0_cols | length > 0 }}
+                {{print_columns(kwargs.type_1_cols)}}
+                    {{',' if kwargs.type_1_cols | length > 0 }}
                 {{print_columns(kwargs.type_2_cols)}}           
             FROM
                 type_2_rows
@@ -148,8 +157,10 @@
             99991231 AS expiration_date,
             TRUE AS current_row,
             {{kwargs.record_identifier}},
-            {{print_columns(kwargs.type_0_cols)}},
-            {{print_columns(kwargs.type_1_cols)}},
+            {{print_columns(kwargs.type_0_cols)}}
+                {{',' if kwargs.type_0_cols | length > 0 }}
+            {{print_columns(kwargs.type_1_cols)}}
+                {{',' if kwargs.type_1_cols | length > 0 }}
             {{print_columns(kwargs.type_2_cols)}}           
         FROM
             staging_quality
@@ -162,8 +173,10 @@ SELECT
     expiration_date,
     current_row,
     {{kwargs.record_identifier}},
-    {{print_columns(kwargs.type_0_cols)}},
-    {{print_columns(kwargs.type_1_cols)}},
+    {{print_columns(kwargs.type_0_cols)}}
+        {{',' if kwargs.type_0_cols | length > 0 }}
+    {{print_columns(kwargs.type_1_cols)}}
+        {{',' if kwargs.type_1_cols | length > 0 }}
     {{print_columns(kwargs.type_2_cols)}}           
 FROM
     ready_for_key_assignment,   

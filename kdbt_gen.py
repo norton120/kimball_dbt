@@ -88,7 +88,7 @@ class kdbt_gen:
 
             self._print_success(self._model_name)
         else:
-            self._print_exists(existing_model)
+            self._print_exists(self.check_for_existing_model(self._model_name))
 
 
 
