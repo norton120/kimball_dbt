@@ -76,59 +76,117 @@
  
 -------- FISCAL_YEAR
 ---- character length is 4
+{% set fiscal_year_4_chars = {'column' : 'fiscal_year', 'type' : 'exact_length', 'exact_length' : 4 } %}
 ---- not null
+{% set fiscal_year_not_null = {'column' : 'fiscal_year', 'type' : 'not_null'} %}
 
 -------- HOL_IND
----- must not be null if holiday is null
----- must be null if holiday is not null
+---- must not be null if holiday is null, and must be null on non-holidays
+{% set hol_ind_matches_holiday = {'column' : 'hol_ind', 'type' : 'custom', 'screen_name' : 'hol_ind_matches_holiday', 'sql_where' : '(hol_ind = 0) <> (holiday IS NULL)' } %}
 ---- 1 = NewYrs, 2 = GdFri, 3 = Easter, 4 = Mem, 5 = Indep, 6 = Lab, 7 = ThanksG, 8 = BlkFri, 9 = CyMon, 10 = Chr
+{% set hol_ind_on_correct_holidays = {'column' : 'hol_ind', 'type' : 'custom', 'screen_name' : 'hol_ind_correct_days', 'sql_where' : 
+"(hol_ind = 1 AND holiday <> 'NewYrs')
+ OR 
+ (hol_ind = 2 AND holiday <> 'GdFri')
+ OR 
+ (hol_ind = 3 AND holiday <> 'Easter')
+ OR 
+ (hol_ind = 4 AND holiday <> 'Mem')
+ OR 
+ (hol_ind = 5 AND holiday <> 'Indep')
+ OR 
+ (hol_ind = 6 AND holiday <> 'Lab')
+ OR 
+ (hol_ind = 7 AND holiday <> 'ThanksG')
+ OR 
+ (hol_ind = 8 AND holiday <> 'BlkFri')
+ OR 
+ (hol_ind = 9 AND holiday <> 'CyMon')
+ OR 
+ (hol_ind = 10 AND holiday <> 'Chr')" } %}
 
 -------- WEEK_DAY_NUMBER
 ---- range 1-7
+{% set week_day_number_range = {'column' : 'week_day_number', 'type' : 'range', 'range_start' : 1, 'range_end' : 7, 'cast_as' : 'NUMBER' } %}
 ---- Monday = 1, Sunday = 7 etc.
+{% set week_day_number_correct_day = {'column' : 'week_day_number', 'type' : 'custom', 'screen_name' : 'week_day_number_correct_day', 'sql_where' : 
+"((week_day_number = 1 AND day_of_week <> 'Monday')
+ OR 
+ (week_day_number = 2 AND day_of_week <> 'Tuesday')
+ OR 
+ (week_day_number = 3 AND day_of_week <> 'Wednesday')
+ OR 
+ (week_day_number = 4 AND day_of_week <> 'Thursday')
+ OR 
+ (week_day_number = 5 AND day_of_week <> 'Friday')
+ OR 
+ (week_day_number = 6 AND day_of_week <> 'Saturday')
+ OR 
+ (week_day_number = 7 AND day_of_week <> 'Sunday'))"} %}
 ---- not null
+{% set week_day_number_not_null = {'column' : 'week_day_number', 'type' : 'not_null'} %}
 
 -------- HOLIDAY
 ---- accepted values Mem, Easter, NewYrs, CyMon, GdFri, Lab, Chr, ThanksG, Indep, BlkFri
+{% set holiday_values = {'column' : 'holiday', 'type' : 'valid_values', 'value_type' : 'TEXT', 'valid_values' : ['Mem', 'Easter', 'NewYrs', 'CyMon', 'GdFri', 'Lab', 'Chr', 'ThanksG', 'Indep', 'BlkFri'], 'allow_null' : False} %}
 
 -------- ISO_QTR
 ---- range 1-4
+{% set iso_qtr_range = {'column' : 'iso_qtr', 'type' : 'range', 'range_start' : 1, 'range_end' : 4, 'cast_as' : 'NUMBER' } %}
 ---- not null
+{% set iso_qtr_not_null = {'column' : 'iso_qtr', 'type' : 'not_null'} %}
 
 -------- FISCAL_WEEK
 ---- range 0-52
+{% set fiscal_week_range = {'column' : 'fiscal_week', 'type' : 'range', 'range_start' : 0, 'range_end' : 52, 'cast_as' : 'NUMBER' } %}
 ---- not null
+{% set fiscal_week_not_null = {'column' : 'fiscal_week', 'type' : 'not_null'} %}
 
 -------- ISO_WEEK
 ---- range 1-53
+{% set iso_week_range = {'column' : 'iso_week', 'type' : 'range', 'range_start' : 1, 'range_end' : 53, 'cast_as' : 'NUMBER' } %}
 ---- not null
+{% set iso_week_not_null = {'column' : 'iso_week', 'type' : 'not_null'} %}
 
 -------- ISO_YEAR
 ---- character length 4
+{% set iso_year_4_chars = {'column' : 'iso_year', 'type' : 'exact_length', 'exact_length' : 4 } %}
 ---- not null
+{% set iso_year_not_null = {'column' : 'iso_year', 'type' : 'not_null'} %}
 
 -------- IS_FIRST_DAY_FISCAL_PERIOD
 ---- not null
+{% set is_first_day_fiscal_period_not_null = {'column' : 'is_first_day_fiscal_period', 'type' : 'not_null'} %}
 
 -------- FISCAL_PERIOD
 ---- range 1-12
+{% set fiscal_period_range = {'column' : 'fiscal_period', 'type' : 'range', 'range_start' : 1, 'range_end' : 12, 'cast_as' : 'NUMBER' } %}
 ---- not null
+{% set fiscal_period_not_null = {'column' : 'fiscal_period', 'type' : 'not_null'} %}
 
 -------- FISCAL_QTR
 ---- range 1-4
+{% set fiscal_qtr_range = {'column' : 'fiscal_qtr', 'type' : 'range', 'range_start' : 1, 'range_end' : 4, 'cast_as' : 'NUMBER' } %}
 ---- not null
+{% set fiscal_qtr_not_null = {'column' : 'fiscal_qtr', 'type' : 'not_null'} %}
 
 -------- ID
 ---- unique
+{% set id_unique = {'column' : 'id', 'type' : 'unique'} %}
 ---- not null
+{% set id_not_null = {'column' : 'id', 'type' : 'not_null'} %}
 
 -------- DATE
 ---- unique
+{% set date_unique = {'column' : 'date', 'type' : 'unique'} %}
 ---- not null
+{% set date_not_null = {'column' : 'date', 'type' : 'not_null'} %}
 
 -------- ISO_MONTH
 ---- range 1-12
+{% set iso_month_range = {'column' : 'iso_month', 'type' : 'range', 'range_start' : 1, 'range_end' : 12, 'cast_as' : 'NUMBER' } %}
 ---- not null
+{% set iso_month_not_null = {'column' : 'iso_month', 'type' : 'not_null'} %}
 
 
 {#
@@ -136,9 +194,35 @@
 ---- add each screen variable above to the collection
 #}
     {% set screen_collection =  [
+                                    date_not_null,
+                                    date_unique,
                                     day_of_week_not_null,
-                                    day_of_week_valid_days
-
+                                    day_of_week_valid_days,
+                                    fiscal_period_range,
+                                    fiscal_period_not_null,
+                                    fiscal_qtr_range,
+                                    fiscal_qtr_not_null,
+                                    fiscal_week_range,
+                                    fiscal_week_not_null,
+                                    fiscal_year_4_chars,
+                                    fiscal_year_not_null,
+                                    hol_ind_matches_holiday,
+                                    hol_ind_on_correct_holidays,
+                                    holiday_values,
+                                    id_not_null,
+                                    id_unique,
+                                    is_first_day_fiscal_period_not_null,
+                                    iso_month_range,    
+                                    iso_month_not_null,
+                                    iso_qtr_range,
+                                    iso_qtr_not_null,
+                                    iso_week_range,
+                                    iso_week_not_null,
+                                    iso_year_4_chars,
+                                    iso_year_not_null,
+                                    week_day_number_range,
+                                    week_day_number_correct_day,
+                                    week_day_number_not_null
                                 ]%}
 
 {# ---------- RUN SCREENS [leave this section alone!] #}
