@@ -17,80 +17,122 @@
 ---- 
 #}
 
-{#---- Declare the final production columns here in the 3 lists: #}
-{% set model_definition = {'this' : this.database + '.' + this.schema + '.' + this.name,  
-                           'name' : this.name, 
-                            'target_exists' : adapter.already_exists(this.schema, this.name), 
-                            'record_identifier' : 'date_id', 
-                            'type_2_cols' : [
-                                            'full_date_description',
-                                            'day_of_week',
-                                            'day_number_of_week',
-                                            'day_number_of_month',
-                                            'day_number_in_calendar_year',
-                                            'day_number_in_fiscal_year',
-                                            'last_day_of_month_indicator',
-                                            'week_end_date_key',
-                                            'week_start_date_key',
-                                            'calendar_week',
-                                            'calendar_month_name',
-                                            'calendar_month_number_in_year',
-                                            'calendar_year_month',
-                                            'calendar_year',
-                                            'fiscal_week',
-                                            'fiscal_quarter',
-                                            'fiscal_year_quarter',
-                                            'first_day_fiscal_period_indicator',
-                                            'last_day_fiscal_period_indicator',
-                                            'holiday',
-                                            'weekday_indicator',
-                                            'fiscal_year_period_week'
-                                               
-                                            ],
-                            'type_1_cols' : [],
-                            'type_0_cols' : [] } %}
-
 WITH
-{#---- staging_quality rows from the newest audit.#}
-staging_quality AS (
-    WITH
-    untransformed AS (
-        SELECT
-
-            {#-- enumerate the needed source data columns#}
-
-        FROM
-            {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.FISCAL_CALENDARS_STAGING_QUALITY
-        WHERE 
-            audit_key = (SELECT 
-                            MAX(audit_key) 
-                        FROM 
-                        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.FISCAL_CALENDARS_STAGING_QUALITY)
-    ),
-    transformed AS (
-        {#-- transforms happen here to conform with the production table.#}
-        {#-- this is done before we run the scd engine.#}
-        SELECT * FROM untransformed
-    )
-    
+fiscal_year_first_dates AS (
     SELECT
-        *
+        fiscal_year,
+        CASE
+            WHEN fiscal_qtr = 1
+                AND fiscal_period = 1
+                AND is_first_day_fiscal_period = TRUE
+            THEN "DATE"
+            ELSE NULL
+        END AS year_start_date
     FROM
-        transformed
-
+        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.FISCAL_CALENDARS_STAGING_QUALITY
+    WHERE
+        year_start_date IS NOT NULL
 ),
 
-{{scd_engine('staging_qualiy', model_definition)}}
+SELECT
+    TO_CHAR("DATE", 'yyyymmdd')::integer AS date_key,
+    "DATE",
 
+    DECODE(DATE_PART('month',"DATE"),
+         1 , 'January',
+         2 , 'February',
+         3 , 'March',
+         4 , 'April',
+         5 , 'May',
+         6 , 'June',
+         7 , 'July',
+         8 , 'August',
+         9 , 'September',
+         10 , 'October',
+         11 , 'November',
+         12 , 'December'
+    ) ||' '|| DATE_PART('day',"DATE")::varchar || ', '|| DATE_PART('year',"DATE")::varchar AS full_date_description,
+
+    day_of_week,   
+    week_day_number AS day_number_in_week,
+    DATE_PART('day',"DATE") AS day_number_in_month,
+    DATE_PART('dayofyear',"DATE") AS day_number_in_calendar_year,
+    DATEDIFF('day',year_start_date,"DATE") + 1 AS day_number_in_fiscal_year,
+
+    CASE 
+        WHEN DATEDIFF('month', "DATE", DATEADD(days,1, "DATE")) <> 0 THEN 'Month End'
+        ELSE 'Not Month End'
+    END AS last_day_of_month_indicator,
+    
+    {{date_key("DATEADD(days, (7 - DATE_PART('dayofweek', \"DATE\")), \"DATE\")")}} AS week_end_date_key,
+    {{date_key("DATEADD(days, (1 - DATE_PART('dayofweek', \"DATE\")), \"DATE\")")}} AS week_start_date_key,
+
+    DECODE(DATE_PART('month',"DATE"),
+         1 , 'January',
+         2 , 'February',
+         3 , 'March',
+         4 , 'April',
+         5 , 'May',
+         6 , 'June',
+         7 , 'July',
+         8 , 'August',
+         9 , 'September',
+         10 , 'October',
+         11 , 'November',
+         12 , 'December'
+    ) AS calendar_month_name,
+    
+    DATE_PART('month', "DATE") AS calendar_month_number_in_year,
+    DATE_PART('year', "DATE")::varchar ||'-'|| DATE_PART('month',"DATE")::varchar AS calendar_year_month,
+    DATE_PART('year', "DATE") AS calendar_year,
+    fiscal_week,
+    fiscal_qtr AS fiscal_quarter,
+    staging_quality.fiscal_year::varchar || '-' || fiscal_qtr AS fiscal_year_quarter,
+
+    CASE
+        WHEN is_first_day_fiscal_period THEN 'Period First Day'
+        ELSE 'Not Period First Day'
+    END AS first_day_fiscal_period_indicator,
+    
+    CASE
+        WHEN next_day_is_first_day_fiscal_period THEN 'Period Last Day'
+        ELSE 'Not Period Last Day'
+    END AS last_day_fiscal_period_indicator,
+    
+    DECODE(hol_ind, 
+            1, 'New Years Day',
+            2, 'Good Friday',
+            3, 'Easter', 
+            4, 'Memorial Day',
+            5, 'Independance Day',
+            6, 'Labor Day',
+            7, 'Thanksgiving',
+            8, 'Black Friday',
+            9, 'Cyber Monday', 
+            10, 'Christmas',
+            'Not Holiday'
+        ) AS holiday,
+    
+    CASE
+        WHEN week_day_number < 6 THEN 'Weekday'
+        ELSE 'Weekend'
+    END AS weekday_indicator,
+
+    staging_quality.fiscal_year::varchar ||'-'|| fiscal_period::varchar ||'-'|| fiscal_week::varchar AS fiscal_year_period_week        
+FROM
+    {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.FISCAL_CALENDARS_STAGING_QUALITY AS staging_quality
+LEFT JOIN
+    fiscal_year_first_dates
+ON
+    fiscal_year_first_dates.fiscal_year = staging_quality.fiscal_year
 
 {# --add constraint and comment macros as needed in post-hook list #}
 {{config({
     'materialized' : 'table',
-    'sql_where' : 'TRUE',
     'schema' : 'GENERAL',
-    'pre-hook' : "USE SCHEMA {{this.schema}}; CREATE SEQUENCE IF NOT EXISTS date_pk_seq start = 100000",
+    'pre-hook' : "USE SCHEMA {{this.schema}};",
     'post-hook': [  
-                    "{{comment({'column' : 'date_key', 'description' : 'Unlike normally generated surrogate keys, the date_key is the integer representation of the date - so 2018-01-01 becomes 20180101. this is based on the (probably naive) assumption that our fiscal calendar will never change historically. If / when it does, we will need to append a version number to the future keys - so 2018-01-01 would become 220180101 for version 2.' })}}"  
+                    "{{comment({'column' : 'date_key', 'description' : '' })}}"  
 
                 ]
         
