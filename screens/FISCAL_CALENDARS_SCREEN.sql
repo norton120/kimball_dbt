@@ -74,88 +74,61 @@
 ---- values Monday - Sunday
 {% set day_of_week_valid_days = {'column' : 'day_of_week', 'type' : 'valid_values', 'value_type' : 'TEXT', 'valid_values' : ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'], 'allow_null' : False} %}
  
--------- HOLIDAY
-----
--------- ISO_MONTH
-----
--------- WEEK_DAY_NAME
-----
--------- FISCAL_PERIOD
-----
--------- FISCAL_QTR
-----
--------- ID
-----
--------- _METADATA_FILE_MODIFIED_TS
-----
--------- _METADATA_LINE_NUMBER
-----
--------- HOLIDAY
-----
--------- ISO_QTR
-----
--------- WEEK_TYPE
-----
--------- HOL_IND
-----
--------- WEEK_DAY_NUMBER
-----
--------- CALENDAR_YEAR
-----
 -------- FISCAL_YEAR
-----
--------- ISO_YEAR
-----
--------- IS_HOLIDAY
-----
--------- _METADATA_TOTAL_ROWS
-----
--------- ISO_QUARTER
-----
--------- FISCAL_WEEK
-----
--------- ISO_WEEK
-----
--------- ISO_YEAR
-----
--------- IS_FIRST_DAY_FISCAL_PERIOD
-----
--------- XMIN__TEXT__BIGINT
-----
--------- CALENDAR_MONTH
-----
--------- _METADATA_FILE_NAME
-----
--------- FISCAL_YEAR
-----
--------- CALENDAR_QUARTER
-----
--------- FISCAL_WEEK
-----
--------- ISO_WEEK
-----
--------- FISCAL_PERIOD
-----
--------- _METADATA__TIMESTAMP
-----
--------- WEEK_DAY_NUM
-----
--------- _METADATA__UUID
-----
--------- DATE
-----
--------- ISO_MONTH
-----
--------- _METADATA_CONSOLIDATION
-----
--------- FISCAL_QUARTER
-----
--------- _METADATA__TIMESTAMP
-----
--------- _METADATA__UUID
-----
--------- DATE
+---- character length is 4
+---- not null
 
+-------- HOL_IND
+---- must not be null if holiday is null
+---- must be null if holiday is not null
+---- 1 = NewYrs, 2 = GdFri, 3 = Easter, 4 = Mem, 5 = Indep, 6 = Lab, 7 = ThanksG, 8 = BlkFri, 9 = CyMon, 10 = Chr
+
+-------- WEEK_DAY_NUMBER
+---- range 1-7
+---- Monday = 1, Sunday = 7 etc.
+---- not null
+
+-------- HOLIDAY
+---- accepted values Mem, Easter, NewYrs, CyMon, GdFri, Lab, Chr, ThanksG, Indep, BlkFri
+
+-------- ISO_QTR
+---- range 1-4
+---- not null
+
+-------- FISCAL_WEEK
+---- range 0-52
+---- not null
+
+-------- ISO_WEEK
+---- range 1-53
+---- not null
+
+-------- ISO_YEAR
+---- character length 4
+---- not null
+
+-------- IS_FIRST_DAY_FISCAL_PERIOD
+---- not null
+
+-------- FISCAL_PERIOD
+---- range 1-12
+---- not null
+
+-------- FISCAL_QTR
+---- range 1-4
+---- not null
+
+-------- ID
+---- unique
+---- not null
+
+-------- DATE
+---- unique
+---- not null
+
+-------- ISO_MONTH
+---- range 1-12
+---- not null
 
 
 {#
