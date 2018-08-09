@@ -22,15 +22,20 @@
 
     '
     {%- if kwargs.additive -%}
-        Additive : {{kwargs.additive}},
+        ''Additive'' : {{kwargs.additive}}
+        {{',' if kwargs.definition or kwargs.grain or kwargs.scd_type}}
     {%- endif -%} 
     {%- if kwargs.definition -%}
-        Definition : {{kwargs.definition}},
+        ''Definition'' : ''{{kwargs.definition}}''
+        {{',' if kwargs.grain or kwargs.scd_type}}
     {%- endif -%} 
     {%- if kwargs.grain -%}
-        Grain : {{kwargs.grain}}
+        ''Grain'' : ''{{kwargs.grain}}''
+        {{',' if kwargs.scd_type}}
     {%- endif -%} 
-
+    {%- if kwargs.scd_type -%}
+        ''Scd_Type'' : {{kwargs.scd_type}}
+    {%- endif -%}
     '
 {%- endmacro -%}
     

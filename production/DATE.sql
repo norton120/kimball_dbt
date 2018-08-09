@@ -126,8 +126,14 @@ ON
     'schema' : 'GENERAL',
     'pre-hook' : "USE SCHEMA {{this.schema}};",
     'post-hook': [  
+
+                    "{{comment({'description' : 'The dimension for all dates in the data warehouse. Note: This table will never be directly related to by another entity, but instead aliased by prefixed views.', 'grain' : 'one instance per calendar day.' })}}",
+
                     "{{comment({'column' : 'date_key', 'description' : 'PK defined as the integer representation of the date. For example, 2018-01-01 becomes 20180101' })}}",
-                    "{{add_constraint(['Pkey',
+                    "{{add_constraint(['Pkey','Null'], this.schema, 'DATE', 'date_key')}}",
+                    
+                    "{{comment({'column' : 'full_date_description', 'description' : 'The common English representation of a date, ie January 1, 1979.', 'scd_type' : 1 })}}",
+                    "{{add_constraint(['Null','Unique'], this.schema, 'DATE', 'description')}}"
 
                 ]
         
