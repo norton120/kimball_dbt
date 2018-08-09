@@ -12,6 +12,15 @@
 #}
 
 WITH
+staging_quality AS (
+    SELECT
+        *
+    FROM
+        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.FISCAL_CALENDARS_STAGING_QUALITY
+),
+
+
+
 fiscal_year_first_dates AS (
     SELECT
         fiscal_year,
@@ -23,7 +32,7 @@ fiscal_year_first_dates AS (
             ELSE NULL
         END AS year_start_date
     FROM
-        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.FISCAL_CALENDARS_STAGING_QUALITY
+        staging_quality
     WHERE
         year_start_date IS NOT NULL
 ),
@@ -35,7 +44,46 @@ fiscal_period_last_days AS (
         {{date_key('DATEADD(day,-1,"DATE")')}} AS date_key,
         is_first_day_fiscal_period AS is_last_day_fiscal_period
     FROM
-        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.FISCAL_CALENDARS_STAGING_QUALITY
+        staging_quality
+),
+
+
+---- we need to account for the leap week days, so we do that by making them fractional values of a day.
+day_of_fiscal_year AS (
+    SELECT
+        {{date_key("DATE")}} AS date_key,
+        
+        CASE
+            WHEN contains_leap_week THEN
+                CASE
+                    WHEN fiscal_week = 0 THEN DATEDIFF('days', year_start_date, DATEADD('days',(-1 * week_day_number), "DATE"))
+                                                        + (0.1 * week_day_number) + 1
+                    WHEN fiscal_week BETWEEN 1 AND 5 THEN DATEDIFF('day',year_start_date,"DATE") + 1
+                    ELSE DATEDIFF('day',year_start_date,"DATE") - 6
+                END
+            ELSE DATEDIFF('day',year_start_date,"DATE") + 1 
+        END AS day_number_in_fiscal_year
+    FROM
+        staging_quality
+    LEFT JOIN
+        fiscal_year_first_dates
+    ON
+        staging_quality.fiscal_year = fiscal_year_first_dates.fiscal_year
+    LEFT JOIN
+    --- this is gross. but the sf engine borks when we subquery in the case statement
+        (SELECT
+            {{date_key("DATE")}} AS date_key,
+            TRUE AS contains_leap_week
+        FROM
+            staging_quality
+        WHERE
+            fiscal_year IN (SELECT
+                                DISTINCT fiscal_year
+                            FROM 
+                                staging_quality
+                            WHERE
+                                fiscal_week = 0) )leap_week
+    ON leap_week.date_key = {{date_key('staging_quality."DATE"')}}
 )
 
 
@@ -63,7 +111,7 @@ SELECT
     week_day_number AS day_number_in_week,
     DATE_PART('day',"DATE") AS day_number_in_month,
     DATE_PART('dayofyear',"DATE") AS day_number_in_calendar_year,
-    DATEDIFF('day',year_start_date,"DATE") + 1 AS day_number_in_fiscal_year,
+    day_number_in_fiscal_year,
 
     CASE 
         WHEN DATEDIFF('month', "DATE", DATEADD(days,1, "DATE")) <> 0 THEN 'Month End'
@@ -91,10 +139,16 @@ SELECT
     DATE_PART('month', "DATE") AS calendar_month_number_in_year,
     DATE_PART('year', "DATE")::varchar ||'-'|| DATE_PART('month',"DATE")::varchar AS calendar_year_month,
     DATE_PART('year', "DATE") AS calendar_year,
-    fiscal_week,
-    fiscal_qtr AS fiscal_quarter,
-    staging_quality.fiscal_year::varchar || '-' || fiscal_qtr AS fiscal_year_quarter,
 
+    CASE
+        when fiscal_week = 0 THEN 5.5
+        ELSE fiscal_week
+    END AS fiscal_week,
+
+    fiscal_qtr AS fiscal_quarter,
+    staging_quality.fiscal_year,
+    staging_quality.fiscal_year::varchar || '-' || fiscal_qtr AS fiscal_year_quarter,
+    
     CASE
         WHEN is_first_day_fiscal_period THEN 'Period First Day'
         ELSE 'Not Period First Day'
@@ -126,7 +180,7 @@ SELECT
 
     staging_quality.fiscal_year::varchar ||'-'|| fiscal_period::varchar ||'-'|| fiscal_week::varchar AS fiscal_year_period_week        
 FROM
-    {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.FISCAL_CALENDARS_STAGING_QUALITY AS staging_quality
+    staging_quality
 LEFT JOIN
     fiscal_year_first_dates
 ON
@@ -135,7 +189,10 @@ LEFT JOIN
     fiscal_period_last_days 
 ON
     fiscal_period_last_days.date_key = {{date_key('staging_quality."DATE"')}}
-
+LEFT JOIN
+    day_of_fiscal_year 
+ON
+    day_of_fiscal_year.date_key = {{date_key('staging_quality."DATE"')}}
 
  
 {# --add constraint and comment macros as needed in post-hook list #}
