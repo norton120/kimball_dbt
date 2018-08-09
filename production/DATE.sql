@@ -1,19 +1,13 @@
 {#---------- DATE PRODUCTION ENTITY
 ---- 
----- production models generate the final consumer-ready production data. In this layer we manage 2 key aspects: 
----- - Slowly Changing Dimensions. This model supports types 0, 1 and 2 at this time.
-----        
----- - Transforms. This is where all your actual transforms on the source data belong, 
-----    preferably abstracted to partials if they get unweildy here.
+---- The DATE entity is not joined directly, but aliased with a view for each instance in a give fact / dimension table
+----    with an appropriate prefix. For example, the purchase_date_key in a sales fact joins the PURCHASE_DATE view,
+----    which is a view of the DATE entity with purchase_ prefixed to each attribute.
 ----
-----    Steps to production:
-----    1) Define your final production table schema inside the model_definition object. 
-----        all columns must be type 0,1, or 2. The record identifier is the persistant id for the row. 
-----
-----    2) Define all your transforms inside the staging_quality.transformed CTE. The final statement inside
-----        staging_quality should be identical to your production structure. 
-----    3) Invoke the finalize_scd macro in the post hook to expire and update dimension rows
-----    4) define constraints and comments in post hooks
+----    DATE is a fully type 1 dimension, and we are operating under the assumption that the organization will never need
+----    to 'look back' at the history of the dimension if it changes. For example, if we suddenly decide that the
+----    fiscal year begins in March, we are assuming that we will adjust all dates looking both forward and back 
+----    for all time (and not retain the previous calendar values). 
 ---- 
 #}
 
@@ -132,7 +126,8 @@ ON
     'schema' : 'GENERAL',
     'pre-hook' : "USE SCHEMA {{this.schema}};",
     'post-hook': [  
-                    "{{comment({'column' : 'date_key', 'description' : '' })}}"  
+                    "{{comment({'column' : 'date_key', 'description' : 'PK defined as the integer representation of the date. For example, 2018-01-01 becomes 20180101' })}}",
+                    "{{add_constraint(['Pkey',
 
                 ]
         
