@@ -28,8 +28,20 @@ fiscal_year_first_dates AS (
         year_start_date IS NOT NULL
 ),
 
+
+
+fiscal_period_last_days AS (
+    SELECT
+        {{date_key('DATEADD(day,-1,"DATE")')}} AS date_key,
+        is_first_day_fiscal_period AS is_last_day_fiscal_period
+    FROM
+        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.FISCAL_CALENDARS_STAGING_QUALITY
+)
+
+
+
 SELECT
-    TO_CHAR("DATE", 'yyyymmdd')::integer AS date_key,
+    {{date_key("DATE")}} AS date_key,
     "DATE",
 
     DECODE(DATE_PART('month',"DATE"),
@@ -89,7 +101,7 @@ SELECT
     END AS first_day_fiscal_period_indicator,
     
     CASE
-        WHEN next_day_is_first_day_fiscal_period THEN 'Period Last Day'
+        WHEN is_last_day_fiscal_period THEN 'Period Last Day'
         ELSE 'Not Period Last Day'
     END AS last_day_fiscal_period_indicator,
     
@@ -119,7 +131,13 @@ LEFT JOIN
     fiscal_year_first_dates
 ON
     fiscal_year_first_dates.fiscal_year = staging_quality.fiscal_year
+LEFT JOIN
+    fiscal_period_last_days 
+ON
+    fiscal_period_last_days.date_key = {{date_key('staging_quality."DATE"')}}
 
+
+ 
 {# --add constraint and comment macros as needed in post-hook list #}
 {{config({
     'materialized' : 'table',
@@ -130,10 +148,10 @@ ON
                     "{{comment({'description' : 'The dimension for all dates in the data warehouse. Note: This table will never be directly related to by another entity, but instead aliased by prefixed views.', 'grain' : 'one instance per calendar day.' })}}",
 
                     "{{comment({'column' : 'date_key', 'description' : 'PK defined as the integer representation of the date. For example, 2018-01-01 becomes 20180101' })}}",
-                    "{{add_constraint(['Pkey','Null'], this.schema, 'DATE', 'date_key')}}",
+                    "{{add_constraints(['Pkey','Null'], this.schema, 'DATE', 'date_key')}}",
                     
                     "{{comment({'column' : 'full_date_description', 'description' : 'The common English representation of a date, ie January 1, 1979.', 'scd_type' : 1 })}}",
-                    "{{add_constraint(['Null','Unique'], this.schema, 'DATE', 'description')}}"
+                    "{{add_constraints(['Null','Unique'], this.schema, 'DATE', 'full_date_description')}}"
 
                 ]
         
