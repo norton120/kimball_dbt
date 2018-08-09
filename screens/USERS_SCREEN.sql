@@ -1,4 +1,4 @@
----------- USERS_SCREEN SCREEN
+{#---------- USERS_SCREEN SCREEN
 ---- Screens are source-data-quality tests that we use to investigate and record data quality.
 ---- You pass screens to the screen_collection list (below) for them to be run and error events collected.
 
@@ -12,6 +12,7 @@
 
 ---------- STATEMENTS [leave this section alone!]
 ---- Statements populate the python context with information about the subject audit.
+#}
     {%- call statement('target_audit', fetch_result=True) -%}
         SELECT
             audit_key,
@@ -42,13 +43,15 @@
 
     {%- endcall -%}
 {% set audit_response_data_object = load_result('target_audit')['data']%}
----------- END STATMENTS
+{#---------- END STATMENTS
 
 ---- if there is no new data, skip the entire screen model
+#}
 {% if audit_response_data_object | length > 0 %}
 
     {%- set audit_response = audit_response_data_object[0] -%}
--- update the record identifier to match the table primary key
+
+{#-- update the record identifier to match the table primary key #}
 
         {%- set target_audit_properties = {
                                 'database' : 'RAW',
@@ -61,10 +64,10 @@
                                 'cdc_data_type' : audit_response[4],
                                 'record_identifier' : 'id' } -%}
 
-
+{#
 ---------- SCREENS
 ---- All screens are flag unless noted
-
+#}
 ---------- AGE_RANGE
 ---- valid values are [4,3,2,7,5 and NULL]
 {% set age_range_valid_values = {'column':'AGE_RANGE', 'type' : 'valid_values','valid_values' : [4,3,2,7,5], 'allow_null' : True, 'value_type' : 'number'} %}
@@ -301,7 +304,7 @@
 
 
 
----------- MODEL CONFIGURATION
+{#---------- MODEL CONFIGURATION #}
 {{config({
 
     "materialized":"ephemeral",

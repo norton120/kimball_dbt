@@ -1,4 +1,4 @@
----------- <model_name> SCREEN
+{#---------- <model_name> SCREEN
 ----
 ---- Screens are source-data-quality tests that we use to investigate and record data quality.     
 ---- You pass screens to the screen_collection list (below) for them to be run and error events collected. 
@@ -13,6 +13,7 @@
 
 ---------- STATEMENTS [leave this section alone!]
 ---- Statements populate the python context with information about the subject audit.
+#}
     {%- call statement('target_audit', fetch_result=True) -%}
         SELECT
             audit_key,
@@ -44,13 +45,13 @@
     {%- endcall -%}
 
 {% set audit_response_data_object = load_result('target_audit')['data']%}
----------- END STATMENTS
+{#---------- END STATMENTS #}
 
----- if there is no new data, skip the entire screen model
+{# ---- if there is no new data, skip the entire screen model #}
 {% if audit_response_data_object | length > 0 %}
 
     {%- set audit_response = audit_response_data_object[0] -%}
--- update the record identifier to match the table primary key
+{# -- update the record identifier to match the table primary key #}
 
         {%- set target_audit_properties = {
                                 'database' : '<database>', 
@@ -63,7 +64,7 @@
                                 'cdc_data_type' : audit_response[4], 
                                 'record_identifier' : '<record_identifier>' } -%}
                         
-
+{#
 ---------- SCREEN VARIABLES
 ---- create a named variable for each screen you want to apply to the source table
 ---- available screens (see /macros/screens/<screen_name> for marcro profile:
@@ -88,22 +89,24 @@
 ---- WHERE clause that returns > 0 results on failure.
 
 ---------- one line per screen   
+#}
     {% set this_is_an_example_not_null_screen_erase_me = {'column':'the_name_of_your_source_column','type':'not_null'} %} 
 
 
-
+{#
 ---------- COLLECT VARIABLES
 ---- add each screen variable above to the collection
+#}
     {% set screen_collection =  [
                                     this_is_an_example_not_null_screen_erase_me
                                 ]%}
 
----------- RUN SCREENS [leave this section alone!]
+{# ---------- RUN SCREENS [leave this section alone!] #}
 WITH
         {{screen_declaration(screen_collection, target_audit_properties)}}
 
 
----------- UNION [leave this section alone!]
+{# ---------- UNION [leave this section alone!] #}
 
     SELECT
         *
@@ -116,7 +119,7 @@ WITH
 
 {% else %}
 
----- when no new data is present, return an empty table
+{# ---- when no new data is present, return an empty table #}
     SELECT
         *
     FROM 
@@ -124,7 +127,7 @@ WITH
     WHERE 1=0
 {% endif %} 
 
----------- CONFIGURATION [leave this section alone!]
+{# ---------- CONFIGURATION [leave this section alone!] #}
 {{config({
 
     "materialized":"ephemeral",

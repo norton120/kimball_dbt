@@ -1,9 +1,27 @@
----------- UNIVERSAL AUDIT PROPERTY SET
----- Nearly all screens need the same property set as a base.
----- This generates the property set and leaves the end of the CTE open (no parenthesis)
----- So it can be extended using AND values for the WHERE clause.
-
 {% macro universal_audit_property_set(screen_type,screen_args,kwargs) %}
+{#
+---- INTENT: Nearly all screens need the same property set as a base.
+----    This generates the property set and leaves the end of the CTE open (no parenthesis)
+----    So it can be extended using AND values for the WHERE clause.
+----
+---- screen_type (string) the name of the applied screen type
+----
+---- Pass the screen_args object with these params:
+----    - column (string) the name of the column to test
+----    - blacklisted_values (list) the values to deny
+----    - value_type (string) the datatype for the list of values
+---- Pass the kwargs object with these params:
+----    - database (string) the source database 
+----    - schema (string) the source schema
+----    - entity (string) the source table / view name
+----    - audit_key (integer) the Fkey to the audit being performed
+----    - cdc_target (string) the column used to indicate change in the entity
+----    - lowest_cdc (string) the lowest cdc_target value in this audit
+----    - highest_cdc (string) the highest cdc_target value in this audit
+----    - cdc_data_type (string) the native data type of the cdc_column in the source entity
+----    - record_identifier (string) the primary key for the source entity
+---- RETURNS: string of boilerplate columns for screens
+#}
 
         {{kwargs.audit_key}} AS audit_key,
             CURRENT_TIMESTAMP() AS error_event_at,
