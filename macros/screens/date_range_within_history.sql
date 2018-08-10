@@ -21,11 +21,7 @@
             {{universal_audit_property_set(screen_args.type,screen_args,kwargs)}}
 
         AND
-            NOT(
-                    date_trunc('MONTH', {{screen_args.column}}) >= '2007-04-01'
-                AND
-                    {{screen_args.column}} <= DATEADD(day,1,current_date())
-            )
+            {{screen_args.column}} NOT BETWEEN '2007-04-01' AND DATEADD(day,1,current_date())
         AND
             {{screen_args.column}} IS NOT NULL
     )
