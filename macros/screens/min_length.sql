@@ -21,7 +21,7 @@
             {{universal_audit_property_set('length_value',screen_args,kwargs)}}
 
         AND
-            LENGTH({{screen_args.column}}) < {{screen_args.length_value}}::number
+            LENGTH({{screen_args.column}}::varchar) < {{screen_args.length_value}}::number
         AND
             {{screen_args.column}} IS NOT NULL
     )
