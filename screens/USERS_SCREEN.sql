@@ -85,7 +85,7 @@
 
 ---------- COUNTRY_OF_RESIDENCE
 ---- valid values must have a length of 3 characters
-{% set country_of_residence_length_must_be_three = {'column': 'country_of_residence', 'type' : 'exact_length', 'exact_length' : 3} %}
+{% set country_of_residence_length_must_be_three = {'column': 'country_of_residence', 'type' : 'exact_length', 'length_value' : 3} %}
 ---- strings must be uppercase
 {% set country_of_residence_must_be_uppercase = {'column':'country_of_residence', 'type' : 'custom', 'sql_where' : "UPPER(country_of_residence) <> country_of_residence AND country_of_residence IS NOT NULL", 'screen_name' : 'country_of_residence_must_be_uppercase' } %}
 
@@ -111,7 +111,7 @@
 
 ---------- ESP_ID
 ---- valid values must have a length of 3 characters
-{% set esp_id_length_must_be_thirty_six = {'column': 'esp_id', 'type' : 'exact_length', 'exact_length' : 36} %}
+{% set esp_id_length_must_be_thirty_six = {'column': 'esp_id', 'type' : 'exact_length', 'length_value' : 36} %}
 ---- esp_id must match esp_id = '________000000000000000000000_______' OR esp_id = '________-____-____-____-____________' OR esp_id IS NULL
 {% set esp_id_must_fit_these_two_formats = {'column':'esp_id', 'type' : 'custom', 'sql_where' : "esp_id NOT LIKE '________000000000000000000000_______' AND esp_id NOT LIKE '________-____-____-____-____________' AND esp_id IS NOT NULL", 'screen_name' : 'esp_id_must_fit_these_two_formats' } %}
 
@@ -123,7 +123,7 @@
 ---- Must not equal 'cycle gear'
 {% set first_name_not_cycle_gear = {'column': 'first_name', 'type' : 'blacklist', 'blacklist_values' : ['cyclegear','cyclegear.com','cycle gear','CYCLEGEAR', 'CYCLEGEAR.COM', 'CYCLE GEAR'], 'value_type' : 'varchar'} %}
 ---- Must be > 1 character
-{% set first_name_min_length = {'column' : 'first_name', 'type' : 'min_length', 'min_length' : 1} %}
+{% set first_name_min_length = {'column' : 'first_name', 'type' : 'min_length', 'length_value' : 1} %}
 
 ---------- GENDER
 ---- Current gender values are either 'female' or 'male'
@@ -140,7 +140,7 @@
 
 ---------- ID_HASH_KEY
 ---- valid values must have a length of 40 characters
-{% set id_hash_key_length_must_be_forty = {'column': 'id_hash_key', 'type' : 'exact_length', 'exact_length' : 40} %}
+{% set id_hash_key_length_must_be_forty = {'column': 'id_hash_key', 'type' : 'exact_length', 'length_value' : 40} %}
 
 ---------- IS_ACTIVE
 ---- valid values are [t,f]
@@ -176,7 +176,7 @@
 ---- Must not equal 'cycle gear'
 {% set last_name_not_cycle_gear = {'column': 'last_name', 'type' : 'blacklist', 'blacklist_values' : ['cyclegear','cyclegear.com','cycle gear','CYCLEGEAR', 'CYCLEGEAR.COM', 'CYCLE GEAR'], 'value_type' : 'varchar'} %}
 ---- Must be > 1 character
-{% set last_name_min_length = {'column' : 'last_name', 'type' : 'min_length', 'min_length' : 1} %}
+{% set last_name_min_length = {'column' : 'last_name', 'type' : 'min_length', 'length_value' : 1} %}
 
 ---------- PASSWORD_RESET_REQUESTED_AT
 ---- date_range_within_history of RevZilla

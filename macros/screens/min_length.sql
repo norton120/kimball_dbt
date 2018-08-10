@@ -2,10 +2,10 @@
 {#
 ---- INTENT: screens for records where values are less than a min character length
 ---- Pass the screen_args object with these params:
-----    - min_length (number) the value an instance of the column must be greater than or equal to 
-----    - column (string) the column tested. 
+----    - min_length (number) the value an instance of the column must be greater than or equal to
+----    - column (string) the column tested.
 ---- Pass the kwargs object with these params:
-----    - database (string) the source database 
+----    - database (string) the source database
 ----    - schema (string) the source schema
 ----    - entity (string) the source table / view name
 ----    - audit_key (integer) the Fkey to the audit being performed
@@ -18,11 +18,11 @@
 #}
     {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_MIN_LENGTH AS (
         SELECT
-            {{universal_audit_property_set('min_length',screen_args,kwargs)}}
-        
+            {{universal_audit_property_set('length_value',screen_args,kwargs)}}
+
         AND
-            LENGTH({{screen_args.column}}) < {{screen_args.min_length}}::number
-        AND 
+            LENGTH({{screen_args.column}}) < {{screen_args.length_value}}::number
+        AND
             {{screen_args.column}} IS NOT NULL
     )
 {%- endmacro -%}

@@ -17,10 +17,10 @@
 
     {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_MAX_LENGTH AS (
         SELECT
-            {{universal_audit_property_set('max_length',screen_args,kwargs)}}
+            {{universal_audit_property_set('length_value',screen_args,kwargs)}}
 
         AND
-            LENGTH({{screen_args.column}}) > {{screen_args.max_length}}::number
+            LENGTH({{screen_args.column}}) > {{screen_args.length_value}}::number
         AND
             {{screen_args.column}} IS NOT NULL
     )
