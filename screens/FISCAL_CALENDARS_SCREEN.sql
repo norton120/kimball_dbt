@@ -104,6 +104,8 @@
  (hol_ind = 9 AND holiday <> 'CyMon')
  OR 
  (hol_ind = 10 AND holiday <> 'Chr')" } %}
+--- every year must have one and only one of each holiday
+{% set one_and_only_one_of_each_holiday_a_year = {'column' : 'hol_ind', 'type' : 'custom_aggregate', 'screen_name' : 'one_and_only_one_of_each_holiday_a_year', 'sql_where' : 'fiscal_year IN (SELECT fiscal_year FROM (SELECT fiscal_year, SUM(hol_ind) hol_total FROM raw.erp.fiscal_calendars GROUP BY 1 HAVING hol_total <> 55))' } %} 
 
 -------- WEEK_DAY_NUMBER
 ---- range 1-7
@@ -129,6 +131,16 @@
 -------- HOLIDAY
 ---- accepted values Mem, Easter, NewYrs, CyMon, GdFri, Lab, Chr, ThanksG, Indep, BlkFri
 {% set holiday_values = {'column' : 'holiday', 'type' : 'valid_values', 'value_type' : 'TEXT', 'valid_values' : ['Mem', 'Easter', 'NewYrs', 'CyMon', 'GdFri', 'Lab', 'Chr', 'ThanksG', 'Indep', 'BlkFri'], 'allow_null' : False} %}
+---- Easter is always a Sunday
+{% set easter_is_sunday = {'column' : 'holiday', 'type' : 'association', 'column_value' : 'Easter', 'depending_column' : 'day_of_week', 'depending_value' : 'Sunday', 'depending_data_type' : 'string', 'column_data_type' : 'string'} %}
+---- Thanksgiving is always a Thursday
+{% set thanksgiving_is_sunday = {'column' : 'holiday', 'type' : 'association', 'column_value' : 'ThanksG', 'depending_column' : 'day_of_week', 'depending_value' : 'Thursday', 'depending_data_type' : 'string', 'column_data_type' : 'string'} %}
+---- Christmas is always in December
+{% set christmas_in_december = {'column' : 'holiday', 'type' : 'association', 'column_value' : 'Chr', 'depending_column' : 'iso_month', 'depending_value' : 12, 'depending_data_type' : 'integer', 'column_data_type' : 'string'} %}
+---- New Years is always in January 
+{% set new_years_in_january = {'column' : 'holiday', 'type' : 'association', 'column_value' : 'NewYrs', 'depending_column' : 'iso_month', 'depending_value' : 1, 'depending_data_type' : 'integer', 'column_data_type' : 'string'} %}
+---- Independence Day is always in July 
+{% set independence_day_in_july = {'column' : 'holiday', 'type' : 'association', 'column_value' : 'Indep', 'depending_column' : 'iso_month', 'depending_value' : 7, 'depending_data_type' : 'integer', 'column_data_type' : 'string'} %}
 
 -------- ISO_QTR
 ---- range 1-4
@@ -157,6 +169,8 @@
 -------- IS_FIRST_DAY_FISCAL_PERIOD
 ---- not null
 {% set is_first_day_fiscal_period_not_null = {'column' : 'is_first_day_fiscal_period', 'type' : 'not_null'} %}
+---- should be 12 of these a year
+{% set is_first_day_fiscal_period_12_per_year = {'column' : 'is_first_day_fiscal_period', 'screen_name' : 'is_first_day_fiscal_period_12_per_year', 'type' : 'custom_aggregate', 'sql_where' : 'fiscal_year IN (SELECT fiscal_year FROM (SELECT fiscal_year, COUNT(*) countstar FROM raw.erp.fiscal_calendars WHERE is_first_day_fiscal_period GROUP BY 1 HAVING countstar <> 12) )'} %} 
 
 -------- FISCAL_PERIOD
 ---- range 1-12
@@ -194,10 +208,12 @@
 ---- add each screen variable above to the collection
 #}
     {% set screen_collection =  [
+                                    christmas_in_december,
                                     date_not_null,
                                     date_unique,
                                     day_of_week_not_null,
                                     day_of_week_valid_days,
+                                    easter_is_sunday,
                                     fiscal_period_range,
                                     fiscal_period_not_null,
                                     fiscal_qtr_range,
@@ -211,7 +227,9 @@
                                     holiday_values,
                                     id_not_null,
                                     id_unique,
+                                    independence_day_in_july,
                                     is_first_day_fiscal_period_not_null,
+                                    is_first_day_fiscal_period_12_per_year,
                                     iso_month_range,    
                                     iso_month_not_null,
                                     iso_qtr_range,
@@ -220,6 +238,9 @@
                                     iso_week_not_null,
                                     iso_year_4_chars,
                                     iso_year_not_null,
+                                    new_years_in_january,
+                                    one_and_only_one_of_each_holiday_a_year,
+                                    thanksgiving_is_sunday,
                                     week_day_number_range,
                                     week_day_number_correct_day,
                                     week_day_number_not_null

@@ -1,15 +1,10 @@
-{% macro universal_audit_property_set(screen_type,screen_args,kwargs) %}
+{%- macro custom_aggregate(screen_args, kwargs) -%}
 {#
----- INTENT: Nearly all screens need the same property set as a base.
-----    This generates the property set and leaves the end of the CTE open (no parenthesis)
-----    So it can be extended using AND values for the WHERE clause.
-----
----- screen_type (string) the name of the applied screen type
-----
+---- INTENT: screens for aggregate failures, not column-specific
 ---- Pass the screen_args object with these params:
-----    - column (string) the name of the column to test
-----    - blacklisted_values (list) the values to deny
-----    - value_type (string) the datatype for the list of values
+----    - screen_name (string) the name of the screen
+----    - sql_where (string) the sql returning 1 or more values on failure
+----    - column (string) the name of the column subject
 ---- Pass the kwargs object with these params:
 ----    - database (string) the source database 
 ----    - schema (string) the source schema
@@ -20,19 +15,15 @@
 ----    - highest_cdc (string) the highest cdc_target value in this audit
 ----    - cdc_data_type (string) the native data type of the cdc_column in the source entity
 ----    - record_identifier (string) the primary key for the source entity
----- RETURNS: string of boilerplate columns for screens
+---- RETURNS: string CTE of failing condition rows
 #}
-
-        {{kwargs.audit_key}} AS audit_key,
+    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_{{screen_args.screen_name}} AS (
+        SELECT
+            {{kwargs.audit_key}} AS audit_key,
             CURRENT_TIMESTAMP() AS error_event_at,
-            '{{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column | upper}}_{{screen_type | upper}}' AS screen_name,
-            '{{screen_args.column | upper}}' AS error_subject,
-
-        {% if screen_args.aggregate_screen %}
+            '{{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column | upper}}_{{screen_args.screen_name | upper}}' AS screen_name,
+            '{{screen_args.column | upper}} - aggregate' AS error_subject,
             'Not Applicable' AS record_identifier,
-        {% else %}
-            {{kwargs.record_identifier}} AS record_identifier,
-        {% endif %}
 
         {% if screen_args.exception_action %}
             '{{screen_args.exception_action}}' AS error_event_action
@@ -50,4 +41,9 @@
         {% else %}
             {{kwargs.lowest_cdc}} AND {{kwargs.highest_cdc}}
         {% endif %}
-{% endmacro %}
+
+        AND
+            {{screen_args.sql_where}} 
+    )
+{%- endmacro -%}
+
