@@ -176,10 +176,11 @@
 
     "materialized":"incremental",
     "sql_where":"TRUE",
-    "schema":"STAGING_QUALITY"
+    "schema":"STAGING_QUALITY",
+    "alias" : "ERP_PRODUCTS"
 
 })}}
 
 
----------- DEPENDENCY HACK
+{#---------- DEPENDENCY HACK #}
 ---- {{ref('AUDIT_FACT')}}

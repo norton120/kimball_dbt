@@ -42,7 +42,7 @@ staging_quality AS (
             email_address,
             is_anonymous
         FROM
-            {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.USERS_STAGING_QUALITY
+            {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.ERP_USERS
         WHERE 
             audit_key = (SELECT 
                             MAX(audit_key) 
