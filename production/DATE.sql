@@ -224,7 +224,7 @@ ON
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'WEEKDAY_INDICATOR')}}",
 
                     "{{comment({'column' : 'WEEK_END_DATE_KEY', 'description' : 'The date_key for the day ending the week the subject date belongs to.', 'scd_type' : 1 })}}",
-                    "{{add_constraints(['Null', 'Fkey'], this.schema, 'DATE', 'WEEK_END_DATE_KEY', 'DATE', 'DATE_KEY')}}",
+                    "{{add_constraints(['Fkey','Null'], this.schema, 'DATE', 'WEEK_END_DATE_KEY', 'DATE', 'DATE_KEY')}}",
 
                     "{{comment({'column' : 'DATE', 'description' : ' ', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'DATE')}}",

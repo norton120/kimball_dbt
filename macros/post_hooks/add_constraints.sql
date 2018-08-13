@@ -15,9 +15,8 @@
         {% if con == 'Null' %}
             ALTER COLUMN {{attribute}} NOT NULL
         {% elif con == 'Fkey' %}
-            ADD CONSTRAINT {{con}}_{{attribute}}
-            FOREIGN KEY ({{attribute}})
-            REFERENCES {{fkey_entity}} ({{fkey_attribute}});
+            ADD CONSTRAINT {{con}}_{{attribute}} 
+            FOREIGN KEY ({{attribute}}) REFERENCES {{fkey_entity}} ({{fkey_attribute}})
         {% elif con == 'Pkey' %}
             ADD CONSTRAINT {{con}}_{{attribute}}
             PRIMARY KEY ({{attribute}})

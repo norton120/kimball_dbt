@@ -76,7 +76,7 @@
  
 -------- FISCAL_YEAR
 ---- character length is 4
-{% set fiscal_year_4_chars = {'column' : 'fiscal_year', 'type' : 'exact_length', 'exact_length' : 4 } %}
+{% set fiscal_year_4_chars = {'column' : 'fiscal_year', 'type' : 'exact_length', 'length_value' : 4 } %}
 ---- not null
 {% set fiscal_year_not_null = {'column' : 'fiscal_year', 'type' : 'not_null'} %}
 
@@ -162,7 +162,7 @@
 
 -------- ISO_YEAR
 ---- character length 4
-{% set iso_year_4_chars = {'column' : 'iso_year', 'type' : 'exact_length', 'exact_length' : 4 } %}
+{% set iso_year_4_chars = {'column' : 'iso_year', 'type' : 'exact_length', 'length_value' : 4 } %}
 ---- not null
 {% set iso_year_not_null = {'column' : 'iso_year', 'type' : 'not_null'} %}
 
