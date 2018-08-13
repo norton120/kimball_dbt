@@ -6,7 +6,9 @@
 ----    - qualifier(string) the entity qualifier. default is no qualifier.
 ---- RETURNS: string of printed column entries. Note that last entry does not get a comma.
 #}
-    {% for col in columns %}
-       {{qualifier+'.' if qualifier != None else ''}}{{col}}{{',' if not loop.last}}
-    {% endfor %}
+    {% if columns | length > 0 %}
+        {% for col in columns %}
+            {{qualifier+'.' if qualifier != None else ''}}{{col}}{{',' if not loop.last}}
+        {% endfor %}
+    {% endif %}
 {% endmacro %}

@@ -26,8 +26,12 @@
             error_event_action
         FROM    
         
+        -- association screens will have a screen_name value that includes the source column test value
+        {% if screen.type == 'association' %}
+            {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen.column}}_association_{{screen.column_value}}
+
         -- custom screens will have a screen_name value that overrides the normal type
-        {% if screen.type == 'custom' %}
+        {% elif screen.type in ('custom','custom_aggregate') %}
             {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen.column}}_{{screen.screen_name}}
 
         -- for all other screens, the screen type (null, unique etc) is used to identify the cte

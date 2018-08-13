@@ -11,13 +11,17 @@
 
 #}
     {% for con in constraints %}
-        ALTER TABLE {{schema}}.{{entity}}__dbt_tmp ADD CONSTRAINT {{con}}_{{attribute}}
-        {% if con == 'Fkey' %}
-            FOREIGN KEY ({{attribute}})
-            REFERENCES {{fkey_entity}} ({{fkey_attribute}});
+        ALTER TABLE {{schema}}.{{entity}}__dbt_tmp 
+        {% if con == 'Null' %}
+            ALTER COLUMN {{attribute}} NOT NULL
+        {% elif con == 'Fkey' %}
+            ADD CONSTRAINT {{con}}_{{attribute}} 
+            FOREIGN KEY ({{attribute}}) REFERENCES {{fkey_entity}} ({{fkey_attribute}})
         {% elif con == 'Pkey' %}
+            ADD CONSTRAINT {{con}}_{{attribute}}
             PRIMARY KEY ({{attribute}})
         {% elif con == 'Unique' %}
+            ADD CONSTRAINT {{con}}_{{attribute}}
             UNIQUE ({{attribute}})
         {% endif %};
     {% endfor %}
