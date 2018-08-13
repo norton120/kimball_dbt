@@ -210,6 +210,79 @@ ON
                     "{{comment({'column' : 'full_date_description', 'description' : 'The common English representation of a date, ie January 1, 1979.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null','Unique'], this.schema, 'DATE', 'full_date_description')}}"
 
+                    "{{comment({'column' : 'fiscal_week', 'description' : 'The week of the fiscal year. Note that there is an extra leap week every 7 years, which is placed between week 5 and week 6. This is labeled week 5.5.', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'fiscal_week')}}",
+
+
+                    "{{comment({'column' : 'LAST_DAY_FISCAL_PERIOD_INDICATOR', 'description' :  'Options are Period Last Day and Not Period Last Day.', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'LAST_DAY_FISCAL_PERIOD_INDICATOR')}}",
+
+                    "{{comment({'column' : 'LAST_DAY_OF_MONTH_INDICATOR', 'description' :'Options are Month End and Not Month End.', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'LAST_DAY_OF_MONTH_INDICATOR')}}",
+
+                    "{{comment({'column' : 'WEEKDAY_INDICATOR', 'description' : 'Options are Weekday and Weekend.', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'WEEKDAY_INDICATOR')}}",
+
+                    "{{comment({'column' : 'WEEK_END_DATE_KEY', 'description' : 'The date_key for the day ending the week the subject date belongs to.', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null', 'Fkey'], this.schema, 'DATE', 'WEEK_END_DATE_KEY', 'DATE', 'DATE_KEY')}}",
+
+                    "{{comment({'column' : 'DATE', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'DATE')}}",
+
+                    "{{comment({'column' : 'FISCAL_YEAR_QUARTER', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'FISCAL_YEAR_QUARTER')}}",
+
+                    "{{comment({'column' : 'FULL_DATE_DESCRIPTION', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'FULL_DATE_DESCRIPTION')}}",
+
+                    "{{comment({'column' : 'CALENDAR_MONTH_NUMBER_IN_YEAR', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'CALENDAR_MONTH_NUMBER_IN_YEAR')}}",
+
+                    "{{comment({'column' : 'DATE_KEY', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'DATE_KEY')}}",
+
+                    "{{comment({'column' : 'DAY_OF_WEEK', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'DAY_OF_WEEK')}}",
+
+                    "{{comment({'column' : 'WEEK_START_DATE_KEY', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'WEEK_START_DATE_KEY')}}",
+
+                    "{{comment({'column' : 'FISCAL_QUARTER', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'FISCAL_QUARTER')}}",
+
+                    "{{comment({'column' : 'CALENDAR_YEAR', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'CALENDAR_YEAR')}}",
+
+                    "{{comment({'column' : 'CALENDAR_MONTH_NAME', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'CALENDAR_MONTH_NAME')}}",
+
+                    "{{comment({'column' : 'CALENDAR_YEAR_MONTH', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'CALENDAR_YEAR_MONTH')}}",
+
+                    "{{comment({'column' : 'DAY_NUMBER_IN_FISCAL_YEAR', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'DAY_NUMBER_IN_FISCAL_YEAR')}}",
+
+                    "{{comment({'column' : 'DAY_NUMBER_IN_WEEK', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'DAY_NUMBER_IN_WEEK')}}",
+
+                    "{{comment({'column' : 'FIRST_DAY_FISCAL_PERIOD_INDICATOR', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'FIRST_DAY_FISCAL_PERIOD_INDICATOR')}}",
+
+                    "{{comment({'column' : 'HOLIDAY', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'HOLIDAY')}}",
+
+                    "{{comment({'column' : 'DAY_NUMBER_IN_MONTH', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'DAY_NUMBER_IN_MONTH')}}",
+
+                    "{{comment({'column' : 'FISCAL_YEAR', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'FISCAL_YEAR')}}",
+
+                    "{{comment({'column' : 'DAY_NUMBER_IN_CALENDAR_YEAR', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'DAY_NUMBER_IN_CALENDAR_YEAR')}}",
+
+                    "{{comment({'column' : 'FISCAL_YEAR_PERIOD_WEEK', 'description' : ' ', 'scd_type' : 1 })}}",
+                    "{{add_constraints(['Null'], this.schema, 'DATE', 'FISCAL_YEAR_PERIOD_WEEK')}}",
+
                 ]
         
                 
