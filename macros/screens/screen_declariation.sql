@@ -30,6 +30,10 @@
             {{valid_values(s, target_audit_properties)}}
         {% elif s['type'] == 'blacklist' %}
             {{blacklist(s, target_audit_properties)}}
+        {% elif s['type'] == 'exact_length' %}
+            {{exact_length(s, target_audit_properties)}}
+        {% elif s['type'] == 'max_length' %}
+            {{max_length(s, target_audit_properties)}}
         {% elif s['type'] == 'min_length' %}
             {{min_length(s, target_audit_properties)}}
         {% elif s['type'] == 'valid_name' %}

@@ -1,8 +1,9 @@
-{%- macro date_range_within_history(screen_args, kwargs) -%}
+{%- macro max_length(screen_args, kwargs) -%}
 {#
----- INTENT: screens for records that exist after this moment in time (future records) or before RevZilla.
+---- INTENT: screens for records where the values are more than a max character length
 ---- Pass the screen_args object with these params:
-----    - column (string) the name of the column to test
+----    - max_length (number) the value an instance of the column must be less than or equal to
+----    - column (string) the column tested.
 ---- Pass the kwargs object with these params:
 ----    - database (string) the source database
 ----    - schema (string) the source schema
@@ -15,13 +16,12 @@
 ----    - record_identifier (string) the primary key for the source entity
 ---- RETURNS: string CTE of failing condition rows
 #}
-
-    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_DATE_RANGE_WITHIN_HISTORY AS (
+    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen_args.column}}_MAX_LENGTH AS (
         SELECT
-            {{universal_audit_property_set(screen_args.type,screen_args,kwargs)}}
+            {{universal_audit_property_set('length_value',screen_args,kwargs)}}
 
         AND
-            {{screen_args.column}} NOT BETWEEN '2007-04-01' AND DATEADD(day,1,current_date())
+            LENGTH({{screen_args.column}}::varchar) > {{screen_args.length_value}}::number
         AND
             {{screen_args.column}} IS NOT NULL
     )

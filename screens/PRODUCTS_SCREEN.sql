@@ -90,7 +90,6 @@
 
 ---------- apparel_material_mask (integer)
 ----    - values_at_least (0)
-    {% set apparel_material_at_least_zero = {'column':'apparel_material_mask', 'type':'values_at_least', 'provided_value':'0'} %}
     {% set apparel_material_mask_at_least_zero = {'column':'apparel_material_mask', 'type':'values_at_least', 'provided_value':'0'} %}
 
 ---------- apparel_type (integer)
@@ -139,6 +138,8 @@
 ----    - values_at_least (1)
     {% set creator_id_at_least_one = {'column':'creator_id', 'type':'values_at_least', 'provided_value':'1'} %}
 
+
+
 ---------- COLLECT VARIABLES
 ---- add each screen variable above to the collection
     {% set screen_collection =  [
@@ -151,7 +152,8 @@
                                     brand_id_not_null,
                                     brand_id_at_least_one,
                                     closed_out_at_range_within_history,
-                                    created_at_range_within_history
+                                    created_at_range_within_history,
+                                    creator_id_at_least_one
 
                                 ]%}
 

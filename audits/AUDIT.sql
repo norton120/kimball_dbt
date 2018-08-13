@@ -38,6 +38,7 @@ WITH
 
 
 
+
 ---- combine the lists here. This is because jinja doesn't like nested list assignment.
     {%- set all_audit_partials = [
                                 erp_products,
