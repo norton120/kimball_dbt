@@ -5,7 +5,7 @@
 ----    - column (string) the name of the column to test
 ----    - provided_value (numeric, integer, etc.) is the minimum value allowed
 ---- Pass the kwargs object with these params:
-----    - database (string) the source database 
+----    - database (string) the source database
 ----    - schema (string) the source schema
 ----    - entity (string) the source table / view name
 ----    - audit_key (integer) the Fkey to the audit being performed
@@ -21,10 +21,8 @@
             {{universal_audit_property_set(screen_args.type,screen_args,kwargs)}}
 
         AND
-            (
-                    {{screen_args.column}} >= {{screen_args.provided_value}}
-                OR
-                    {{screen_args.column}} IS NULL
-            )
+            {{screen_args.column}} < {{screen_args.provided_value}}
+        AND
+            {{screen_args.column}} IS NOT NULL
     )
 {%- endmacro -%}
