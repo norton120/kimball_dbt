@@ -69,6 +69,11 @@
         audit_key IS NOT NULL
 {% endif %}
 
+
+
+{#---------- DEPENDENCY HACK weirdly if you move this it will bork #}
+---- {{ref('ERROR_EVENT_FACT')}}
+
 {{config({
     "materialized":"incremental",
     "sql_where":"TRUE",
@@ -84,5 +89,4 @@
 })}}
 
 
----------- DEPENDENCY HACK
----- {{ref('ERROR_EVENT_FACT')}}
+

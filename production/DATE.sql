@@ -16,7 +16,7 @@ staging_quality AS (
     SELECT
         *
     FROM
-        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.FISCAL_CALENDARS_STAGING_QUALITY
+        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.ERP_FISCAL_CALENDARS
 ),
 
 

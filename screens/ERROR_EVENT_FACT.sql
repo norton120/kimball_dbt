@@ -60,9 +60,9 @@ unioned_error_events AS (
     WHERE
         audit_key IS NOT NULL
 
+{#---- DEPENDENCY HACK weirdly borks if you move it at all #}
+---- {{ref('AUDIT')}}
 
-
----------- CONFIGURATION
     {{config({
         "materialized":"incremental",
         "sql_where":"TRUE",
@@ -80,5 +80,8 @@ unioned_error_events AS (
 
    ]})}}
 
----------- DEPENDENCY HACK
----- {{ref('AUDIT')}}
+
+
+
+
+

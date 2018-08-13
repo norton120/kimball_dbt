@@ -176,6 +176,7 @@
     "materialized":"incremental",
     "sql_where":"TRUE",
     "schema":"STAGING_QUALITY",
+    "alias" : "ERP_FISCAL_CALENDARS",
     "post-hook": " CREATE TEMPORARY TABLE {{this.name}}_to_remove AS (
                     SELECT
                         FIRST_VALUE(audit_key) OVER (PARTITION BY id ORDER BY audit_key ASC)::varchar||'-'||id::varchar as remove_flag
