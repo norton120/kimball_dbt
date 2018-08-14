@@ -1,0 +1,43 @@
+DATE:
+  constraints:
+    not_null:
+      - date_key
+      - date
+      - full_date_description
+      - day_of_week
+      - day_number_in_week
+      - day_number_in_month
+      - day_number_in_calendar_year
+      - day_number_in_fiscal_year
+      - last_day_of_month_indicator
+      - week_end_date_key
+      - week_start_date_key
+      - calendar_month_name
+      - calendar_month_number_in_year
+      - calendar_year_month
+      - calendar_year
+      - fiscal_week
+      - fiscal_quarter
+      - fiscal_year
+      - fiscal_year_quarter
+      - first_day_fiscal_period_indicator
+      - last_day_fiscal_period_indicator
+      - holiday
+      - weekday_indicator
+      - fiscal_year_period_week
+    unique:
+      - date_key
+      - date
+      - full_date_description
+    accepted_values:
+      - {field: day_of_week, values: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']}
+      - {field: day_number_in_week, values: [1,2,3,4,5,6,7]}
+      - {field: day_number_in_month, values: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]}
+      - {field: last_day_of_month_indicator, values: ['Month End','Not Month End']}
+      - {field: calendar_month_name, values: ['January','February','March','April','May','June','July','August','September','October','November','December']}
+      - {field: calendar_month_number_in_year, values: [1,2,3,4,5,6,7,8,9,10,11,12]}
+      - {field: fiscal_quarter, values: [1,2,3,4]}
+      - {field: first_day_fiscal_period_indicator, values: ['Period First Day','Not Period First Day']}
+      - {field: last_day_fiscal_period_indicator, values: ['Period Last Day','Not Period Last Day']}
+      - {field: holiday, values: ['New Years Day','Good Friday','Easter','Memorial Day','Independance Day','Labor Day','Thanksgiving','Black Friday','Cyber Monday','Christmas','Not Holiday']}
+      - {field: weekday_indicator, values: ['Weekday','Weekend']}

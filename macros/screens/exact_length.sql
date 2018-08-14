@@ -1,6 +1,7 @@
 {%- macro exact_length(screen_args, kwargs) -%}
 {#
 ---- INTENT: screens for records where values are not an exact character length
+----    - does not screen for null values
 ---- Pass the screen_args object with these params:
 ----    - exact_length (number) the value an instance of the column must be equal to
 ----    - column (string) the column tested.
@@ -22,6 +23,7 @@
 
         AND
             LENGTH({{screen_args.column}}::varchar) <> {{screen_args.length_value}}::number
+
         AND
             {{screen_args.column}} IS NOT NULL
     )

@@ -171,15 +171,16 @@
             0=1
 {% endif %}
 
----------- CONFIGURATION [leave this section alone!]
+{#---------- DEPENDENCY HACK #}
+---- {{ref('AUDIT_FACT')}}
+{#---------- CONFIGURATION [leave this section alone!] #}
+
 {{config({
 
     "materialized":"incremental",
     "sql_where":"TRUE",
-    "schema":"STAGING_QUALITY"
+    "schema":"STAGING_QUALITY",
+    "alias" : "ERP_PRODUCTS"
 
 })}}
 
-
----------- DEPENDENCY HACK
----- {{ref('AUDIT_FACT')}}

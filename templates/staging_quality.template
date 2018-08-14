@@ -176,6 +176,7 @@
     "materialized":"incremental",
     "sql_where":"TRUE",
     "schema":"STAGING_QUALITY",
+    "alias" : "<schema>_<entity>",
     "post-hook": " CREATE TEMPORARY TABLE {{this.name}}_to_remove AS (
                     SELECT
                         FIRST_VALUE(audit_key) OVER (PARTITION BY <record_identifier> ORDER BY audit_key ASC)::varchar||'-'||<record_identifier>::varchar as remove_flag

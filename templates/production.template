@@ -36,12 +36,12 @@ staging_quality AS (
             {#-- enumerate the needed source data columns#}
 
         FROM
-            {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.<entity>_STAGING_QUALITY
+            {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.<schema>_<entity>
         WHERE 
             audit_key = (SELECT 
                             MAX(audit_key) 
                         FROM 
-                        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.<entity>_STAGING_QUALITY)
+                        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.<schema>_<entity>)
     ),
     transformed AS (
         {#-- transforms happen here to conform with the production table.#}

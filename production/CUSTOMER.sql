@@ -42,12 +42,12 @@ staging_quality AS (
             email_address,
             is_anonymous
         FROM
-            {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.USERS_STAGING_QUALITY
+            {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.ERP_USERS
         WHERE 
             audit_key = (SELECT 
                             MAX(audit_key) 
                         FROM 
-                        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.USERS_STAGING_QUALITY)
+                        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.ERP_USERS)
     ),
     transformed AS (
         {#-- transforms happen here to conform with the production table.#}
@@ -64,9 +64,13 @@ staging_quality AS (
 
 {{scd_engine('staging_qualiy', model_definition)}}
 
+{#---------- DEPENDENCY HACK #}
+---- {{ref('USERS_STAGING_QUALITY')}}
+{#---------- CONFIGURATION #} 
 
 {{config({
     'materialized' : 'table',
+    'enabled' : false,
     'sql_where' : 'TRUE',
     'schema' : 'GENERAL',
     'pre-hook' : "USE SCHEMA {{this.schema}}; CREATE SEQUENCE IF NOT EXISTS customer_pk_seq start = 100000",
@@ -79,8 +83,7 @@ staging_quality AS (
 
 })}}
 
-{#---- DEPENDENCY HACK#}
----- {{ref('USERS_STAGING_QUALITY')}}
+
 
 
 

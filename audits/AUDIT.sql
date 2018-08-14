@@ -9,17 +9,6 @@
 ---- * Keep all_audit_partial variables in alphabetical order. Yes it makes git diffs harder to read.
 
 
----------- CONFIGURATION
-    {{config({
-        "materialized":"incremental",
-        "sql_where":"TRUE",
-        "schema":"QUALITY",
-        "post-hook":[
-            "{{comment({'column':'audit_key','definition':'The supernatural key for the audit table.'})}}",
-            "{{comment({'definition':'Every time we execute a quality process job against new data in the Data Lake the instance of that execution is called an audit.',
-                        'grain':'One row per audit executed on a unique entity'})}}"
-
-   ]})}}
 
 
 ---- Set already exists flag
@@ -69,9 +58,10 @@ union_all_initial_audits AS (
                     entity_type,
                     entity_key,
                     schema_key,
-                    database_Key,
-                    dbt_version,
-                    dbt_repo_release_version,
+                    database_key,
+                    '{{var("release")}}' AS release,
+                    '{{var("dbt_version")}}' AS dbt_version,
+                    '{{var("app_version")}}' AS app_version,
                     lowest_cdc,
                     highest_cdc
                 FROM
@@ -90,3 +80,57 @@ WHERE
     lowest_cdc IS NOT NULL
 AND
     highest_cdc IS NOT NULL
+
+
+
+---------- CONFIGURATION
+    {{config({
+        "materialized":"incremental",
+        "sql_where":"TRUE",
+        "schema":"QUALITY",
+        "post-hook":[
+
+            "{{comment({'definition':'Every time we execute a quality process job against new data in the Data Lake the instance of that execution is called an audit.',
+                        'grain':'One row per audit executed on a unique entity'})}}",
+
+            "{{comment({'column':'audit_key','definition':'The supernatural key for the audit table.', 'scd_type' : 1})}}",
+            "{{add_constraints(['Pkey', 'Null'],this.schema,'AUDIT', 'AUDIT_KEY', None, None, 'incremental')}}",
+
+            "{{comment({'column':'ENTITY_KEY','definition' : 'The entity name (table or view) to be audited. Could be FK to information_schema, but at this time not enforced.', 'scd_type' : 1})}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'ENTITY_KEY', None, None, 'incremental')}}",
+
+            "{{comment({'column':'CDC_TARGET','definition':'The change data capture column - ie the column that tells us a record has been added or updated.', 'scd_type' : 1})}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'CDC_TARGET', None, None, 'incremental')}}",
+
+            "{{comment({'column':'DATABASE_KEY','definition':'The database name for the entity to be audited. Could be FK to information_schema, but at this time not enforced.', 'scd_type' : 1})}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'DATABASE_KEY', None, None, 'incremental')}}",
+
+            "{{comment({'column':'DBT_VERSION','definition':'The version number of the dbt framework running when this audit was generated.', 'scd_type' : 1})}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'DBT_VERSION', None, None, 'incremental')}}",
+
+            "{{comment({'column':'HIGHEST_CDC','definition':'The greatest value of the cdc_target column to be included in this audit.', 'scd_type' : 1})}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'HIGHEST_CDC', None, None, 'incremental')}}",
+
+            "{{comment({'column':'ENTITY_TYPE','definition':'The schema object type of the entity to be audited. Typically a View or a Table.', 'scd_type' : 1})}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'ENTITY_TYPE', None, None, 'incremental')}}",
+
+            "{{comment({'column':'APP_VERSION','definition':'The internal version number for our application.', 'scd_type' : 1})}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'APP_VERSION', None, None, 'incremental')}}",
+
+            "{{comment({'column':'RELEASE','definition':'The release name that this version belongs to.', 'scd_type' : 1})}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'RELEASE', None, None, 'incremental')}}",
+
+            "{{comment({'column':'SCHEMA_KEY','definition':'The schema name for the entity to be audited. Could be FK to the information_schema, but at this time not enforced.', 'scd_type' : 1})}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'SCHEMA_KEY', None, None, 'incremental')}}",
+
+            "{{comment({'column':'AUDIT_STATUS','definition':'Possible values are In Process and Completed. Only In Process while the screens are being applied and error events are generated.', 'scd_type' : 1})}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'AUDIT_STATUS', None, None, 'incremental')}}",
+
+            "{{comment({'column':'LOWEST_CDC','definition':'The least value of the cdc_target column that will be included in this audit.', 'scd_type' : 1})}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'LOWEST_CDC', None, None, 'incremental')}}"
+
+
+
+
+   ]})}}
+

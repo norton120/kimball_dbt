@@ -14,8 +14,9 @@ CREATE OR REPLACE SEQUENCE quality_audit_pk_seq start = 100000
 
 CREATE TABLE AUDIT (                                                                                                    
     audit_key INTEGER PRIMARY KEY DEFAULT quality_audit_pk_seq.nextval,                                                                                      
-    dbt_repo_release_version VARCHAR NOT NULL, -- not sure how to populate these within DBT context yet,                                                                         
-    dbt_version VARCHAR NOT NULL,              -- but good to have as placeholders.                                                                          
+    app_version VARCHAR NOT NULL,                                                                          
+    release VARCHAR NOT NULL,
+    dbt_version VARCHAR NOT NULL,                                                                                       
     database_key VARCHAR NOT NULL,                                                                                      
     schema_key VARCHAR NOT NULL,                                                                                        
     entity_key VARCHAR NOT NULL,                                                                                        
@@ -31,8 +32,6 @@ CREATE TABLE AUDIT_FACT (
     gross_record_count INTEGER,
     validated_record_count INTEGER,
     audit_completed_at TIMESTAMP_LTZ,
-
--- this should be fkey'd to the audit date view in the prod model
     audit_date_key INTEGER 
 
 );

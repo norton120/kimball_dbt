@@ -14,7 +14,8 @@
 ---- RETURNS: dict of lists, each list containing the comma-deliniated values for each row
 
     SELECT
-        audit_key,
+        -- snowflake needs this explicictly cast for some reason
+        audit_key::NUMBER AS audit_key,
         database_key,
         schema_key,
         entity_key,
@@ -43,7 +44,7 @@
 
 
 ---- if no rows are returned, increment with an empty table
-{% if audit_fact_response | length > 0 %}    
+{% if audit_fact_response | length > 0 %}
 ---- get the total record count within the audit context
     WITH
     all_records_in_audit_context AS (
@@ -51,23 +52,30 @@
     )
 
     SELECT
-        audit_key,
-        gross_record_count,
-        gross_record_count - error_event_count AS validated_record_count,
+        audit_key::NUMBER AS audit_key,
+        gross_record_count::NUMBER AS gross_record_count,
+        gross_record_count::NUMBER - error_event_count::NUMBER AS validated_record_count,
         CURRENT_TIMESTAMP() AS audit_completed_at,
         {{date_key('CURRENT_DATE()')}} AS audit_date_key
     FROM
         all_records_in_audit_context
 {% else %}
     SELECT
-        NULL AS audit_key,
-        NULL AS gross_record_count,
-        NULL AS validated_record_count,
-        NULL AS audit_completed_at,
-        NULL AS audit_date_key
-    WHERE 
+        NULL::NUMBER AS audit_key,
+        NULL::NUMBER AS gross_record_count,
+        NULL::NUMBER AS validated_record_count,
+        NULL::TIMESTAMP_LTZ AS audit_completed_at,
+        NULL::NUMBER AS audit_date_key
+    WHERE
         audit_key IS NOT NULL
 {% endif %}
+
+
+
+
+{#---------- DEPENDENCY HACK #}
+---- {{ref('ERROR_EVENT_FACT')}}
+{#---------- CONFIGURATIONT #}
 
 {{config({
     "materialized":"incremental",
@@ -78,11 +86,24 @@
             (SELECT
                 audit_key
             FROM
-                {{this.database}}.{{this.schema}}.audit_fact)"
+                {{this.database}}.{{this.schema}}.audit_fact)",
+            
+
+            "{{comment({'grain' : 'One row per completed audit.','definition' : 'KPIs for each audit run.'})}}",
+
+            "{{comment({'column' : 'AUDIT_DATE_KEY','definition' : 'The FK to the date when audit was run.', 'additive' : false})}}",
+            "{{add_constraints(['Fkey', 'Null'], this.schema, 'AUDIT_FACT', 'AUDIT_DATE_KEY', 'DATE', 'DATE_KEY', 'incremental')}}",
+
+            "{{comment({'column' : 'AUDIT_KEY','definition' : 'The FK to the audit dim.', 'additive' : false})}}",
+            "{{add_constraints(['Fkey', 'Null'], this.schema, 'AUDIT_FACT', 'AUDIT_KEY', 'AUDIT', 'AUDIT_KEY', 'incremental')}}",
+
+            "{{comment({'column' : 'AUDIT_COMPLETED_AT','definition' : 'The timestamp completion of the audit.', 'additive' :false})}}",
+            "{{add_constraints(['Null'], this.schema, 'AUDIT_FACT', 'AUDIT_COMPLETED_AT', None, None, 'incremental')}}",
+
+            "{{comment({'column' : 'VALIDATED_RECORD_COUNT','definition' : 'The number of records in this audit that passed without error.', 'additive' :true})}}",
+
+            "{{comment({'column' : 'GROSS_RECORD_COUNT','definition' : 'The number of total records audited.', 'additive' :true})}}"
+ 
     ]
 
 })}}
-
-
----------- DEPENDENCY HACK
----- {{ref('ERROR_EVENT_FACT')}}

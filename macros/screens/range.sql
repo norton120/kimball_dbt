@@ -1,14 +1,14 @@
 {%- macro range(screen_args, kwargs) -%}
-
 {#
 ---- INTENT: screens for values within a given range. Ignores NULL values.
+----    - does not screen for null values
 ---- Pass the screen_args object with these params:
 ----    - column (string) the name of the column to test
 ----    - cast_as (string) data type to cast the column as
 ----    - range_start (number, date) lowest value to allow
 ----    - range_end (number, date) highest value to allow
 ---- Pass the kwargs object with these params:
-----    - database (string) the source database 
+----    - database (string) the source database
 ----    - schema (string) the source schema
 ----    - entity (string) the source table / view name
 ----    - audit_key (integer) the Fkey to the audit being performed
@@ -30,6 +30,7 @@
             {% else %}
                 {{screen_args.range_start}} AND {{screen_args.range_end}}
             {% endif %}
+
         AND
             {{screen_args.column}} IS NOT NULL
     )
