@@ -67,6 +67,7 @@ staging_quality AS (
 
 {{config({
     'materialized' : 'table',
+    'enabled' : false,
     'sql_where' : 'TRUE',
     'schema' : 'GENERAL',
     'pre-hook' : "USE SCHEMA {{this.schema}}; CREATE SEQUENCE IF NOT EXISTS customer_pk_seq start = 100000",
