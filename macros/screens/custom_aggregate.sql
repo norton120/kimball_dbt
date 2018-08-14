@@ -1,12 +1,13 @@
 {%- macro custom_aggregate(screen_args, kwargs) -%}
 {#
 ---- INTENT: screens for aggregate failures, not column-specific
+----    - custom query will need to specify whether or not to screen for null values
 ---- Pass the screen_args object with these params:
 ----    - screen_name (string) the name of the screen
 ----    - sql_where (string) the sql returning 1 or more values on failure
 ----    - column (string) the name of the column subject
 ---- Pass the kwargs object with these params:
-----    - database (string) the source database 
+----    - database (string) the source database
 ----    - schema (string) the source schema
 ----    - entity (string) the source table / view name
 ----    - audit_key (integer) the Fkey to the audit being performed
@@ -43,7 +44,6 @@
         {% endif %}
 
         AND
-            {{screen_args.sql_where}} 
+            {{screen_args.sql_where}}
     )
 {%- endmacro -%}
-

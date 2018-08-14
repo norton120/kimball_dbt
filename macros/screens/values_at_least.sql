@@ -1,6 +1,7 @@
 {%- macro values_at_least(screen_args, kwargs) -%}
 {#
 ---- INTENT: screens for values less than a minimum value if not null
+----    - does not screen for null values
 ---- Pass the screen_args object with these params:
 ----    - column (string) the name of the column to test
 ----    - provided_value (numeric, integer, etc.) is the minimum value allowed
@@ -22,6 +23,7 @@
 
         AND
             {{screen_args.column}} < {{screen_args.provided_value}}
+
         AND
             {{screen_args.column}} IS NOT NULL
     )

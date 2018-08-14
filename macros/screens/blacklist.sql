@@ -1,12 +1,13 @@
 {%- macro blacklist(screen_args, kwargs) -%}
 {#
 ---- INTENT: screens for values in a list of known bad values
+----    - does not screen for null values
 ---- Pass the screen_args object with these params:
 ----    - column (string) the name of the column to test
 ----    - blacklisted_values (list) the values to deny
 ----    - value_type (string) the datatype for the list of values
 ---- Pass the kwargs object with these params:
-----    - database (string) the source database 
+----    - database (string) the source database
 ----    - schema (string) the source schema
 ----    - entity (string) the source table / view name
 ----    - audit_key (integer) the Fkey to the audit being performed
@@ -32,5 +33,8 @@
                 {{ ',' if not loop.last}}
             {%- endfor -%}
             )
+
+        AND
+            {{screen_args.column}} IS NOT NULL
     )
 {%- endmacro -%}

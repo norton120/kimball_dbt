@@ -1,6 +1,7 @@
 {%- macro date_range_within_history(screen_args, kwargs) -%}
 {#
 ---- INTENT: screens for records that exist after this moment in time (future records) or before RevZilla.
+----    - does not screen for null values
 ---- Pass the screen_args object with these params:
 ----    - column (string) the name of the column to test
 ---- Pass the kwargs object with these params:
@@ -22,6 +23,7 @@
 
         AND
             {{screen_args.column}} NOT BETWEEN '2007-04-01' AND DATEADD(day,1,current_date())
+
         AND
             {{screen_args.column}} IS NOT NULL
     )

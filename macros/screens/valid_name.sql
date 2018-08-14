@@ -1,13 +1,14 @@
 {%- macro valid_name(screen_args, kwargs) -%}
 {#
 ---- INTENT: screens for values with an invalid English naming convention
-----    note: We are using English base conventions to simplify support at the BI level. 
+----    - does not screen for null values
+----    note: We are using English base conventions to simplify support at the BI level.
 ----    Non-UTF characters are perfectly acceptable but will be flagged by this macro.
 ----
 ---- Pass the screen_args object with these params:
 ----    - column (string) the name of the column to test
 ---- Pass the kwargs object with these params:
-----    - database (string) the source database 
+----    - database (string) the source database
 ----    - schema (string) the source schema
 ----    - entity (string) the source table / view name
 ----    - audit_key (integer) the Fkey to the audit being performed
@@ -23,7 +24,8 @@
             {{universal_audit_property_set('valid_name',screen_args,kwargs)}}
 
         AND
-            {{screen_args.column}} IS NULL
+            {{screen_args.column}} IS NOT NULL
+
         AND
             {{screen_args.column}} NOT REGEXP '[\s a-z A-Z \'\' \-]*'
     )
