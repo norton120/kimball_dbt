@@ -71,17 +71,10 @@
 
 
 
-<<<<<<< HEAD
-{#---------- DEPENDENCY HACK weirdly if you move this it will bork #}
----- {{ref('ERROR_EVENT_FACT')}}
-=======
-{#
----------- DEPENDENCY HACK
----- {{ref('ERROR_EVENT_FACT')}}
-#}
 
-
->>>>>>> 0ef8c4039e0701f5775aa48fb56b5d826fe3cfa1
+{#---------- DEPENDENCY HACK #}
+---- {{ref('ERROR_EVENT_FACT')}}
+{#---------- CONFIGURATIONT #}
 
 {{config({
     "materialized":"incremental",
@@ -96,9 +89,3 @@
     ]
 
 })}}
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> 0ef8c4039e0701f5775aa48fb56b5d826fe3cfa1

@@ -64,6 +64,9 @@ staging_quality AS (
 
 {{scd_engine('staging_qualiy', model_definition)}}
 
+{#---------- DEPENDENCY HACK #}
+---- {{ref('USERS_STAGING_QUALITY')}}
+{#---------- CONFIGURATION #} 
 
 {{config({
     'materialized' : 'table',
@@ -80,8 +83,7 @@ staging_quality AS (
 
 })}}
 
-{#---- DEPENDENCY HACK#}
----- {{ref('USERS_STAGING_QUALITY')}}
+
 
 
 

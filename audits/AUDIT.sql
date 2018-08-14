@@ -94,40 +94,40 @@ AND
                         'grain':'One row per audit executed on a unique entity'})}}",
 
             "{{comment({'column':'audit_key','definition':'The supernatural key for the audit table.'})}}",
-            "{{add_constraints(['Pkey', 'Null'],this.schema,'AUDIT', 'AUDIT_KEY')}}",
+            "{{add_constraints(['Pkey', 'Null'],this.schema,'AUDIT', 'AUDIT_KEY', None, None, 'incremental')}}",
 
             "{{comment({'column':'ENTITY_KEY','definition' : 'The entity name (table or view) to be audited. Could be FK to information_schema, but at this time not enforced.'})}}",
-            "{{add_constraints(['Null'],this.schema,'AUDIT', 'ENTITY_KEY')}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'ENTITY_KEY', None, None, 'incremental')}}",
 
             "{{comment({'column':'CDC_TARGET','definition':'The change data capture column - ie the column that tells us a record has been added or updated.'})}}",
-            "{{add_constraints(['Null'],this.schema,'AUDIT', 'CDC_TARGET')}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'CDC_TARGET', None, None, 'incremental')}}",
 
             "{{comment({'column':'DATABASE_KEY','definition':'The database name for the entity to be audited. Could be FK to information_schema, but at this time not enforced.'})}}",
-            "{{add_constraints(['Null'],this.schema,'AUDIT', 'DATABASE_KEY')}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'DATABASE_KEY', None, None, 'incremental')}}",
 
             "{{comment({'column':'DBT_VERSION','definition':'The version number of the dbt framework running when this audit was generated.'})}}",
-            "{{add_constraints(['Null'],this.schema,'AUDIT', 'DBT_VERSION')}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'DBT_VERSION', None, None, 'incremental')}}",
 
             "{{comment({'column':'HIGHEST_CDC','definition':'The greatest value of the cdc_target column to be included in this audit.'})}}",
-            "{{add_constraints(['Null'],this.schema,'AUDIT', 'HIGHEST_CDC')}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'HIGHEST_CDC', None, None, 'incremental')}}",
 
             "{{comment({'column':'ENTITY_TYPE','definition':'The schema object type of the entity to be audited. Typically a View or a Table.'})}}",
-            "{{add_constraints(['Null'],this.schema,'AUDIT', 'ENTITY_TYPE')}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'ENTITY_TYPE', None, None, 'incremental')}}",
 
             "{{comment({'column':'APP_VERSION','definition':'The internal version number for our application.'})}}",
-            "{{add_constraints(['Null'],this.schema,'AUDIT', 'APP_VERSION')}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'APP_VERSION', None, None, 'incremental')}}",
 
             "{{comment({'column':'RELEASE','definition':'The release name that this version belongs to.'})}}",
-            "{{add_constraints(['Null'],this.schema,'AUDIT', 'RELEASE')}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'RELEASE', None, None, 'incremental')}}",
 
             "{{comment({'column':'SCHEMA_KEY','definition':'The schema name for the entity to be audited. Could be FK to the information_schema, but at this time not enforced.'})}}",
-            "{{add_constraints(['Null'],this.schema,'AUDIT', 'SCHEMA_KEY')}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'SCHEMA_KEY', None, None, 'incremental')}}",
 
             "{{comment({'column':'AUDIT_STATUS','definition':'Possible values are In Process and Completed. Only In Process while the screens are being applied and error events are generated.'})}}",
-            "{{add_constraints(['Null'],this.schema,'AUDIT', 'AUDIT_STATUS')}}",
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'AUDIT_STATUS', None, None, 'incremental')}}",
 
             "{{comment({'column':'LOWEST_CDC','definition':'The least value of the cdc_target column that will be included in this audit.'})}}",
-            "{{add_constraints(['Null'],this.schema,'AUDIT', 'LOWEST_CDC')}}"
+            "{{add_constraints(['Null'],this.schema,'AUDIT', 'LOWEST_CDC', None, None, 'incremental')}}"
 
 
 

@@ -63,18 +63,8 @@ unioned_error_events AS (
 {#---- DEPENDENCY HACK weirdly borks if you move it at all #}
 ---- {{ref('AUDIT')}}
 
-<<<<<<< HEAD
-=======
+{#---------- CONFIGURATION #}
 
-{#
----------- DEPENDENCY HACK
----- {{ref('AUDIT')}}
-#}
-
-
-
----------- CONFIGURATION
->>>>>>> 0ef8c4039e0701f5775aa48fb56b5d826fe3cfa1
     {{config({
         "materialized":"incremental",
         "sql_where":"TRUE",
@@ -91,12 +81,4 @@ unioned_error_events AS (
                         'grain':'Every time an instance or entity fails a screen, an error event is created.'})}}"
 
    ]})}}
-<<<<<<< HEAD
 
-
-
-
-
-
-=======
->>>>>>> 0ef8c4039e0701f5775aa48fb56b5d826fe3cfa1
