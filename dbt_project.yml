@@ -30,7 +30,7 @@ quoting:
 models:
   revzilla:
   vars:
-    release: "David Carradine"
+    release: "Harvey Mushman"
     app_version: 0.0.0
     dbt_version: 0.10.2  
     production_database: 'DW2'
