@@ -18,7 +18,7 @@
 
 ---------- STATEMENTS [leave this section alone!]
 ---- Statements populate the python context with information about the subject audit.
-{% if adapter.already_exists(this.schema, this.name) %}
+{% if adapter.already_exists(this.schema | replace('STAGING_QUALITY','QUALITY'), 'AUDIT') %}
     {%- call statement('target_audit', fetch_result=True) -%}
         SELECT
             audit_key,
@@ -171,15 +171,16 @@
             0=1
 {% endif %}
 
----------- CONFIGURATION [leave this section alone!]
+{#---------- DEPENDENCY HACK #}
+---- {{ref('AUDIT_FACT')}}
+{#---------- CONFIGURATION [leave this section alone!] #}
+
 {{config({
 
     "materialized":"incremental",
     "sql_where":"TRUE",
-    "schema":"STAGING_QUALITY"
+    "schema":"STAGING_QUALITY",
+    "alias" : "ERP_PRODUCTS"
 
 })}}
 
-
----------- DEPENDENCY HACK
----- {{ref('AUDIT_FACT')}}
