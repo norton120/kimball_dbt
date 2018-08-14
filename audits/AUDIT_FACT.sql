@@ -60,11 +60,11 @@
         all_records_in_audit_context
 {% else %}
     SELECT
-        NULL AS audit_key,
-        NULL AS gross_record_count,
-        NULL AS validated_record_count,
-        NULL AS audit_completed_at,
-        NULL AS audit_date_key
+        NULL::NUMBER AS audit_key,
+        NULL::NUMBER AS gross_record_count,
+        NULL::NUMBER AS validated_record_count,
+        NULL::TIMESTAMP_LTZ AS audit_completed_at,
+        NULL::NUMBER AS audit_date_key
     WHERE
         audit_key IS NOT NULL
 {% endif %}
@@ -85,7 +85,24 @@
             (SELECT
                 audit_key
             FROM
-                {{this.database}}.{{this.schema}}.audit_fact)"
+                {{this.database}}.{{this.schema}}.audit_fact)",
+            
+
+            "{{comment({'grain' : 'One row per completed audit.','definition' : 'KPIs for each audit run.'})}}",
+
+            "{{comment({'column' : 'AUDIT_DATE_KEY','definition' : 'The FK to the date when audit was run.', 'additive' : false})}}",
+            "{{add_constraints(['Fkey', 'Null'], this.schema, 'AUDIT_FACT', 'AUDIT_DATE_KEY', 'DATE', 'DATE_KEY', 'incremental')}}",
+
+            "{{comment({'column' : 'AUDIT_KEY','definition' : 'The FK to the audit dim.', 'additive' : false})}}",
+            "{{add_constraints(['Fkey', 'Null'], this.schema, 'AUDIT_FACT', 'AUDIT_KEY', 'AUDIT', 'AUDIT_KEY', 'incremental')}}",
+
+            "{{comment({'column' : 'AUDIT_COMPLETED_AT','definition' : 'The timestamp completion of the audit.', 'additive' :false})}}",
+            "{{add_constraints(['Null'], this.schema, 'AUDIT_FACT', 'AUDIT_COMPLETED_AT', None, None, 'incremental')}}",
+
+            "{{comment({'column' : 'VALIDATED_RECORD_COUNT','definition' : 'The number of records in this audit that passed without error.', 'additive' :true})}}",
+
+            "{{comment({'column' : 'GROSS_RECORD_COUNT','definition' : 'The number of total records audited.', 'additive' :true})}}"
+ 
     ]
 
 })}}

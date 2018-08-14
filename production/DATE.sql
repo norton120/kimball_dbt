@@ -213,77 +213,77 @@ ON
 
                     "{{comment({'description' : 'The dimension for all dates in the data warehouse. Note: This table will never be directly related to by another entity, but instead aliased by prefixed views.', 'grain' : 'one instance per calendar day.' })}}",
 
-                    "{{comment({'column' : 'date_key', 'description' : 'PK defined as the integer representation of the date. For example, 2018-01-01 becomes 20180101. 0 represents Data Not Applicable, 99991231 represents Data Not Yet Available.' })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'date_key', 'description' : 'PK defined as the integer representation of the date. For example, 2018-01-01 becomes 20180101. 0 represents Data Not Applicable, 99991231 represents Data Not Yet Available.' })}}",
                     "{{add_constraints(['Pkey','Null'], this.schema, 'DATE', 'date_key')}}",
 
-                    "{{comment({'column' : 'full_date_description', 'description' : 'The common English representation of a date, ie January 1, 1979.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'full_date_description', 'description' : 'The common English representation of a date, ie January 1, 1979.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null','Unique'], this.schema, 'DATE', 'full_date_description')}}"
 
-                    "{{comment({'column' : 'fiscal_week', 'description' : 'The week of the fiscal year. Note that there is an extra leap week every 7 years, which is placed between week 5 and week 6. This is labeled week 5.5.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'fiscal_week', 'description' : 'The week of the fiscal year. Note that there is an extra leap week every 7 years, which is placed between week 5 and week 6. This is labeled week 5.5.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'fiscal_week')}}",
 
 
-                    "{{comment({'column' : 'LAST_DAY_FISCAL_PERIOD_INDICATOR', 'description' :  'Options are Period Last Day and Not Period Last Day.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'LAST_DAY_FISCAL_PERIOD_INDICATOR', 'description' :  'Options are Period Last Day and Not Period Last Day.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'LAST_DAY_FISCAL_PERIOD_INDICATOR')}}",
 
-                    "{{comment({'column' : 'LAST_DAY_OF_MONTH_INDICATOR', 'description' :'Options are Month End and Not Month End.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'LAST_DAY_OF_MONTH_INDICATOR', 'description' :'Options are Month End and Not Month End.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'LAST_DAY_OF_MONTH_INDICATOR')}}",
 
-                    "{{comment({'column' : 'WEEKDAY_INDICATOR', 'description' : 'Options are Weekday and Weekend.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'WEEKDAY_INDICATOR', 'description' : 'Options are Weekday and Weekend.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'WEEKDAY_INDICATOR')}}",
 
-                    "{{comment({'column' : 'WEEK_END_DATE_KEY', 'description' : 'The date_key for the day ending the week the subject date belongs to.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'WEEK_END_DATE_KEY', 'description' : 'The date_key for the day ending the week the subject date belongs to.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Fkey','Null'], this.schema, 'DATE', 'WEEK_END_DATE_KEY', 'DATE', 'DATE_KEY')}}",
 
-                    "{{comment({'column' : 'DATE', 'description' : 'The date-typed column containing the representation of the date as a date object.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'DATE', 'description' : 'The date-typed column containing the representation of the date as a date object.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null', 'Unique'], this.schema, 'DATE', 'DATE')}}",
 
-                    "{{comment({'column' : 'FISCAL_YEAR_QUARTER', 'description' : 'A string formatted as <year>-<quarter>.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'FISCAL_YEAR_QUARTER', 'description' : 'A string formatted as <year>-<quarter>.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'FISCAL_YEAR_QUARTER')}}",
 
-                    "{{comment({'column' : 'CALENDAR_MONTH_NUMBER_IN_YEAR', 'description' : 'The integer value of the month 1-12.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'CALENDAR_MONTH_NUMBER_IN_YEAR', 'description' : 'The integer value of the month 1-12.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'CALENDAR_MONTH_NUMBER_IN_YEAR')}}",
 
-                    "{{comment({'column' : 'DAY_OF_WEEK', 'description' : 'Conformed day of the week Monday-Sunday for the given date.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'DAY_OF_WEEK', 'description' : 'Conformed day of the week Monday-Sunday for the given date.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'DAY_OF_WEEK')}}",
 
-                    "{{comment({'column' : 'WEEK_START_DATE_KEY', 'description' : 'The date_key for the day ending the week the subject date belongs to.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'WEEK_START_DATE_KEY', 'description' : 'The date_key for the day ending the week the subject date belongs to.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Fkey','Null'], this.schema, 'DATE', 'WEEK_START_DATE_KEY', 'DATE', 'DATE_KEY')}}",
 
-                    "{{comment({'column' : 'FISCAL_QUARTER', 'description' : 'The fiscal quarter 1-4 for the given date.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'FISCAL_QUARTER', 'description' : 'The fiscal quarter 1-4 for the given date.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'FISCAL_QUARTER')}}",
 
-                    "{{comment({'column' : 'CALENDAR_YEAR', 'description' : 'The Gregorian calendar year representation of the subject date.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'CALENDAR_YEAR', 'description' : 'The Gregorian calendar year representation of the subject date.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'CALENDAR_YEAR')}}",
 
-                    "{{comment({'column' : 'CALENDAR_MONTH_NAME', 'description' : 'The Engish language name of the month representation of the subject date.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'CALENDAR_MONTH_NAME', 'description' : 'The Engish language name of the month representation of the subject date.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'CALENDAR_MONTH_NAME')}}",
 
-                    "{{comment({'column' : 'CALENDAR_YEAR_MONTH', 'description' : 'A string in the format <year>-<month> with numbers, ie 2018-1.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'CALENDAR_YEAR_MONTH', 'description' : 'A string in the format <year>-<month> with numbers, ie 2018-1.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'CALENDAR_YEAR_MONTH')}}",
 
-                    "{{comment({'column' : 'DAY_NUMBER_IN_FISCAL_YEAR', 'description' : 'Number of days from the first day of the given fiscal year as integer, for normal years this will range 1-364. For leap week (every 7 years), this will have a decimal value with .1 for each day of the leap week. If the Sunday before leap week is day_number_in_fiscal_year 35, Monday will be 35.1, Tuesday 35.2 etc.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'DAY_NUMBER_IN_FISCAL_YEAR', 'description' : 'Number of days from the first day of the given fiscal year as integer, for normal years this will range 1-364. For leap week (every 7 years), this will have a decimal value with .1 for each day of the leap week. If the Sunday before leap week is day_number_in_fiscal_year 35, Monday will be 35.1, Tuesday 35.2 etc.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'DAY_NUMBER_IN_FISCAL_YEAR')}}",
 
-                    "{{comment({'column' : 'DAY_NUMBER_IN_WEEK', 'description' : 'Integer representation of the week day, 1-7 starting on Monday.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'DAY_NUMBER_IN_WEEK', 'description' : 'Integer representation of the week day, 1-7 starting on Monday.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'DAY_NUMBER_IN_WEEK')}}",
 
-                    "{{comment({'column' : 'FIRST_DAY_FISCAL_PERIOD_INDICATOR', 'description' : 'Options are Period First Day, Not Period First Day.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'FIRST_DAY_FISCAL_PERIOD_INDICATOR', 'description' : 'Options are Period First Day, Not Period First Day.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'FIRST_DAY_FISCAL_PERIOD_INDICATOR')}}",
 
-                    "{{comment({'column' : 'HOLIDAY', 'description' : 'The textual representation of the holiday for the given date, or Not Holiday.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'HOLIDAY', 'description' : 'The textual representation of the holiday for the given date, or Not Holiday.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'HOLIDAY')}}",
 
-                    "{{comment({'column' : 'DAY_NUMBER_IN_MONTH', 'description' : 'The integer value day number in the Gregorian month (matches the normal calendar month) 1-31.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'DAY_NUMBER_IN_MONTH', 'description' : 'The integer value day number in the Gregorian month (matches the normal calendar month) 1-31.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'DAY_NUMBER_IN_MONTH')}}",
 
-                    "{{comment({'column' : 'FISCAL_YEAR', 'description' : 'The integer value of the fiscal year.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'FISCAL_YEAR', 'description' : 'The integer value of the fiscal year.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'FISCAL_YEAR')}}",
 
-                    "{{comment({'column' : 'DAY_NUMBER_IN_CALENDAR_YEAR', 'description' : 'The count of days from the start of the Gregorian year. Does not take into account fiscal leap weeks.', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'DAY_NUMBER_IN_CALENDAR_YEAR', 'description' : 'The count of days from the start of the Gregorian year. Does not take into account fiscal leap weeks.', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'DAY_NUMBER_IN_CALENDAR_YEAR')}}",
 
-                    "{{comment({'column' : 'FISCAL_YEAR_PERIOD_WEEK', 'description' : 'Textual representation in the format <year>-<period>-<week>. ', 'scd_type' : 1 })}}",
+                    "{{comment({'scd_type' : 1, 'column' : 'FISCAL_YEAR_PERIOD_WEEK', 'description' : 'Textual representation in the format <year>-<period>-<week>. ', 'scd_type' : 1 })}}",
                     "{{add_constraints(['Null'], this.schema, 'DATE', 'FISCAL_YEAR_PERIOD_WEEK')}}"
 
                 ]
