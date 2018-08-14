@@ -171,7 +171,9 @@
             0=1
 {% endif %}
 
----------- CONFIGURATION [leave this section alone!]
+{#---------- DEPENDENCY HACK #}
+---- {{ref('AUDIT_FACT')}}
+{#---------- CONFIGURATION [leave this section alone!] #}
 {{config({
 
     "materialized":"incremental",
@@ -182,5 +184,4 @@
 })}}
 
 
-{#---------- DEPENDENCY HACK #}
----- {{ref('AUDIT_FACT')}}
+

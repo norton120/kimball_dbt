@@ -29,7 +29,11 @@ quoting:
 
 models:
   revzilla:
-    
+  vars:
+    release: "David Carradine"
+    app_version: 0.0.0
+    dbt_version: 0.10.2  
+ 
     partials:
       materialized: ephemeral
     

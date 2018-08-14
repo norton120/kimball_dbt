@@ -69,9 +69,10 @@ union_all_initial_audits AS (
                     entity_type,
                     entity_key,
                     schema_key,
-                    database_Key,
-                    dbt_version,
-                    dbt_repo_release_version,
+                    database_key,
+                    '{{var("release")}}' AS release,
+                    '{{var("dbt_version")}}' AS dbt_version,
+                    '{{var("app_version")}}' AS app_version,
                     lowest_cdc,
                     highest_cdc
                 FROM
