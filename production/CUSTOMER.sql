@@ -47,7 +47,7 @@ staging_quality AS (
             audit_key = (SELECT 
                             MAX(audit_key) 
                         FROM 
-                        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.USERS_STAGING_QUALITY)
+                        {{this.database}}.{{this.schema | replace('GENERAL','STAGING_QUALITY')}}.ERP_USERS)
     ),
     transformed AS (
         {#-- transforms happen here to conform with the production table.#}
