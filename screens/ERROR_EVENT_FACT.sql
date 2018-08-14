@@ -62,6 +62,13 @@ unioned_error_events AS (
 
 
 
+{#
+---------- DEPENDENCY HACK
+---- {{ref('AUDIT')}}
+#}
+
+
+
 ---------- CONFIGURATION
     {{config({
         "materialized":"incremental",
@@ -79,6 +86,3 @@ unioned_error_events AS (
                         'grain':'Every time an instance or entity fails a screen, an error event is created.'})}}"
 
    ]})}}
-
----------- DEPENDENCY HACK
----- {{ref('AUDIT')}}

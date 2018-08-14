@@ -171,6 +171,15 @@
             0=1
 {% endif %}
 
+
+
+{#
+---------- DEPENDENCY HACK
+---- {{ref('AUDIT_FACT')}}
+#}
+
+
+
 ---------- CONFIGURATION [leave this section alone!]
 {{config({
 
@@ -179,7 +188,3 @@
     "schema":"STAGING_QUALITY"
 
 })}}
-
-
----------- DEPENDENCY HACK
----- {{ref('AUDIT_FACT')}}
