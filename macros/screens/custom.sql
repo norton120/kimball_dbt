@@ -1,12 +1,13 @@
 {%- macro custom(screen_args, kwargs) -%}
 {#
 ---- INTENT: screens for values that fail a more complex business logic test
+----    - custom query will need to specify whether or not to screen for null values
 ---- Pass the screen_args object with these params:
 ----    - column (string) the name of the column to test
 ----    - sql_where (string) the WHERE clause that defines a failing screen
 ----    - screen_name (string) the custom name for the screen
 ---- Pass the kwargs object with these params:
-----    - database (string) the source database 
+----    - database (string) the source database
 ----    - schema (string) the source schema
 ----    - entity (string) the source table / view name
 ----    - audit_key (integer) the Fkey to the audit being performed
@@ -48,6 +49,6 @@
         {% endif %}
 
         AND
-            {{screen_args.sql_where}} 
+            {{screen_args.sql_where}}
     )
 {%- endmacro -%}

@@ -43,7 +43,7 @@
 
 
 ---- if no rows are returned, increment with an empty table
-{% if audit_fact_response | length > 0 %}    
+{% if audit_fact_response | length > 0 %}
 ---- get the total record count within the audit context
     WITH
     all_records_in_audit_context AS (
@@ -65,14 +65,23 @@
         NULL AS validated_record_count,
         NULL AS audit_completed_at,
         NULL AS audit_date_key
-    WHERE 
+    WHERE
         audit_key IS NOT NULL
 {% endif %}
 
 
 
+<<<<<<< HEAD
 {#---------- DEPENDENCY HACK weirdly if you move this it will bork #}
 ---- {{ref('ERROR_EVENT_FACT')}}
+=======
+{#
+---------- DEPENDENCY HACK
+---- {{ref('ERROR_EVENT_FACT')}}
+#}
+
+
+>>>>>>> 0ef8c4039e0701f5775aa48fb56b5d826fe3cfa1
 
 {{config({
     "materialized":"incremental",
@@ -87,6 +96,9 @@
     ]
 
 })}}
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 0ef8c4039e0701f5775aa48fb56b5d826fe3cfa1

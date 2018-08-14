@@ -189,18 +189,15 @@
                         id IN ( SELECT
                                     id
                                 FROM
-                                    (SELECT id, 
-                                            count(*) countstar 
+                                    (SELECT id,
+                                            count(*) countstar
                                     FROM {{this}}
-                                    GROUP BY 1 
+                                    GROUP BY 1
                                     HAVING countstar > 1)));
-             
-                    DELETE FROM {{this}} 
-                    WHERE 
-                        audit_key::varchar||'-'||id::varchar 
+
+                    DELETE FROM {{this}}
+                    WHERE
+                        audit_key::varchar||'-'||id::varchar
                     IN (SELECT remove_flag FROM {{this.name}}_to_remove);
                     DROP TABLE {{this.name}}_to_remove;"
 })}}
-
-
-

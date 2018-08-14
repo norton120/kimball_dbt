@@ -174,6 +174,7 @@
 {#---------- DEPENDENCY HACK #}
 ---- {{ref('AUDIT_FACT')}}
 {#---------- CONFIGURATION [leave this section alone!] #}
+
 {{config({
 
     "materialized":"incremental",
@@ -182,6 +183,4 @@
     "alias" : "ERP_PRODUCTS"
 
 })}}
-
-
 

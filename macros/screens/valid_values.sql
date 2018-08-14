@@ -2,13 +2,14 @@
 
 {#
 ---- INTENT: screens for values within a whitelist
+----    - does not screen for null values
 ---- Pass the screen_args object with these params:
 ----    - column (string) the name of the column to test
 ----    - valid_values (list) the values to allow
 ----    - value_type (string) the datatype for the list of values
 ----    - allow_null (boolean) adds NULL to the list of allowed values
 ---- Pass the kwargs object with these params:
-----    - database (string) the source database 
+----    - database (string) the source database
 ----    - schema (string) the source schema
 ----    - entity (string) the source table / view name
 ----    - audit_key (integer) the Fkey to the audit being performed
@@ -35,5 +36,8 @@
             {%- endfor -%}
             {{ ', NULL' if screen_args.allow_null else ''}}
             )
+
+        AND
+            {{screen_args.column}} IS NOT NULL
     )
 {%- endmacro -%}
