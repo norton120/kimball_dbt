@@ -49,7 +49,8 @@ unioned_error_events AS (
 ---- create the final partial
     SELECT
         sequence.nextval AS error_event_key,
-        audit_key,
+        -- for some reason snowflake needs this explicitly cast
+        audit_key::NUMBER AS audit_key,
         screen_name,
         error_subject,
         record_identifier,

@@ -14,7 +14,8 @@
 ---- RETURNS: dict of lists, each list containing the comma-deliniated values for each row
 
     SELECT
-        audit_key,
+        -- snowflake needs this explicictly cast for some reason
+        audit_key::NUMBER AS audit_key,
         database_key,
         schema_key,
         entity_key,
@@ -51,9 +52,9 @@
     )
 
     SELECT
-        audit_key,
-        gross_record_count,
-        gross_record_count - error_event_count AS validated_record_count,
+        audit_key::NUMBER AS audit_key,
+        gross_record_count::NUMBER AS gross_record_count,
+        gross_record_count::NUMBER - error_event_count::NUMBER AS validated_record_count,
         CURRENT_TIMESTAMP() AS audit_completed_at,
         {{date_key('CURRENT_DATE()')}} AS audit_date_key
     FROM
