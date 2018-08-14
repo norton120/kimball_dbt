@@ -1,6 +1,7 @@
 {%- macro column_order(screen_args, kwargs) -%}
 {#
 ---- INTENT: screens for records where columns are not in proper value order with each other
+----    - does not screen for null values
 ---- Pass the screen_args object with these params:
 ----    - column (number) the column with the expected greater value.
 ----    - lesser_column (string) the column with the expected lower value.
@@ -32,8 +33,10 @@
                     <=
                 {%- endif -%}
             {{screen_args.lesser_column}}::{{screen_args.data_type}}
+
         AND
             {{screen_args.column}} IS NOT NULL
+
         AND
             {{screen_args.lesser_column}} IS NOT NULL
     )

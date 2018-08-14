@@ -13,7 +13,7 @@ profile: 'revzilla'
 # The `source-paths` config, for example, states that source models can be found
 # in the "models/" directory. You probably won't need to change these!
 source-paths: ["screens","audits","staging_quality","production","partials"]
-analysis-paths: ["analysis"] 
+analysis-paths: ["analysis"]
 test-paths: ["tests"]
 data-paths: ["data"]
 macro-paths: ["macros"]
@@ -29,16 +29,19 @@ quoting:
 
 models:
   revzilla:
-    
+  vars:
+    release: "Harvey Mushman"
+    app_version: 0.0.1
+    dbt_version: 0.10.2
+    production_database: 'DW2'
+
     partials:
       materialized: ephemeral
-    
+
     audits:
       materialized: incremental
       sql_where: "TRUE"         ## This is legacy dbt that tells the framework to use the logic in the model.
 
     screens:
       materialized: incremental
-      sql_where: "TRUE" 
-
-
+      sql_where: "TRUE"

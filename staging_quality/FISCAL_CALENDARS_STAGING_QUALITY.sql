@@ -170,12 +170,17 @@
             0=1
 {% endif %}
 
+
+{# ---------- DEPENDENCY HACK #}
+---- {{ref('AUDIT_FACT')}}
+
 {# ---------- CONFIGURATION [leave this section alone!] #}
 {{config({
 
     "materialized":"incremental",
     "sql_where":"TRUE",
     "schema":"STAGING_QUALITY",
+    "alias" : "ERP_FISCAL_CALENDARS",
     "post-hook": " CREATE TEMPORARY TABLE {{this.name}}_to_remove AS (
                     SELECT
                         FIRST_VALUE(audit_key) OVER (PARTITION BY id ORDER BY audit_key ASC)::varchar||'-'||id::varchar as remove_flag
@@ -184,19 +189,15 @@
                         id IN ( SELECT
                                     id
                                 FROM
-                                    (SELECT id, 
-                                            count(*) countstar 
+                                    (SELECT id,
+                                            count(*) countstar
                                     FROM {{this}}
-                                    GROUP BY 1 
+                                    GROUP BY 1
                                     HAVING countstar > 1)));
-             
-                    DELETE FROM {{this}} 
-                    WHERE 
-                        audit_key::varchar||'-'||id::varchar 
+
+                    DELETE FROM {{this}}
+                    WHERE
+                        audit_key::varchar||'-'||id::varchar
                     IN (SELECT remove_flag FROM {{this.name}}_to_remove);
                     DROP TABLE {{this.name}}_to_remove;"
 })}}
-
-
-{# ---------- DEPENDENCY HACK #}
----- {{ref('AUDIT_FACT')}}
