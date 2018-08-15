@@ -18,7 +18,6 @@
 
 ---------- STATEMENTS [leave this section alone!]
 ---- Statements populate the python context with information about the subject audit.
-{% if adapter.already_exists(this.schema | replace('STAGING_QUALITY','QUALITY'), 'AUDIT') %}
     {%- call statement('target_audit', fetch_result=True) -%}
         SELECT
             audit_key,
@@ -60,22 +59,21 @@
             schema_key = 'ERP'
         AND
             entity_key = 'PRODUCTS'
+        
         {% if adapter.already_exists(this.schema,this.name) %}
-        AND
-            audit_key NOT IN (SELECT
-                                DISTINCT audit_key
-                              FROM
-                                {{this}})
+            AND
+                audit_key NOT IN (SELECT
+                                    DISTINCT audit_key
+                                  FROM
+                                    {{this}})
         {% endif %}
+      
         ORDER BY audit_key DESC
         LIMIT 1
 
     {%- endcall -%}
 
     {% set audit_response = load_result('target_audit')['data']%}
-{% else %}
-    {% set audit_response= [] %}
-{% endif %}
 ---------- END STATMENTS
 
 ---- if there is no new data, skip the entire staging quality incremental build
