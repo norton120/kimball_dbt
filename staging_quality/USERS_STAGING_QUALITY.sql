@@ -18,64 +18,63 @@
 
 ---------- STATEMENTS [leave this section alone!]
 ---- Statements populate the python context with information about the subject audit.
-{% if adapter.already_exists(this.schema, this.name) %}
-    {%- call statement('target_audit', fetch_result=True) -%}
-        SELECT
-            audit_key,
-            cdc_target,
-            lowest_cdc,
-            highest_cdc,
-            target.data_type AS cdc_data_type,
-            record_identifier.data_type AS record_identifier_data_type
+{%- call statement('target_audit', fetch_result=True) -%}
+    SELECT
+        audit_key,
+        cdc_target,
+        lowest_cdc,
+        highest_cdc,
+        target.data_type AS cdc_data_type,
+        record_identifier.data_type AS record_identifier_data_type
+    FROM
+        {{this.database}}.{{this.schema | replace('STAGING_QUALITY','QUALITY')}}.audit
+
+    JOIN
+        "RAW".information_schema.columns target
+    ON
+        target.table_schema = 'ERP'
+    AND
+        target.table_name = entity_key
+    AND
+        target.column_name = cdc_target
+    JOIN
+        (SELECT
+            data_type
         FROM
-            {{this.database}}.{{this.schema | replace('STAGING_QUALITY','QUALITY')}}.audit
-
-        JOIN
-            "RAW".information_schema.columns target
-        ON
-            target.table_schema = 'ERP'
-        AND
-            target.table_name = entity_key
-        AND
-            target.column_name = cdc_target
-        JOIN
-            (SELECT
-                data_type
-            FROM
-                "RAW".information_schema.columns
-            WHERE
-                table_schema = 'ERP'
-            AND
-                table_name = 'DW_USERS_VIEW'
-            AND
-                column_name = UPPER('id')
-            LIMIT 1
-            ) record_identifier
-        ON
-            1=1
-
+            "RAW".information_schema.columns
         WHERE
-            audit_status = 'Completed'
+            table_schema = 'ERP'
         AND
-            database_key = 'RAW'
+            table_name = 'DW_USERS_VIEW'
         AND
-            schema_key = 'ERP'
-        AND
-            entity_key = 'DW_USERS_VIEW'
+            column_name = UPPER('id')
+        LIMIT 1
+        ) record_identifier
+    ON
+        1=1
+
+    WHERE
+        audit_status = 'Completed'
+    AND
+        database_key = 'RAW'
+    AND
+        schema_key = 'ERP'
+    AND
+        entity_key = 'DW_USERS_VIEW'
+    {% if adapter.already_exists(this.schema, this.name) %}
         AND
             audit_key NOT IN (SELECT
                                 DISTINCT audit_key
                               FROM
                                 {{this}})
-        ORDER BY audit_key DESC
-        LIMIT 1
+    {% endif %}
 
-    {%- endcall -%}
+    ORDER BY audit_key DESC
+    LIMIT 1
 
-    {% set audit_response = load_result('target_audit')['data']%}
-{% else %}
-    {% set audit_response= [] %}
-{% endif %}
+{%- endcall -%}
+
+{% set audit_response = load_result('target_audit')['data']%}
 ---------- END STATMENTS
 
 ---- if there is no new data, skip the entire staging quality incremental build
