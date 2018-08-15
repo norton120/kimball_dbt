@@ -61,7 +61,7 @@ unioned_error_events AS (
     WHERE
         audit_key IS NOT NULL
 
-{#---- DEPENDENCY HACK weirdly borks if you move it at all #}
+{#---- DEPENDENCY HACK  #}
 ---- {{ref('AUDIT')}}
 
 {#---------- CONFIGURATION #}
