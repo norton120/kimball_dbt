@@ -46,3 +46,22 @@ CREATE VIEW dev.flastname_screens.view_name AS
 ---- user's role owns everything in their dev.schema that currently exists
 GRANT ALL PRIVILEGES ON ALL VIEWS IN SCHEMA dev.flastname_screens
 TO ROLE aa_screen_read_only;
+
+
+
+-------- Adding views to their dev environment (after original creation)
+---- use account admin to ensure necessary privileges
+USE ROLE ACCOUNTADMIN;
+
+---- Add views to their dev.schema
+CREATE VIEW dev.flastname_screens.view_name AS
+    (
+        SELECT
+            *
+        FROM
+            raw.erp.table_name
+    );
+
+---- user's role owns everything in their dev.schema that currently exists
+GRANT ALL PRIVILEGES ON ALL VIEWS IN SCHEMA dev.flastname_screens
+TO ROLE aa_screen_read_only;
