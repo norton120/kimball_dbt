@@ -32,7 +32,7 @@
         FROM
             {{kwargs.this}}
         WHERE
-            current_row
+            current_row_indicator
     ),
 
 
@@ -41,7 +41,7 @@
         SELECT
             NULL AS {{kwargs.name}}_key,
             staging_quality.{{kwargs.record_identifier}},
-            TRUE AS current_row,
+            TRUE AS current_row_indicator,
 
 
             {% for col in kwargs.type_0_cols %}
@@ -52,8 +52,8 @@
                 {{',' if kwargs.type_1_cols | length > 0 }}
             {{print_columns(kwargs.type_2_cols,'staging_quality')}}
                 {{',' if kwargs.type_2_cols | length > 0 }}
-            {{date_key('CURRENT_DATE()')}} AS effective_date,
-            99991231 AS expiration_date
+            {{date_key('CURRENT_DATE()')}} AS effective_date_key,
+            99991231 AS expiration_date_key
         FROM
             staging_quality
         LEFT JOIN
@@ -82,8 +82,8 @@
            
             CASE
                 WHEN type_2_rows.{{kwargs.record_identifier}} IS NOT NULL THEN FALSE
-                ELSE production.current_row
-            END AS current_row,
+                ELSE production.current_row_indicator
+            END AS current_row_indicator,
                 
             {{print_columns(kwargs.type_0_cols,'production')}}
                 {{',' if kwargs.type_0_cols | length > 0 }}
@@ -92,13 +92,13 @@
             {% endfor %}
             {{print_columns(kwargs.type_2_cols,'production')}}
                 {{',' if kwargs.type_2_cols | length > 0 }}
-            production.effective_date,
+            production.effective_date_key,
 
             CASE 
-                WHEN production.current_row = FALSE THEN production.expiration_date
-                WHEN type_2_rows.{{kwargs.record_identifier}} IS NOT NULL THEN {{date_key('CURRENT_DATE()')}}
-                ELSE production.expiration_date
-            END AS expiration_date
+                WHEN production.current_row_indicator = FALSE THEN production.expiration_date_key
+                WHEN type_2_rows.{{kwargs.record_identifier}} IS NOT NULL THEN {{date_key("DATEADD('days', -1, CURRENT_DATE())")}}
+                ELSE production.expiration_date_key
+            END AS expiration_date_key
 
         FROM
             {{kwargs.this}} production
@@ -118,9 +118,9 @@
         FROM
             (SELECT
                 {{kwargs.name}}_key,
-                effective_date,
-                expiration_date,
-                current_row,
+                effective_date_key,
+                expiration_date_key,
+                current_row_indicator,
                 {{kwargs.record_identifier}},
                 {{print_columns(kwargs.type_0_cols)}}
                     {{',' if kwargs.type_0_cols | length > 0 }}
@@ -134,9 +134,9 @@
 
             SELECT
                 {{kwargs.name}}_key,
-                effective_date,
-                expiration_date,
-                current_row,
+                effective_date_key,
+                expiration_date_key,
+                current_row_indicator,
                 {{kwargs.record_identifier}},
                 {{print_columns(kwargs.type_0_cols)}}
                     {{',' if kwargs.type_0_cols | length > 0 }}
@@ -153,9 +153,9 @@
     ready_for_key_assignment AS (
         SELECT
             NULL AS {{kwargs.name}}_key,
-            {{date_key('CURRENT_DATE()')}} AS effective_date,
-            99991231 AS expiration_date,
-            TRUE AS current_row,
+            {{date_key('CURRENT_DATE()')}} AS effective_date_key,
+            99991231 AS expiration_date_key,
+            TRUE AS current_row_indicator,
             {{kwargs.record_identifier}},
             {{print_columns(kwargs.type_0_cols)}}
                 {{',' if kwargs.type_0_cols | length > 0 }}
@@ -169,9 +169,9 @@
 
 SELECT
     COALESCE({{kwargs.name}}_key, sequence.nextval) AS {{kwargs.name}}_key,
-    effective_date,
-    expiration_date,
-    current_row,
+    effective_date_key,
+    expiration_date_key,
+    current_row_indicator,
     {{kwargs.record_identifier}},
     {{print_columns(kwargs.type_0_cols)}}
         {{',' if kwargs.type_0_cols | length > 0 }}
