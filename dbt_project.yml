@@ -31,7 +31,7 @@ models:
   revzilla:
   vars:
     release: "Harvey Mushman"
-    app_version: 0.0.1
+    app_version: 0.0.11
     dbt_version: 0.10.2
     production_database: 'DW2'
 
