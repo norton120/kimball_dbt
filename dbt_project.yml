@@ -45,3 +45,9 @@ models:
     screens:
       materialized: incremental
       sql_where: "TRUE"
+
+    on-run-end: # create if statement wrappers to determine target database 
+      - 'GRANT USAGE ON SCHEMA general TO ROLE GENERAL_USER'
+      - 'GRANT SELECT ON ALL TABLES IN SCHEMA general TO ROLE GENERAL_USER'
+      - 'GRANT USAGE ON SCHEMA general TO ROLE DEVELOPER'
+      - 'GRANT ALL ON ALL TABLES IN SCHEMA general TO ROLE DEVELOPER'
