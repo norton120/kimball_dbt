@@ -6,7 +6,7 @@ import time
 
 '''
     INTENT: query the slave server and generate an HTML document
-        profiling the given entity. 
+        profiling the given entity.
 
     SIGNATURE:
         python stat_profile_gen.py <entity> [method]
@@ -14,7 +14,7 @@ import time
         - method (string) accepts bernoulli (default), random (for non-tables) or all (the whole entity)
     RETURNS:
         boolean success or failure of process
-''' 
+'''
 def stat_profile_gen(*args):
     entity = args[1].lower()
 
@@ -28,24 +28,24 @@ def stat_profile_gen(*args):
     except:
         print('failed to connect to postgres. Is your jumper SSH connected?')
         sys.exit()
-    
+
     query_string = '''
-                    SELECT 
-                        * 
+                    SELECT
+                        *
                     FROM {0}'''.format(entity)
-    
-    bernoulli = ''' 
+
+    bernoulli = '''
                     TABLESAMPLE BERNOULLI ((
-                        SELECT 
-                            CASE 
+                        SELECT
+                            CASE
                                 WHEN (SELECT COUNT(*) FROM {0}) <= 1000 THEN 100
                                 WHEN (SELECT COUNT(*) FROM {0}) BETWEEN 1001 AND 100000 THEN 10
                                 ELSE 1
                             END))'''.format(entity)
-    
+
     random = '''
                 WHERE RANDOM() >= 0.1 LIMIT 100000'''
-    
+
     ## assemble the record based on the method passed
     if method == 'bernoulli':
         query_string += bernoulli
@@ -59,7 +59,7 @@ def stat_profile_gen(*args):
 
     print('attempting to sample entity {} via {}'.format(entity, method))
     timer = time.time()
-    
+
     try:
         data = pd.read_sql_query(query_string, con=engine)
     except:
@@ -67,16 +67,15 @@ def stat_profile_gen(*args):
         sys.exit()
 
     print('analyzing {} rows from {}'.format(data.shape[0], entity))
-    
+
     try:
-        pp.check_correlation = False
-        prof = pp.ProfileReport(data)
+        prof = pp.ProfileReport(data, check_correlation = False)
 
         ## TODO: remove PII from freq report
         #for col in pii_concerns:
         #    prof['freq'][col] = 'obfuscated due to PII concerns'
-    
-        prof.to_file(outputfile = entity.upper() + '.html')  
+
+        prof.to_file(outputfile = entity.upper() + '.html')
 
     except:
         print('something went wrong when profiling the data for {} :('.format(entity))
