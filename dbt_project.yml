@@ -28,13 +28,14 @@ quoting:
   schema: false
 
 on-run-end:
-  - "GRANT USAGE ON SCHEMA {{this.schema}} TO ROLE GENERAL_USER"
-  - "GRANT SELECT ON ALL TABLES IN SCHEMA {{this.schema}} TO ROLE GENERAL_USER"
-  - "GRANT SELECT ON ALL VIEWS IN SCHEMA {{this.schema}} TO ROLE GENERAL_USER"
-  - "GRANT USAGE ON SCHEMA {{this.schema}} TO ROLE DEVELOPER"
-  - "GRANT SELECT ON ALL TABLES IN SCHEMA {{this.schema}} TO ROLE DEVELOPER"
-  - "GRANT SELECT ON ALL VIEWS IN SCHEMA {{this.schema}} TO ROLE DEVELOPER"
-
+  - >
+    {% for schema_suffix in ["QUALITY", "STAGING_QUALITY", "GENERAL"] %}
+      {% for snowflake_role in ["GENERAL_USER", "DEVELOPER"] %}
+      GRANT USAGE ON SCHEMA {% if this.database == var('production_database') %} QUALITY {% else %} {{this.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
+      GRANT SELECT ON ALL TABLES IN SCHEMA {% if this.database == var('production_database') %} QUALITY {% else %} {{this.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
+      GRANT SELECT ON ALL VIEWS IN SCHEMA {% if this.database == var('production_database') %} QUALITY {% else %} {{this.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
+      {% endfor %}
+    {% endfor %}
 
 models:
   revzilla:
