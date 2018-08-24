@@ -15,7 +15,7 @@ profile: 'revzilla'
 source-paths: ["screens","audits","staging_quality","production","partials"]
 analysis-paths: ["analysis"]
 test-paths: ["tests"]
-data-paths: ["data"]
+data-paths: ["seeds"]
 macro-paths: ["macros"]
 
 target-path: "target"  # directory which will store compiled SQL files
@@ -45,3 +45,72 @@ models:
     screens:
       materialized: incremental
       sql_where: "TRUE"
+
+seeds:
+  revzilla:
+    enabled: true
+    schema: SEED
+    post-hook:
+      - 'GRANT USAGE ON SCHEMA "RAW"."SEED" TO ROLE DEVELOPER'
+      - 'GRANT USAGE ON SCHEMA "RAW"."SEED" TO ROLE DW2_ADMIN'
+      - 'GRANT SELECT ON ALL TABLES IN SCHEMA "RAW"."SEED" TO ROLE DEVELOPER'
+      - 'GRANT SELECT ON ALL TABLES IN SCHEMA "RAW"."SEED" TO ROLE DW2_ADMIN'    
+
+      # configure each seed explicitly
+    state_region_records:
+      column_types:
+        state: varchar(16777216)
+        region: varchar(16777216)
+
+    budget_plan_records:
+      column_types:
+        date: date
+        revzilla_plan: number(38,0)
+        cycle_gear_plan: number(38,0)
+        upshift_plan: number(38,0)
+
+    kenshoo_channel_mapping_records:
+      column_types:
+        site_name: varchar(16777216)
+        marketing_channel_name: varchar(16777216)
+        kenshoo_profile_name: varchar(16777216)
+        kenshoo_channel_name: varchar(16777216)
+
+    marketing_forecast_budget_records:
+      column_types:
+        site_name: varchar(16777216)
+        year: number(38,0)
+        week: number(38,0)
+        total_site_revenue: float
+        total_spend: float
+        total_marketing_revenue: float
+        seo_revenue: float
+        paid_search_revenue: float
+        paid_search_spend: float
+        cse_revenue: float
+        cse_spend: float
+        display_retargeting_revenue: float
+        display_retargeting_spend: float
+        email_revenue: float
+        affiliate_revenue: float
+        affiliate_spend: float
+        display_video_revenue: float
+        display_video_spend: float
+        social_revenue: float
+        social_spend: float
+        direct_revenue: float
+        referral_revenue: float
+        offline_revenue: float
+        budget_released_at: timestamp_ntz(9)
+
+    organizational_definition_records:
+      column_types:
+        term: varchar(16777216)
+        definition: varchar(16777216)
+        updated_at: date
+
+    approved_abbreviation_records:
+      column_types:
+        abbreviation: varchar(16777216)
+        full_term: varchar(16777216)
+        reason_for_abbreviation: varchar(16777216)
