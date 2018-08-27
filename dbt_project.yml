@@ -27,11 +27,22 @@ quoting:
   identifier: false
   schema: false
 
+on-run-end:
+  - >
+    {% for schema_suffix in ["QUALITY", "STAGING_QUALITY", "GENERAL"] %}
+      {% for snowflake_role in ["GENERAL_USER", "DEVELOPER"] %}
+      GRANT USAGE ON SCHEMA {% if target.database == var('production_database') %} QUALITY {% else %} {{target.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
+      GRANT SELECT ON ALL TABLES IN SCHEMA {% if target.database == var('production_database') %} QUALITY {% else %} {{target.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
+      GRANT SELECT ON ALL VIEWS IN SCHEMA {% if target.database == var('production_database') %} QUALITY {% else %} {{target.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
+      {% endfor %}
+    {% endfor %}
+
 models:
   revzilla:
+
   vars:
     release: "Harvey Mushman"
-    app_version: 0.0.11
+    app_version: 0.0.12
     dbt_version: 0.10.2
     production_database: 'DW2'
 
