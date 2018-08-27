@@ -39,13 +39,6 @@ on-run-end:
 
 models:
   revzilla:
-    post-hook:
-      #- "GRANT USAGE ON SCHEMA {{this.schema}} TO ROLE GENERAL_USER"
-      #- "GRANT SELECT ON ALL TABLES IN SCHEMA {{this.schema}} TO ROLE GENERAL_USER"
-      #- "GRANT SELECT ON ALL VIEWS IN SCHEMA {{this.schema}} TO ROLE GENERAL_USER"
-      #- "GRANT USAGE ON SCHEMA {{this.schema}} TO ROLE DEVELOPER"
-      #- "GRANT SELECT ON ALL TABLES IN SCHEMA {{this.schema}} TO ROLE DEVELOPER"
-      #- "GRANT SELECT ON ALL VIEWS IN SCHEMA {{this.schema}} TO ROLE DEVELOPER"
 
   vars:
     release: "Harvey Mushman"
