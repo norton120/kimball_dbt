@@ -31,9 +31,9 @@ on-run-end:
   - >
     {% for schema_suffix in ["QUALITY", "STAGING_QUALITY", "GENERAL"] %}
       {% for snowflake_role in ["GENERAL_USER", "DEVELOPER"] %}
-      GRANT USAGE ON SCHEMA {% if this.database == var('production_database') %} QUALITY {% else %} {{this.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
-      GRANT SELECT ON ALL TABLES IN SCHEMA {% if this.database == var('production_database') %} QUALITY {% else %} {{this.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
-      GRANT SELECT ON ALL VIEWS IN SCHEMA {% if this.database == var('production_database') %} QUALITY {% else %} {{this.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
+      GRANT USAGE ON SCHEMA {% if target.database == var('production_database') %} QUALITY {% else %} {{target.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
+      GRANT SELECT ON ALL TABLES IN SCHEMA {% if target.database == var('production_database') %} QUALITY {% else %} {{target.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
+      GRANT SELECT ON ALL VIEWS IN SCHEMA {% if target.database == var('production_database') %} QUALITY {% else %} {{target.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
       {% endfor %}
     {% endfor %}
 
