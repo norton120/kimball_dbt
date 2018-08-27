@@ -39,7 +39,7 @@ on-run-end:
 
 models:
   revzilla:
-    #post-hook:
+    post-hook:
       #- "GRANT USAGE ON SCHEMA {{this.schema}} TO ROLE GENERAL_USER"
       #- "GRANT SELECT ON ALL TABLES IN SCHEMA {{this.schema}} TO ROLE GENERAL_USER"
       #- "GRANT SELECT ON ALL VIEWS IN SCHEMA {{this.schema}} TO ROLE GENERAL_USER"
