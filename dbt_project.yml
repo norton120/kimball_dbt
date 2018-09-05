@@ -42,7 +42,7 @@ models:
 
   vars:
     release: "Harvey Mushman"
-    app_version: 0.0.12
+    app_version: 0.0.13
     dbt_version: 0.10.2
     production_database: 'DW2'
 
