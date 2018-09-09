@@ -12,7 +12,7 @@
 
 #}
     {% for con in constraints %}
-        ALTER TABLE {{schema}}.{{entity}}__{{'dbt_tmp' if materialization in ('table','view') else 'dbt_incremental_tmp'}}
+        ALTER TABLE {{schema}}.{{entity}}
         {% if con == 'Null' %}
             ALTER COLUMN {{attribute}} NOT NULL
         {% elif con == 'Fkey' %}
