@@ -14,7 +14,7 @@ class kdbt_gen:
         '''
         usage: kdbt_gen.py <model_type> <model_name> [--option_name option_value]
 
-        model_type: the model template to check and generate. Options are screen, audit, staging_quality, production
+        model_type: the model template to check and generate. Options are screen, staging_quality, dimension, fact, artifact
         model_name: the file name of the new model
         options:
             database: the source data database. Default RAW
