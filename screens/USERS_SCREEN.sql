@@ -278,19 +278,8 @@
                                     updated_at_after_created_at
                                 ]%}
 
-    WITH
+    {{screen_partial(screen_collection, target_audit_properties)}}
 
-        {{screen_declaration(screen_collection, target_audit_properties)}}
-
-
----------- UNION
-    SELECT
-        *
-    FROM
-        (
-            {{screen_union_statement(screen_collection, target_audit_properties)}}
-
-        )
 
 {% else %}
 
@@ -307,8 +296,7 @@
 {#---------- MODEL CONFIGURATION #}
 {{config({
 
-    "materialized":"ephemeral",
-    "sql_where":"TRUE",
-    "schema":"QUALITY"
-
+    "materialized" : "view",
+    "schema" : "QUALITY",
+    "alias" : this.table + "_TEMP"
 })}}

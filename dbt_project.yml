@@ -2,8 +2,8 @@
 # Name your package! Package names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: 'kdbt_template'
-version: '0.0.1'
+name: 'revzilla'
+version: '0.0.13'
 
 # This setting configures which "profile" dbt uses for this project. Profiles contain
 # database connection information, and should be configured in the  ~/.dbt/profiles.yml file
@@ -40,11 +40,11 @@ on-run-end:
 models:
   revzilla:
 
-  vars:
-    release: "Harvey Mushman"
-    app_version: 0.0.13
-    dbt_version: 0.10.2
-    production_database: 'DW2'
+    vars:
+      release: "Harvey Mushman"
+      app_version: 0.0.13
+      dbt_version: 0.11.0
+      production_database: 'DW2'
 
     partials:
       materialized: ephemeral
@@ -54,11 +54,25 @@ models:
       sql_where: "TRUE"         ## This is legacy dbt that tells the framework to use the logic in the model.
 
     screens:
-      materialized: incremental
-      sql_where: "TRUE"
+      materialized: view
 
+## post-hooks here rely on naming conventions 
+    post-hook: 
+      - > 
+         {% if this.name[-12:] == "_SCREEN_TEMP"%} 
+           INSERT INTO {{this.schema}}.ERROR_EVENT_FACT (SELECT * FROM {{this}});
+           DROP VIEW {{this}};
+         {% else %}
+           SELECT NULL WHERE 1=0
+         {% endif %}
 seeds:
   revzilla:
+    vars:
+## TODO: this is a breaking change in this PR. so new release! 
+      release: "Harvey Mushman"
+      app_version: 0.0.13
+      dbt_version: 0.11.0
+      production_database: 'DW2'
     enabled: true
     schema: SEED
     post-hook:

@@ -284,8 +284,7 @@ WITH
 {# ---------- CONFIGURATION [leave this section alone!] #}
 {{config({
 
-    "materialized":"ephemeral",
-    "sql_where":"TRUE",
+    "materialized":"view",
     "schema":"QUALITY"
-
+    
 })}}

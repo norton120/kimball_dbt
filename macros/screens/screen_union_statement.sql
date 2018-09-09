@@ -16,29 +16,35 @@
 ----    - record_identifier (string) the primary key for the source entity
 ---- RETURNS: string CTE of failing condition rows
 #}
-    {% for screen in screen_args %}
+    screen_union AS (
         SELECT
-            audit_key,
-            error_event_at,
-            screen_name,
-            error_subject,
-            record_identifier,
-            error_event_action
-        FROM    
-        
-        -- association screens will have a screen_name value that includes the source column test value
-        {% if screen.type == 'association' %}
-            {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen.column}}_association_{{screen.column_value}}
+            *
+        FROM (
 
-        -- custom screens will have a screen_name value that overrides the normal type
-        {% elif screen.type in ('custom','custom_aggregate') %}
-            {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen.column}}_{{screen.screen_name}}
+            {% for screen in screen_args %}
+                SELECT
+                    audit_key,
+                    error_event_at,
+                    screen_name,
+                    error_subject,
+                    record_identifier,
+                    error_event_action
+                FROM    
+                
+                -- association screens will have a screen_name value that includes the source column test value
+                {% if screen.type == 'association' %}
+                    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen.column}}_association_{{screen.column_value}}
 
-        -- for all other screens, the screen type (null, unique etc) is used to identify the cte
-        {% else %} 
-            {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen.column}}_{{screen.type}}        
-        {% endif %}
-        {{ 'UNION' if not loop.last}}
-    {% endfor %}
+                -- custom screens will have a screen_name value that overrides the normal type
+                {% elif screen.type in ('custom','custom_aggregate') %}
+                    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen.column}}_{{screen.screen_name}}
 
+                -- for all other screens, the screen type (null, unique etc) is used to identify the cte
+                {% else %} 
+                    {{kwargs.database}}_{{kwargs.schema}}_{{kwargs.entity}}_{{screen.column}}_{{screen.type}}        
+                {% endif %}
+                {{ 'UNION' if not loop.last}}
+            {% endfor %}
+        )
+    )
 {% endmacro %}
