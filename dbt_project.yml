@@ -3,7 +3,7 @@
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
 name: 'revzilla'
-version: '0.0.13'
+version: '0.1.0'
 
 # This setting configures which "profile" dbt uses for this project. Profiles contain
 # database connection information, and should be configured in the  ~/.dbt/profiles.yml file
@@ -41,8 +41,8 @@ models:
   revzilla:
 
     vars:
-      release: "Harvey Mushman"
-      app_version: 0.0.13
+      release: "Evil Knievel"
+      app_version: 0.1.0
       dbt_version: 0.11.0
       production_database: 'DW2'
 
@@ -68,9 +68,8 @@ models:
 seeds:
   revzilla:
     vars:
-## TODO: this is a breaking change in this PR. so new release! 
-      release: "Harvey Mushman"
-      app_version: 0.0.13
+      release: "Evil Knievel"
+      app_version: 0.1.0
       dbt_version: 0.11.0
       production_database: 'DW2'
     enabled: true
