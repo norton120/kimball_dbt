@@ -25,7 +25,7 @@ WITH
     {% set erp_fiscal_calendars  = ["ERP", "FISCAL_CALENDARS","XMIN__TEXT__BIGINT","NUMBER"] %}
     {% set erp_products  = ["ERP", "PRODUCTS","XMIN__TEXT__BIGINT","NUMBER"] %}
     {% set erp_users  = ["ERP", "DW_USERS_VIEW","XMIN","NUMBER"] %}
-
+    {% set erp_orders  = ["ERP", "ORDERS","XMIN__TEXT__BIGINT","NUMBER"] %}
 
 
 
@@ -33,7 +33,8 @@ WITH
     {%- set all_audit_partials = [
                                 erp_fiscal_calendars,
                                 erp_products,
-                                erp_users
+                                erp_users,
+                                erp_orders
                                 ] -%}
 
 ---- Each macro is a self-contained CTE.

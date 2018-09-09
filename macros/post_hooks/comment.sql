@@ -40,6 +40,7 @@
     {%- endif -%}
     {%- if kwargs.introduced_in_version -%}
         "introduced_in_version" : "{{kwargs.introduced_in_version}}"
+    {%- endif -%}
     }
     '
 {%- endmacro -%}

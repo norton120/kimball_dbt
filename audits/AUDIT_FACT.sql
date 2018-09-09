@@ -75,7 +75,12 @@
 
 {#---------- DEPENDENCY HACK #}
 ---- {{ref('ERROR_EVENT_FACT')}}
-{#---------- CONFIGURATIONT #}
+---- {{ref('ORDERS_SCREEN')}}
+---- {{ref('USERS_SCREEN')}}
+---- {{ref('FISCAL_CALENDARS_SCREEN')}}
+---- {{ref('PRODUCTS_SCREEN')}}
+
+{#---------- CONFIGURATION #}
 
 {{config({
     "materialized":"incremental",
