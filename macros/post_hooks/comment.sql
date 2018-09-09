@@ -8,6 +8,7 @@
 ----        additive (boolean) for column comments, is the column an additive fact?
 ----        definition (string) for column comments, definition of the column
 ----        grain (string) for table comments, defines the table grain
+----        introduced_in_version (string) the version this entity or column first appeared in
 ---- RETURNS: string comment ready for post-hook
 #}     
     
@@ -20,22 +21,26 @@
 
     IS 
 
-    '
+    '{
     {%- if kwargs.additive -%}
-        ''Additive'' : {{kwargs.additive}}
-        {{',' if kwargs.definition or kwargs.grain or kwargs.scd_type}}
+        "Additive" : {{kwargs.additive}}
+        {{',' if kwargs.definition or kwargs.grain or kwargs.scd_type or kwargs.introduced_in_version}}
     {%- endif -%} 
     {%- if kwargs.definition -%}
-        ''Definition'' : ''{{kwargs.definition}}''
-        {{',' if kwargs.grain or kwargs.scd_type}}
+        "Definition" : "{{kwargs.definition}}"
+        {{',' if kwargs.grain or kwargs.scd_type or kwargs.introduced_in_version}}
     {%- endif -%} 
     {%- if kwargs.grain -%}
-        ''Grain'' : ''{{kwargs.grain}}''
-        {{',' if kwargs.scd_type}}
+        "Grain" : "{{kwargs.grain}}"
+        {{',' if kwargs.scd_type or kwargs.introduced_in_version}}
     {%- endif -%} 
     {%- if kwargs.scd_type -%}
-        ''Scd_Type'' : {{kwargs.scd_type}}
+        "Scd_Type" : {{kwargs.scd_type}}
+        {{',' if kwargs.introduced_in_version}}
     {%- endif -%}
+    {%- if kwargs.introduced_in_version -%}
+        "introduced_in_version" : "{{kwargs.introduced_in_version}}"
+    }
     '
 {%- endmacro -%}
     
