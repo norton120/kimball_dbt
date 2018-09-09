@@ -123,6 +123,8 @@
 {% endif %}
 
 
+{# ---- DEPENDENCY HACK #}
+--- {{ref('ERROR_EVENT_FACT')}}
 
 {#---------- MODEL CONFIGURATION #}
 {{config({

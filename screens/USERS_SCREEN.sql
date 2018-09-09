@@ -291,7 +291,8 @@
     WHERE 1=0
 {% endif %}
 
-
+{# ---- DEPENDENCY HACK #}
+--- {{ref('ERROR_EVENT_FACT')}}
 
 {#---------- MODEL CONFIGURATION #}
 {{config({
