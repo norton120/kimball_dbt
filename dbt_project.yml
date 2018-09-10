@@ -12,7 +12,7 @@ profile: 'revzilla'
 # These configurations specify where dbt should look for different types of files.
 # The `source-paths` config, for example, states that source models can be found
 # in the "models/" directory. You probably won't need to change these!
-source-paths: ["screens","audits","staging_quality","production","partials"]
+source-paths: ["screens","audits","staging_quality","dimensions","facts","artifacts","partials"]
 analysis-paths: ["analysis"]
 test-paths: ["tests"]
 data-paths: ["seeds"]
@@ -59,11 +59,11 @@ models:
 ## post-hooks here rely on naming conventions 
     post-hook: 
       - > 
-         {% if this.name[-12:] == "_SCREEN_TEMP"%} 
+         {% if (model.original_file_path.split('/')[0] == 'screens') and this.table != 'ERROR_EVENT_FACT' %} 
            INSERT INTO {{this.schema}}.ERROR_EVENT_FACT (SELECT * FROM {{this}});
            DROP VIEW {{this}};
          {% else %}
-           SELECT NULL WHERE 1=0
+           SELECT NULL WHERE 1=0;
          {% endif %}
 seeds:
   revzilla:
