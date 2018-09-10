@@ -180,5 +180,5 @@ SELECT
     {{print_columns(kwargs.type_2_cols)}}           
 FROM
     ready_for_key_assignment,   
-    TABLE(getnextval({{kwargs.name}}_pk_seq)) sequence  
+    TABLE(getnextval({{this.database}}.{{this.schema}}.{{kwargs.name | lower}}_pk_seq)) sequence  
 {% endmacro %}

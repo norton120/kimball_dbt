@@ -157,20 +157,7 @@
 
                                 ]%}
 
----------- RUN SCREENS [leave this section alone!]
-WITH
-        {{screen_declaration(screen_collection, target_audit_properties)}}
-
-
----------- UNION [leave this section alone!]
-
-    SELECT
-        *
-    FROM
-        (
-            {{screen_union_statement(screen_collection, target_audit_properties)}}
-
-        )
+    {{screen_partial(screen_collection, target_audit_properties)}}
 
 
 {% else %}
@@ -183,11 +170,14 @@ WITH
     WHERE 1=0
 {% endif %}
 
----------- CONFIGURATION [leave this section alone!]
+
+{# ---- DEPENDENCY HACK #}
+--- {{ref('ERROR_EVENT_FACT')}}
+
+{#---------- MODEL CONFIGURATION #}
 {{config({
 
-    "materialized":"ephemeral",
-    "sql_where":"TRUE",
-    "schema":"QUALITY"
-
+    "materialized" : "view",
+    "schema" : "QUALITY",
+    "alias" : this.table + "_TEMP"
 })}}

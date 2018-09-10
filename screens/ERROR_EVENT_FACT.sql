@@ -1,63 +1,13 @@
 ---------- ERROR EVENT
----- AS screens are applied during audits they can generate errors.
----- These errors are collected and added to the error event table here.
----- to use, just add the prefix of the screen you want to the all_screens variable.
----- for example, if you want to add the ORDERS_SCREEN.sql results, add 'ORDERS' to the all_screens variable.
+---- creates the schema for the ERROR_EVENT_FACT table.
 
----------- FORMATTING
----- keep the values in the all_screens list in alphabetical order so they are easy to search through.
-
----- INCLUDE SCREENS BY ADDING THEM HERE:
-{% set all_screens = [
-                    'FISCAL_CALENDARS',
-                    'USERS'
-                    ] %}
-
-
-
----------- NOTHING TO CHANGE BELOW HERE
----- this is all framework from here down.
-
-
-WITH
-unioned_error_events AS (
     SELECT
-        audit_key,
-        screen_name,
-        error_subject,
-        record_identifier,
-        error_event_action
-    FROM
-
-{% for screen in all_screens %}
-    (
-    SELECT
-        audit_key,
-        screen_name,
-        error_subject,
-        record_identifier,
-        error_event_action
-    FROM
-        {{ref(screen|upper +'_SCREEN')}}
-    )
-    {{ 'UNION' if not loop.last }}
-
-{% endfor %}
-
-
-)
----- create the final partial
-    SELECT
-        sequence.nextval AS error_event_key,
-        -- for some reason snowflake needs this explicitly cast
-        audit_key::NUMBER AS audit_key,
-        screen_name,
-        error_subject,
-        record_identifier,
-        error_event_action
-    FROM
-        unioned_error_events,
-        TABLE(getnextval(quality_error_event_fact_pk_seq)) sequence
+        NULL::NUMBER AS error_event_key,
+        NULL::NUMBER AS audit_key,
+        NULL::VARCHAR AS screen_name,
+        NULL::VARCHAR AS error_subject,
+        NULL::VARCHAR AS record_identifier,
+        NULL::VARCHAR AS error_event_action
     WHERE
         audit_key IS NOT NULL
 

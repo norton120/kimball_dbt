@@ -8,27 +8,32 @@
 ----    - fkey_attribute (string) the attribute to fkey against
 ----    - materialization (string) the type of dbt construct, default table
 ---- RETURNS: string the compiled DDL statement
----- Note: this sets the constraints on __dbt_tmp table which is then renamed into the prod table
 
 #}
-    {% for con in constraints %}
-        ALTER TABLE {{schema}}.{{entity}}__{{'dbt_tmp' if materialization in ('table','view') else 'dbt_incremental_tmp'}}
-        {% if con == 'Null' %}
-            ALTER COLUMN {{attribute}} NOT NULL
-        {% elif con == 'Fkey' %}
-            {% if adapter.already_exists(schema, fkey_entity) %}
+    -- Only run if this is the initial creation of the entity. 
+    -- There is no catchable crud operation for constraints :( 
+    {% if not adapter.already_exists(this.schema, this.name) %}
+        {% for con in constraints %}
+            ALTER TABLE {{schema}}.{{entity}}
+            {% if con == 'Null' %}
+                ALTER COLUMN {{attribute}} NOT NULL
+            {% elif con == 'Fkey' %}
+                {% if adapter.already_exists(schema, fkey_entity) %}
+                    ADD CONSTRAINT {{con}}_{{attribute}}
+                    FOREIGN KEY ({{attribute}}) REFERENCES {{fkey_entity}} ({{fkey_attribute}})
+                {% else %}
+                    UNSET DATA_RETENTION_TIME_IN_DAYS
+                {% endif %}
+            {% elif con == 'Pkey' %}
                 ADD CONSTRAINT {{con}}_{{attribute}}
-                FOREIGN KEY ({{attribute}}) REFERENCES {{fkey_entity}} ({{fkey_attribute}})
-            {% else %}
-                UNSET DATA_RETENTION_TIME_IN_DAYS
-            {% endif %}
-        {% elif con == 'Pkey' %}
-            ADD CONSTRAINT {{con}}_{{attribute}}
-            PRIMARY KEY ({{attribute}})
-        {% elif con == 'Unique' %}
-            ADD CONSTRAINT {{con}}_{{attribute}}
-            UNIQUE ({{attribute}})
-        {% endif %};
-    {% endfor %}
-
+                PRIMARY KEY ({{attribute}})
+            {% elif con == 'Unique' %}
+                ADD CONSTRAINT {{con}}_{{attribute}}
+                UNIQUE ({{attribute}})
+            {% endif %};
+        {% endfor %}        
+    {% else %}
+    -- post-hooks can't return an empty statement
+        SELECT NULL WHERE 1=0;
+    {% endif %}
 {% endmacro %}
