@@ -2,7 +2,7 @@
 # Name your package! Package names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: 'revzilla'
+name: 'k_dbt'
 version: '0.1.0'
 
 # This setting configures which "profile" dbt uses for this project. Profiles contain
@@ -27,18 +27,8 @@ quoting:
   identifier: false
   schema: false
 
-on-run-end:
-  - >
-    {% for schema_suffix in ["QUALITY", "STAGING_QUALITY", "GENERAL"] %}
-      {% for snowflake_role in ["GENERAL_USER", "DEVELOPER"] %}
-      GRANT USAGE ON SCHEMA {% if target.database == var('production_database') %} QUALITY {% else %} {{target.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
-      GRANT SELECT ON ALL TABLES IN SCHEMA {% if target.database == var('production_database') %} QUALITY {% else %} {{target.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
-      GRANT SELECT ON ALL VIEWS IN SCHEMA {% if target.database == var('production_database') %} QUALITY {% else %} {{target.schema+'_'+schema_suffix}} {% endif %} TO ROLE {{snowflake_role}};
-      {% endfor %}
-    {% endfor %}
-
 models:
-  revzilla:
+  k_dbt:
 
     vars:
       release: "Evil Knievel"
@@ -66,75 +56,11 @@ models:
            SELECT NULL WHERE 1=0;
          {% endif %}
 seeds:
-  revzilla:
+  k_dbt:
     vars:
       release: "Evil Knievel"
       app_version: 0.1.0
       dbt_version: 0.11.0
       production_database: 'DW2'
-    enabled: true
     schema: SEED
-    post-hook:
-      - 'GRANT USAGE ON SCHEMA "RAW"."SEED" TO ROLE DEVELOPER'
-      - 'GRANT USAGE ON SCHEMA "RAW"."SEED" TO ROLE DW2_ADMIN'
-      - 'GRANT SELECT ON ALL TABLES IN SCHEMA "RAW"."SEED" TO ROLE DEVELOPER'
-      - 'GRANT SELECT ON ALL TABLES IN SCHEMA "RAW"."SEED" TO ROLE DW2_ADMIN'    
 
-      # configure each seed explicitly
-    state_region_records:
-      column_types:
-        state: varchar(16777216)
-        region: varchar(16777216)
-
-    budget_plan_records:
-      column_types:
-        date: date
-        revzilla_plan: number(38,0)
-        cycle_gear_plan: number(38,0)
-        upshift_plan: number(38,0)
-
-    kenshoo_channel_mapping_records:
-      column_types:
-        site_name: varchar(16777216)
-        marketing_channel_name: varchar(16777216)
-        kenshoo_profile_name: varchar(16777216)
-        kenshoo_channel_name: varchar(16777216)
-
-    marketing_forecast_budget_records:
-      column_types:
-        site_name: varchar(16777216)
-        year: number(38,0)
-        week: number(38,0)
-        total_site_revenue: float
-        total_spend: float
-        total_marketing_revenue: float
-        seo_revenue: float
-        paid_search_revenue: float
-        paid_search_spend: float
-        cse_revenue: float
-        cse_spend: float
-        display_retargeting_revenue: float
-        display_retargeting_spend: float
-        email_revenue: float
-        affiliate_revenue: float
-        affiliate_spend: float
-        display_video_revenue: float
-        display_video_spend: float
-        social_revenue: float
-        social_spend: float
-        direct_revenue: float
-        referral_revenue: float
-        offline_revenue: float
-        budget_released_at: timestamp_ntz(9)
-
-    organizational_definition_records:
-      column_types:
-        term: varchar(16777216)
-        definition: varchar(16777216)
-        updated_at: date
-
-    approved_abbreviation_records:
-      column_types:
-        abbreviation: varchar(16777216)
-        full_term: varchar(16777216)
-        reason_for_abbreviation: varchar(16777216)
